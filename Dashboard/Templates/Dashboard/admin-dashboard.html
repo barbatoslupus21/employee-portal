@@ -1,0 +1,482 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+                <span class="material-symbols-rounded light-gray">
+                    keyboard_arrow_right
+                </span>
+                <h5 class="m-0 light-gray fw-medium">Dashboard</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-4 rounded-4">
+            <div class="row g-2 mt-2 align-items-stretch">
+                <div class="col-md-8">
+                    <div class="row g-2">
+                        <div class="col-12 col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class=" d-flex align-items-center gap-3">
+                                        <h2 class="display-6 fw-bold light-gray lh-1 p-2 rounded-3" style="background-color: #eef1ff; color: #7c92ff;">{{total_employees}}</h2>
+                                        <div>
+                                            <h5 class="dark-gray fw-bold m-0">Total Employee</h5>
+                                            <p class="light-gray fw-medium m-0">Overall Count</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class=" d-flex align-items-center gap-3">
+                                        <h2 class="display-6 fw-bold light-gray lh-1 p-2 rounded-3" style="background-color: #eef1ff; color: #7c92ff;">{{regular}}</h2>
+                                        <div>
+                                            <h5 class="dark-gray fw-bold m-0">Regular Employee</h5>
+                                            <p class="light-gray fw-medium m-0">Monthly Count</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class=" d-flex align-items-center gap-3">
+                                        <h2 class="display-6 fw-bold light-gray lh-1 p-2 rounded-3" style="background-color: #eef1ff; color: #7c92ff;">{{OJT}}</h2>
+                                        <div>
+                                            <h5 class="dark-gray fw-bold m-0">On Job Training</h5>
+                                            <p class="light-gray fw-medium m-0">Monthly Count</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card survey-chart mt-2">
+                        <div class="d-flex justify-content-between">
+                            <h5 class="dark-gray body-title">Departmental Employee Breakdown</h5>
+                            <a href="{% url 'accounts' %}" class="text-decoration-none"><button class="button-small-light">View Employees</button></a>
+                        </div>
+                        <canvas id="departmentclassificationChart" class="survey-graph"></canvas>
+                    </div>
+
+                    <div class="card survey-chart mt-2">
+                        <div class="d-flex justify-content-between">
+                            <h5 class="dark-gray body-title">Leave Request Percentage</h5>
+                            <a href="{% url 'admin-leave' %}" class="text-decoration-none"><button class="button-small-light">View Leave Requests</button></a>
+                        </div>
+                        <canvas id="leaveRequestChart" class="survey-graph"></canvas>
+                    </div>
+
+                    <div class="card survey-chart my-2">
+                        <div class="d-flex justify-content-between">
+                            <h5 class="dark-gray body-title">Monthly Training and Seminar Percentage</h5>
+                            <a href="{% url 'admin-training' %}" class="text-decoration-none"><button class="button-small-light">View Training</button></a>
+                        </div>
+                        <canvas id="trainingChart" class="survey-graph"></canvas>
+                    </div>
+                </div>
+
+                <div class="col-md-4 d-flex flex-column">
+                    <div class="card">
+                        <div class="top-categories-card">
+                            <h5 class="dark-gray body-title">Employee Satisfaction</h5>
+                            <div class="chart-container">
+                              <canvas class="donut-chart" id="satisfactionChart"></canvas>
+                              <div class="total-sales">
+                                <span class="label">TOTAL AVERAGE</span>
+                                <span class="value"></span>
+                              </div>
+                            </div>
+                            <div class="categories-list">
+                              <div class="category">
+                                <span class="color-indicator Excellent"></span>
+                                <span class="name body-regular">Excellent</span>
+                                <span class="body-regular fw-bold"></span>
+                              </div>
+                              <div class="category">
+                                <span class="color-indicator Good"></span>
+                                <span class="name body-regular">Good</span>
+                                <span class="body-regular fw-bold"></span>
+                              </div>
+                              <div class="category">
+                                <span class="color-indicator Very-Good"></span>
+                                <span class="name body-regular">Very Good</span>
+                                <span class="body-regular fw-bold"></span>
+                              </div>
+                            </div>
+                            <a href="{% url 'admin-survey' %}" class="texd-decoration-none"><button type="button" class="view-details body-regular">View details</button></a>
+                          </div>
+                    </div>
+
+                    <div class="card announcement-card flex-grow-1 my-2">
+                        <div id="announcementIndicators" class="carousel slide">
+                            <div class="carousel-indicators">
+                                {% for announcement in announcements %}
+                                <button type="button" data-bs-target="#announcementIndicators" data-bs-slide-to="{{ forloop.counter0 }}" 
+                                        class="{% if forloop.first %}active{% endif %} indicator"></button>
+                                {% endfor %}
+                            </div>
+                            <div class="carousel-inner">
+                                {% for announcement in announcements %}
+                                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                    <div class="carousel-content" {% if announcement.image %}style="background-image: url('{{ announcement.image.url }}')"{% endif %}>
+                                        <div class="carousel-caption">
+                                            <h3 class="fw-bold mb-3">{{ announcement.title }}</h3>
+                                            <p class="text-light">{{ announcement.description }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#announcementIndicators" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#announcementIndicators" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+    </div>
+    
+</article>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        axios.get('/Profile/api/department-percentages/')
+            .then(function (response) {
+                const data = response.data;
+    
+                const ctx = document.getElementById('departmentclassificationChart');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Employee Percentage by Department',
+                            data: data.percentages,
+                            fill: 'start',
+                            backgroundColor: 'rgba(124, 146, 255, 0.2)',
+                            borderColor: '#7c92ff',
+                            borderWidth: 1.5,
+                            tension: 0.3,
+                            pointRadius: 0,
+                            pointHoverRadius: 10,
+                            pointHitRadius: 100,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (tooltipItem) {
+                                        return tooltipItem.raw + '%';
+                                    }
+                                },
+                                displayColors: false,
+                                bodyFont: {
+                                    size: 15
+                                },
+                                titleFont: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                min: 0,
+                                max: 100,
+                                grid: {
+                                    display: false,
+                                },
+                                ticks: {
+                                    callback: function (value) {
+                                        if (value === 100 || value === 50) return value + '%';
+                                        return '';
+                                    }
+                                }
+                            },
+                            x: {
+                                offset: false,
+                                grid: {
+                                    display: false,
+                                },
+                                ticks: {
+                                    align: 'center',
+                                    font: {
+                                        size: 12,
+                                        weight: 'normal'
+                                    },
+                                    color: '#333'
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(function (error) {
+                console.error('Error fetching department percentages:', error);
+            });
+    });
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('leaveRequestChart');
+        
+        axios.get('/Leave/api/leave-percentage/')
+            .then(response => {
+                const labels = response.data.labels;
+                const data = response.data.data;
+                
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '',
+                            data: data,
+                            fill: 'start',
+                            backgroundColor: 'rgba(124, 146, 255, 0.2)',
+                            borderColor: '#7c92ff',
+                            borderWidth: 1.5,
+                            tension: 0.3,
+                            pointRadius: 0,
+                            pointHoverRadius: 10,
+                            pointHitRadius: 100,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (tooltipItem) {
+                                        return tooltipItem.raw + '%';
+                                    }
+                                },
+                                displayColors: false,
+                                bodyFont: {
+                                    size: 15
+                                },
+                                titleFont: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                min: 0,
+                                max: 100,
+                                grid: {
+                                    display: false,
+                                },
+                                ticks: {
+                                    callback: function (value) {
+                                        if (value === 100 || value === 50) return value + '%';
+                                        return '';
+                                    }
+                                }
+                            },
+                            x: {
+                                offset: false,
+                                grid: {
+                                    display: false,
+                                },
+                                ticks: {
+                                    align: 'center',
+                                    font: {
+                                        size: 12,
+                                        weight: 'normal'
+                                    },
+                                    color: '#333'
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching leave percentage data:', error));
+    });
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('trainingChart');
+        let trainingChart;
+    
+        axios.get('/Training-effectiveness/api/training-counts/')
+            .then(response => {
+                const data = response.data;
+                
+                trainingChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Trainings per Month',
+                            data: data.data,
+                            fill: 'start',
+                            backgroundColor: 'rgba(124, 146, 255, 0.2)',
+                            borderColor: '#7c92ff',
+                            borderWidth: 1.5,
+                            tension: 0.3,
+                            pointRadius: 0,
+                            pointHoverRadius: 10,
+                            pointHitRadius: 100,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (tooltipItem) {
+                                        return tooltipItem.raw + ' trainings';
+                                    }
+                                },
+                                displayColors: false,
+                                bodyFont: {
+                                    size: 15
+                                },
+                                titleFont: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                min: 1,
+                                max: 10,
+                                grid: {
+                                    display: false,
+                                },
+                                ticks: {
+                                    stepSize: 1,
+                                    callback: function (value) {
+                                        return value;
+                                    }
+                                }
+                            },
+                            x: {
+                                offset: false,
+                                grid: {
+                                    display: false,
+                                },
+                                ticks: {
+                                    align: 'start',
+                                    font: {
+                                        size: 12,
+                                        weight: 'normal'
+                                    },
+                                    color: '#333'
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching training data:', error);
+            });
+    });
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fetch data from the API
+        fetch('/Survey/api/survey-rating-percentages/')
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById('satisfactionChart');
+                
+                // Prepare data for the chart
+                const chartData = [
+                    data.percentages.Excellent,
+                    data.percentages['Very Good'],
+                    data.percentages.Good,
+                    data.percentages.Poor,
+                    data.percentages['Need Improvement']
+                ];
+    
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Excellent', 'Very Good', 'Good', 'Poor', 'Need Improvement'],
+                        datasets: [{
+                            data: chartData,
+                            backgroundColor: ['#5046e5', '#6366f1', '#818cf8', '#a6b4fd', '#c7d2ff'],
+                            borderWidth: 0,
+                        }]
+                    },
+                    options: {
+                        cutout: '70%',
+                        rotation: -90,
+                        circumference: 180,
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (tooltipItem) {
+                                        return tooltipItem.raw.toFixed(2) + '%';
+                                    }
+                                },
+                                displayColors: false,
+                                bodyFont: {
+                                    size: 15
+                                },
+                                titleFont: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        layout: {
+                            padding: {
+                                bottom: 30
+                            }
+                        }
+                    }
+                });
+    
+                // Update HTML elements
+                document.querySelector('.total-sales .value').textContent = data.overall_average.toFixed(2) + '%';
+    
+                const categories = document.querySelectorAll('.category');
+                categories[0].querySelector('.fw-bold').textContent = data.percentages.Excellent.toFixed(2) + '%';
+                categories[1].querySelector('.fw-bold').textContent = data.percentages.Good.toFixed(2) + '%';
+                categories[2].querySelector('.fw-bold').textContent = data.percentages['Very Good'].toFixed(2) + '%';
+            })
+            .catch(error => console.error('Error fetching survey data:', error));
+    });
+</script>
+{% endblock content %}

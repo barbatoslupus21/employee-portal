@@ -1,0 +1,235 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url "Dashboard:Dashboard" %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Assessments</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <a href="{% url 'supervisor-evaluation' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Performance Evaluation</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <a href="{% url 'supervisor-view-quarter' pk=employee.quarter.id %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">{{employee.quarter}}</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">{{employee.employee.name}}</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="pt-2">
+                <h1 class="display-6 fw-bold dark-gray">Performance Evaluation</h1>
+                <p class="dark-gray mb-4">Please take a few moments to complete this survey</p>
+            </div>
+            <hr>
+            <form method="POST" action="{% url 'submit-assessment' pk=employee.id %}">
+                {% csrf_token %}
+                {% if training %}
+                <div class="pb-2">
+                    <h3 class="dark-gray mb-3">Requested Training</h3>
+                    <div class="row p-3">
+                        <div class="col-12 col-md-12">
+                            <dl class="row">
+                                <dt class="col-sm-2">
+                                    <h5 class="body-regular light-gray fw-medium">Training</h5>
+                                </dt>
+                                <dd class="col-sm-10">
+                                    <h5 class="body-regular dark-gray">{{training.training}}</h5>
+                                </dd>
+
+                                <dt class="col-sm-2">
+                                    <h5 class="body-regular light-gray fw-medium">Objective of Training</h5>
+                                </dt>
+                                <dd class="col-sm-10">
+                                    <h5 class="body-regular dark-gray">{{training.objective}}</h5>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="pb-2">
+                    <h3 class="dark-gray mb-3">Recommendation and Comments</h3>
+                    <div class="row p-3">
+                        <div class="col-12 col-md-12">
+                            <dl class="row">
+                                <dt class="col-sm-2">
+                                    <h5 class="body-regular light-gray fw-medium">Strengths</h5>
+                                </dt>
+                                <dd class="col-sm-10">
+                                    <textarea type="text" class="form-control" name="strength" required></textarea>
+                                </dd>
+
+                                <dt class="col-sm-2">
+                                    <h5 class="body-regular light-gray fw-medium">Weaknesses</h5>
+                                </dt>
+                                <dd class="col-sm-10">
+                                    <textarea type="text" class="form-control" name="weakness" required></textarea>
+                                </dd>
+
+                                <dt class="col-sm-2">
+                                    <h5 class="body-regular light-gray fw-medium">Training Required</h5>
+                                </dt>
+                                <dd class="col-sm-10">
+                                    <textarea type="text" class="form-control" name="training" required></textarea>
+                                </dd>
+
+                                <dt class="col-sm-2">
+                                    <h5 class="body-regular light-gray fw-medium">Comment</h5>
+                                </dt>
+                                <dd class="col-sm-10">
+                                    <textarea type="text" class="form-control" name="comment" required></textarea>
+                                </dd>
+                                
+                                <dt class="col-sm-2">
+                                    <h5 class="body-regular light-gray fw-medium">Employee Comment</h5>
+                                </dt>
+                                <dd class="col-sm-10">
+                                    <textarea type="text" class="form-control" name="emp_comment" required></textarea>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pb-4">
+                    <h3 class="dark-gray mb-2">Employee Task Assessment</h3>
+                    <p class="dark-gray mb-2">Rate employees satisfaction with each job aspect on a scale of 1 (Poor) to
+                        5(Excellent).</p>
+                    <table class="table survey-table">
+                        <thead>
+                            <tr>
+                                <th class="body-regular dark-gray fw-medium supervisor-self-assessment"></th>
+                                <th class="body-regular dark-gray fw-medium text-center">Employee Assessment</th>
+                                <th class="body-regular dark-gray fw-medium text-center">1</th>
+                                <th class="body-regular dark-gray fw-medium text-center">2</th>
+                                <th class="body-regular dark-gray fw-medium text-center">3</th>
+                                <th class="body-regular dark-gray fw-medium text-center">4</th>
+                                <th class="body-regular dark-gray fw-medium text-center">5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tasklist in tasklists %}
+                            <tr>
+                                <td><p>{{tasklist.tasklist}}</p></td>
+                                <td class="text-center"><p>{{tasklist.self_assessment}}</p></td>
+                                <td class="text-center">
+                                    <div class="form-check d-flex justify-content-center">
+                                        <input class="form-check-input" type="radio" name="Assessment{{tasklist.id}}" value="1">
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="form-check d-flex justify-content-center">
+                                        <input class="form-check-input" type="radio" name="Assessment{{tasklist.id}}" value="2">
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="form-check d-flex justify-content-center">
+                                        <input class="form-check-input" type="radio" name="Assessment{{tasklist.id}}" value="3">
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="form-check d-flex justify-content-center">
+                                        <input class="form-check-input" type="radio" name="Assessment{{tasklist.id}}" value="4">
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="form-check d-flex justify-content-center">
+                                        <input class="form-check-input" type="radio" name="Assessment{{tasklist.id}}" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr>
+                <div class="d-flex justify-content-end mb-4 gap-2">
+                    <button type="submit" class="custom-button" onclick="validateEvaluation(event)">
+                        Submit
+                    </button>                    
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</article>
+
+<script>
+    function validateEvaluation(event) {
+        event.preventDefault(); // Prevent form submission initially
+    
+        const rows = document.querySelectorAll('table tbody tr');
+        const textareas = document.querySelectorAll('textarea[required]');
+        let allRowsValid = true;
+        let allTextareasValid = true;
+        let firstInvalidRow = null;
+        let firstInvalidTextarea = null;
+    
+        // Check radio button validation for each row
+        rows.forEach((row) => {
+            const radios = row.querySelectorAll('input[type="radio"]');
+            const isChecked = Array.from(radios).some(radio => radio.checked);
+            const rowHeader = row.querySelector('td');
+    
+            if (!isChecked) {
+                rowHeader.classList.add('error-label');
+                allRowsValid = false;
+                if (!firstInvalidRow) {
+                    firstInvalidRow = row;
+                }
+            } else {
+                rowHeader.classList.remove('error-label');
+            }
+        });
+    
+        // Check each required textarea
+        textareas.forEach((textarea) => {
+            if (!textarea.value.trim()) {
+                textarea.classList.add('error-label');
+                allTextareasValid = false;
+                if (!firstInvalidTextarea) {
+                    firstInvalidTextarea = textarea;
+                }
+            } else {
+                textarea.classList.remove('error-label');
+            }
+        });
+    
+        // Final submission check
+        if (allRowsValid && allTextareasValid) {
+            event.target.closest('form').submit();
+        } else {
+            if (firstInvalidRow) {
+                firstInvalidRow.scrollIntoView({ behavior: 'smooth' });
+                firstInvalidRow.querySelector('input[type="radio"]').focus();
+            } else if (firstInvalidTextarea) {
+                firstInvalidTextarea.scrollIntoView({ behavior: 'smooth' });
+                firstInvalidTextarea.focus();
+            }
+        }
+    }    
+</script>
+
+{% endblock content %}

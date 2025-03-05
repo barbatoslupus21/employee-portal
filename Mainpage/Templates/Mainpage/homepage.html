@@ -1,0 +1,443 @@
+{% extends "homepage.html" %}
+{% load static %}
+
+{% block content %}
+
+<body class="vh-100">
+    <nav class="navbar navbar-expand-lg fixed-top">
+      <div class="container-fluid">
+          <a class="navbar-brand" href="#">
+              <div class="d-flex justify-content-center gap-2 align-items-center mx-3 logo-container">
+                  <div>
+                      <img src="{% static "images/ryonanlogo.png" %}" class="main-logo" alt="company-logo">
+                  </div>
+                  <div>
+                      <h4 class="ryonan">RYONAN ELECTRIC</h4>
+                      <h6 class="electric">Philippines Corporation</h6>
+                  </div>
+              </div>
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="material-symbols-rounded">
+              menu
+              </span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarText">
+              <ul class="navbar-nav me-auto mb-lg-0 flex-grow-1">
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url "mainpage" %}"><h5>Home</h5></a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="#mission_vision"><h5>Mission Vision</h5></a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="#ryonanCreed"><h5>Ryonan Creed</h5></a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="#location"><h5>Global Location</h5></a>
+                  </li>
+              </ul>
+              <ul class="navbar-nav me-auto mb-lg-0">
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url "login" %}"><h5>Login</h5></a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url "register-user" %}"><h5>Register</h5></a>
+                  </li>
+              </ul>
+          </div>
+      </div>
+    </nav>
+    
+    <div class="blue-section">
+      <div class="home-container">
+        <div class="row flex-lg-row-reverse align-items-center g-3">
+          <div class="col-lg-7">
+            <div class="floating-dashboard">
+              <img src="{% static "images/Screenshot 2023-06-15 125408.png" %}" class="d-block dashboard-img" alt="ryonan wallpaper" loading="lazy">
+            </div>
+          </div>
+          <div class="col-lg-5 hero-intro-container">
+            <h1 class="display-4 fw-bold lh-1 mb-3 text-light">Ryonan Electric Philippines Corporation</h1>
+            <p class="text-light">Welcome to Ryonan Electric Philippines, your trusted partner in high-quality wire harness solutions. We specialize in delivering precision-engineered harnesses tailored to power and connect your products seamlessly. Discover our commitment to excellence, innovation, and customer satisfaction—bringing your projects to life with reliable, efficient, and expertly crafted wire harness systems.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- customers -->
+    <div class="trusted-partners">
+      <h4 class="fw-medium">Trusted by industry-leading companies</h5>
+    </div>
+    <div class="marquee-container">
+      <div class="marquee">
+        <div class="logo-partner">
+          <div class="logo-company">
+            <img src="{% static "images/customers/lamcor.png" %}" alt="LAMCOR logo">
+          </div>
+          <div class="logo-company">
+            <img src="{% static "images/customers/73fa72dd6d4de67f34123d54aa5d3b52.png" %}" alt="mitsubishi logo">
+          </div>
+          <div class="logo-company">
+            <img src="{% static "images/customers/pngwing.com.png" %}" height="40" alt="DENSO logo">
+          </div>
+          <div class="logo-company">
+            <img src="{% static "images/customers/mitsuba.png" %}" alt="MITSUBA logo">
+          </div>
+          <div class="logo-company">
+            <img src="{% static "images/customers/naganuma.png" %}" alt="Naganuma logo">
+          </div>
+          <div class="logo-company">
+            <img src="{% static "images/customers/Semitec.png" %}" alt="SEMITEC logo">
+          </div>
+          <div class="logo-company">
+            <img src="{% static "images/customers/Tsukiden.png" %}" alt="TSUKIDEN logo">
+          </div>
+          <div class="logo-company">
+            <img src="{% static "images/customers/Sumiden-Wire.png" %}" alt="SUMIDEN logo">
+          </div>
+          <div class="logo-company">
+            <img src="{% static "images/customers/Sumitomo.png" %}" alt="SUMITOMO logo">
+          </div>
+        </div>
+        <div class="logo-partner">
+            <div class="logo-company">
+              <img src="{% static "images/customers/lamcor.png" %}" alt="LAMCOR logo">
+            </div>
+            <div class="logo-company">
+              <img src="{% static "images/customers/73fa72dd6d4de67f34123d54aa5d3b52.png" %}" alt="mitsubishi logo">
+            </div>
+            <div class="logo-company">
+              <img src="{% static "images/customers/pngwing.com.png" %}" height="40" alt="DENSO logo">
+            </div>
+            <div class="logo-company">
+              <img src="{% static "images/customers/mitsuba.png" %}" alt="MITSUBA logo">
+            </div>
+            <div class="logo-company">
+              <img src="{% static "images/customers/naganuma.png" %}" alt="Naganuma logo">
+            </div>
+            <div class="logo-company">
+              <img src="{% static "images/customers/Semitec.png" %}" alt="SEMITEC logo">
+            </div>
+            <div class="logo-company">
+              <img src="{% static "images/customers/Tsukiden.png" %}" alt="TSUKIDEN logo">
+            </div>
+            <div class="logo-company">
+              <img src="{% static "images/customers/Sumiden-Wire.png" %}" alt="SUMIDEN logo">
+            </div>
+            <div class="logo-company">
+              <img src="{% static "images/customers/Sumitomo.png" %}" alt="SUMITOMO logo">
+            </div>
+          </div>
+          <div class="logo-partner">
+            <div class="logo-company">
+              <img src="{% static "images/customers/lamcor.png" %}" alt="LAMCOR logo">
+            </div>
+            <div class="logo-company">
+              <img src="{% static "images/customers/73fa72dd6d4de67f34123d54aa5d3b52.png" %}" alt="mitsubishi logo">
+            </div>
+            <div class="logo-company">
+              <img src="{% static "images/customers/pngwing.com.png" %}" height="40" alt="DENSO logo">
+            </div>
+            <div class="logo-company">
+              <img src="{% static "images/customers/mitsuba.png" %}" alt="MITSUBA logo">
+            </div>
+            <div class="logo-company">
+              <img src="{% static "images/customers/naganuma.png" %}" alt="Naganuma logo">
+            </div>
+            <div class="logo-company">
+              <img src="{% static "images/customers/Semitec.png" %}" alt="SEMITEC logo">
+            </div>
+            <div class="logo-company">
+              <img src="{% static "images/customers/Tsukiden.png" %}" alt="TSUKIDEN logo">
+            </div>
+            <div class="logo-company">
+              <img src="{% static "images/customers/Sumiden-Wire.png" %}" alt="SUMIDEN logo">
+            </div>
+            <div class="logo-company">
+              <img src="{% static "images/customers/Sumitomo.png" %}" alt="SUMITOMO logo">
+            </div>
+          </div>
+      </div>
+    </div>
+
+    <section id="mission_vision">
+      <!-- mission/vision -->
+      <div class="home-container container-content" id="hanging-icons">
+        <div class="row g-4 pt-5 row-cols-1 row-cols-lg-3">
+          <div class="col d-flex align-items-start">
+            <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center flex-shrink-0 me-3 p-2 rounded-3">
+              <img src="{% static "images/icons/mission.png" %}" alt="mission logo">
+            </div>
+            <div>
+              <h3 class="dark-gray">Mission</h3>
+              <ul>
+                <li><p>To provide excellent QUALITY, COST,  DELIVERY and SERVICES, and RESPONSE SPEED for the Customers to be impressed.</p></li>
+                <li><p>To continuously improve SAFETY, CLEAN FACILITIES  AND EMPLOYEES’  HAPPINESS,</p></li>
+                <li><p>To Continuously develop EMPLOYEES KNOWLEDGE, SKILLS, ABILITY AND TECHNOLOGICAL ADAPTABILITY.</p></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col d-flex align-items-start">
+            <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center flex-shrink-0 me-3 p-2 rounded-3">
+              <img src="{% static "images/icons/vision.png" %}" alt="vision logo">
+            </div>
+            <div>
+              <h3 class="dark-gray">Vision</h3>
+              <p>  To be the number 1 globally competitive wiring harness manufacturing company that provides utmost  safety and convenience to people.</p>
+            </div>
+          </div>
+          <div class="col d-flex align-items-start">
+            <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center flex-shrink-0 me-3 p-2 rounded-3">
+              <img src="{% static "images/icons/vision2025.png" %}" alt="vision 2025 logo">
+            </div>
+            <div>
+              <h3 class="dark-gray">Vision 2025</h3>
+              <p>The Ryonan Electric Group is polishing speed, response ability ang global product ability. We aim to be the first choice of customers.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="carousel">
+      <!-- Carousel -->
+      <div id="myCarousel" class="carousel slide mb-6" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="indicator" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2" class="indicator active" aria-current="true"></button>
+          <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3" class="indicator"></button>
+        </div>
+        <div class="carousel-inner">
+          <div class="carousel-item">
+            <img class="bd-placeholder-img" src="{% static "images/mainpage/ryonan-drone.jpg" %}" alt="" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
+            <div class="container ">
+              <div class="carousel-caption text-start">
+                <h1>Excellence in Wire Harness Manufacturing</h1>
+                <p  class="text-light">Ryonan Electric Philippines is dedicated to producing high-quality, precision-engineered wire harnesses that meet the unique needs of various industries. Our products are crafted with meticulous attention to detail, ensuring reliability and durability that our customers can trust.</p>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item active">
+            <img class="bd-placeholder-img" src="{% static "images/mainpage/ryonan-group.jpg" %}" alt="" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
+            <div class="container">
+              <div class="carousel-caption">
+                <h1>Innovative Solutions, Tailored to You</h1>
+                <p class="text-light">We understand that each project has specific requirements. At Ryonan Electric Philippines, we work closely with our clients to design and deliver customized wiring solutions that drive efficiency, enhance performance, and align with industry standards.</p>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img class="bd-placeholder-img" src="{% static "images/mainpage/team-building.JPG" %}" alt="" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
+            <div class="container">
+              <div class="carousel-caption text-end">
+                <h1>Commitment to Quality and Customer Satisfaction</h1>
+                <p class="text-light">From quality control to on-time delivery, our goal is to exceed customer expectations. With a focus on cost-effectiveness and responsive service, Ryonan Electric Philippines is committed to building long-lasting partnerships grounded in trust and excellence.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </section>
+    
+    <section id="ryonanCreed">
+      <!-- Ryonan Creed -->
+      <div class="home-container container-content" id="icon-grid">
+        <h2 class="display-6 text-center fw-normal">Ryonan Creed</h2>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 creed-container">
+          <div class="col d-flex align-items-start">
+            <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center flex-shrink-0 me-3 p-2 rounded-3">
+              <span class="material-symbols-rounded">
+                support_agent
+                </span>
+            </div>
+            <div>
+              <h3 class="fw-medium mb-0">Customer First Principle</h3>
+              <p>We prioritize customer needs, delivering responsive, value-driven service.</p>
+            </div>
+          </div>
+          <div class="col d-flex align-items-start">
+            <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center flex-shrink-0 me-3 p-2 rounded-3">
+              <span class="material-symbols-rounded">
+                rocket
+                </span>
+            </div>
+            <div>
+              <h3 class="fw-medium mb-0">Speed</h3>
+              <p>We act swiftly, resolve issues fast, and uphold deadlines.</p>
+            </div>
+          </div>
+          <div class="col d-flex align-items-start">
+            <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center flex-shrink-0 me-3 p-2 rounded-3">
+              <span class="material-symbols-rounded">
+                lightbulb
+                </span>
+            </div>
+            <div>
+              <h3 class="fw-medium mb-0">Genba Principle</h3>
+              <p>We ensure a safe, quality-focused workplace through real-world engagement.</p>
+            </div>
+          </div>
+          <div class="col d-flex align-items-start">
+            <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center flex-shrink-0 me-3 p-2 rounded-3">
+              <span class="material-symbols-rounded">
+                tooltip_2
+                </span>
+            </div>
+            <div>
+              <h3 class="fw-medium mb-0">Communication</h3>
+              <p>We build strong relationships through open, respectful communication.</p>
+            </div>
+          </div>
+          <div class="col d-flex align-items-start">
+            <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center flex-shrink-0 me-3 p-2 rounded-3">
+              <span class="material-symbols-rounded">
+                folded_hands
+                </span>
+            </div>
+            <div>
+              <h3 class="fw-medium mb-0">Gratitude</h3>
+              <p>We express gratitude, respect, and celebrate mutual growth.</p>
+            </div>
+          </div>
+          <div class="col d-flex align-items-start">
+            <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center flex-shrink-0 me-3 p-2 rounded-3">
+              <span class="material-symbols-rounded">
+                settings
+                </span>
+            </div>
+            <div>
+              <h3 class="fw-medium mb-0">Challenge</h3>
+              <p>We embrace innovation, exploring new fields and technologies.</p>
+            </div>
+          </div>
+          <div class="col d-flex align-items-start">
+            <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center flex-shrink-0 me-3 p-2 rounded-3">
+              <span class="material-symbols-rounded">
+                groups
+                </span>
+            </div>
+            <div>
+              <h3 class="fw-medium mb-0">Corporate Culture</h3>
+              <p>We uphold compliance, respect, and social responsibility in all we do.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+      
+    <section id="location">
+      <!-- Global Location -->
+      <div class="home-container container-content">     
+        <h2 class="display-6 text-center fw-normal">Global Location</h2> 
+        <div class="row featurette creed-container">
+          <div class="col-md-7">
+            <h2 class="featurette-heading fw-normal pb-2">Ryonan Denso Company Ltd. Japan</h2>
+            <p class="lead">Founded in Japan, Ryonan Denso Company Ltd. serves as the headquarters of Ryonan Electric, where the company’s journey began. This facility oversees research, development, and strategic direction for all global locations. Known for its commitment to innovation and quality, the Himeji office has been at the forefront of product development, providing state-of-the-art wire harness solutions and other electronic components to a wide range of industries.</p>
+          </div>
+          <div class="col-md-5">
+            <!-- <svg class="bd-placeholder-img bd-placeholder-img-lg featurette-image img-fluid mx-auto" width="500" height="500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: 500x500" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="var(--bs-secondary-bg)"></rect><text x="50%" y="50%" fill="var(--bs-secondary-color)" dy=".3em">500x500</text></svg> -->
+            <img src="{% static "images/mainpage/Ryonan Denso.jpg" %}" class="featurette-img" role="img" aria-label="Placeholder: 500x500" preserveAspectRatio="xMidYMid slice" focusable="false" alt="RDENSO Factory">
+          </div>
+        </div>
+    
+        <hr class="featurette-divider">
+    
+        <div class="row featurette">
+          <div class="col-md-7 order-md-2">
+            <h2 class="featurette-heading fw-normal pb-2">Ryonan Electric Vietnam Co.,LTD.</h2>
+            <p class="lead">Opened as part of Ryonan Electric’s expansion into Southeast Asia, the Vietnam facility was established to meet growing demand in the region. Located in Hanoi’s Thang Long Industrial Park, this facility focuses on manufacturing and assembly, ensuring efficient delivery of high-quality products to regional clients. The Vietnam branch reflects Ryonan's commitment to regional markets and provides valuable job opportunities, supporting the local economy and enhancing Ryonan’s capacity to meet diverse client needs.</p>
+          </div>
+          <div class="col-md-5 order-md-1">
+            <img src="{% static "images/mainpage/REVCO.jpg" %}" class="featurette-img" role="img" aria-label="Placeholder: 500x500" preserveAspectRatio="xMidYMid slice" focusable="false" alt="REVCO Factory">
+          </div>
+        </div>
+    
+        <hr class="featurette-divider">
+    
+        <div class="row featurette">
+          <div class="col-md-7">
+            <h2 class="featurette-heading fw-normal pb-2">Ryonan Electric India Private Limited</h2>
+            <p class="lead">The India branch is Ryonan Electric's primary location for South Asia operations, established in Gurugram’s IMT Manesar to cater to the automotive and electronics industries in the region. This facility is a hub for innovation and is equipped with advanced manufacturing technology to deliver products that meet international quality standards. Ryonan Electric India plays a critical role in expanding the company’s market presence in South Asia, ensuring close collaboration with key industry players in India.</p>
+          </div>
+          <div class="col-md-5">
+            <img src="{% static "images/mainpage/REIPL.jpg" %}" class="featurette-img" role="img" aria-label="Placeholder: 500x500" preserveAspectRatio="xMidYMid slice" focusable="false" alt="REIPL Factory">
+          </div>
+        </div>
+
+        <hr class="featurette-divider">
+    
+        <div class="row featurette">
+          <div class="col-md-7 order-md-2">
+            <h2 class="featurette-heading fw-normal pb-2">Izumo Factory</h2>
+            <p class="lead">Located in Shimane Prefecture, the Izumo Factory is a core manufacturing site that combines advanced production capabilities with strict quality control. Since its establishment, the Izumo facility has been essential in supporting Ryonan Electric’s global supply chain, producing high-performance components with precision and care. This location continues to uphold Ryonan’s standards of excellence and helps to drive forward the company's reputation for quality and reliability in wire harness and electronic components.</p>
+          </div>
+          <div class="col-md-5 order-md-1">
+            <img src="{% static "images/mainpage/Izumo Factory.jpg" %}" class="featurette-img" role="img" aria-label="Placeholder: 500x500" preserveAspectRatio="xMidYMid slice" focusable="false" alt="IZUMO Factory">
+          </div>
+        </div>
+
+        <hr class="featurette-divider">
+    
+    
+      </div>
+    </section>
+
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top header-footer">
+          <div class="col-md-4 d-flex align-items-center">
+            <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
+              <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
+            </a>
+            <span class="mb-3 mb-md-0 text-body-secondary">© 2024 Ryonan Electric Corporation</span>
+          </div>
+      
+          <ul class="nav col-md-4 justify-content-end list-unstyled d-flex px-3">
+            <li class="ms-3"><a class="text-body-secondary" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
+                  <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
+                </svg>
+            </a></li>
+            <li class="ms-3"><a class="text-body-secondary" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16">
+                  <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/>
+                </svg>
+            </a></li>
+            <li class="ms-3"><a class="text-body-secondary" href="#">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
+                  <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951"/>
+                </svg>
+            </a></li>
+          </ul>
+    </footer>
+</body>
+
+<script>
+
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        const blueSection = document.querySelector('.blue-section');
+        const blueSectionBottom = blueSection.offsetTop + blueSection.offsetHeight;
+        
+        if (window.scrollY > blueSectionBottom - 100) {
+            navbar.classList.remove('blue-section');
+        } else {
+            navbar.classList.add('blue-section');
+        }
+    });
+
+    window.dispatchEvent(new Event('scroll'));
+</script>   
+
+{% endblock content %}
+
+
+
+

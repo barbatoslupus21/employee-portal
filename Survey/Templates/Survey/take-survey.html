@@ -1,0 +1,892 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:Dashboard' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Assessments</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <a href="{% url 'survey' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Survey</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Take Survey</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="pt-2">
+                <h1 class="display-6 fw-bold dark-gray">Online Satisfactory Survey</h1>
+                <p class="dark-gray mb-4">Please take a few moments to complete this survey</p>
+            </div>
+            <hr>
+            <form method="POST" action="{% url 'survey-response' pk=selectedSurvey.id %}">
+                {% csrf_token %}
+                <div class="pb-4">
+                    <h3 class="dark-gray mb-2">Employee Job Satisfaction</h3>
+                    <p class="dark-gray mb-2">Rate your satisfaction with each job aspect on a scale of 1 (Poor) to
+                        5(Excellent).</p>
+                    <table class="table survey-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="align-left body-regular dark-gray fw-medium"></th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">1</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">2</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">3</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">4</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Skills</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="skills" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="skills" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="skills" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="skills" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="skills" value="5">
+                                    </div>
+                                </td>
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Knowledge of Job
+                                </th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="knowledge" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="knowledge" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="knowledge" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="knowledge" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="knowledge" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Orientation of
+                                    Job
+                                </th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="orientation" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="orientation" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="orientation" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="orientation" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="orientation" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Quality of
+                                    Supervision</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="supervision" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="supervision" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="supervision" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="supervision" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="supervision" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Training and
+                                    Development</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="training" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="training" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="training" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="training" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="training" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Job Description
+                                </th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="job_description"
+                                            value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="job_description"
+                                            value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="job_description"
+                                            value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="job_description"
+                                            value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="job_description"
+                                            value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Opportunity for
+                                    Advancement</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="advancement" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="advancement" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="advancement" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="advancement" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="advancement" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Workload</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="workload" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="workload" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="workload" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="workload" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="workload" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pb-4">
+                    <h3 class="dark-gray mb-2">Company Policy and Salary</h3>
+                    <p class="dark-gray mb-2">Rate your understanding and satisfaction with company policies on a scale
+                        of 1 (Poor) to 5 (Excellent).</p>
+                    <table class="table survey-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="align-left body-regular dark-gray fw-medium"></th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">1</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">2</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">3</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">4</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Company Policy
+                                </th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="policy" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="policy" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="policy" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="policy" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="policy" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" class="align-left  body-regular dark-gray fw-medium">Salary</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="salary" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="salary" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="salary" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="salary" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="salary" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" class="align-left  body-regular dark-gray fw-medium">Salary Increase
+                                </th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="salary_increase"
+                                            value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="salary_increase"
+                                            value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="salary_increase"
+                                            value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="salary_increase"
+                                            value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="salary_increase"
+                                            value="5">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pb-4">
+                    <h3 class="dark-gray mb-2">Company Facilities</h3>
+                    <p class="dark-gray mb-2">Rate your satisfaction with the company culture and work environment on a
+                        scale of 1 (Poor) to 5 (Excellent).</p>
+                    <table class="table survey-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="align-left body-regular dark-gray fw-medium"></th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">1</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">2</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">3</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">4</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Clinic</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Clinic" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Clinic" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Clinic" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Clinic" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Clinic" value="5">
+                                    </div>
+                                </td>
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Kiddie Garden
+                                </th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Kiddie" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Kiddie" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Kiddie" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Kiddie" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Kiddie" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Shuttle Service
+                                </th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Shuttle" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Shuttle" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Shuttle" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Shuttle" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Shuttle" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Locker Room
+                                </th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Locker" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Locker" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Locker" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Locker" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Locker" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Working
+                                    Condition</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Working" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Working" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Working" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Working" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Working" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Workplace</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Workplace" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Workplace" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Workplace" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Workplace" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Workplace" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Comfort Room
+                                </th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Comfort" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Comfort" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Comfort" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Comfort" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Comfort" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Canteen</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Canteen" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Canteen" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Canteen" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Canteen" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Canteen" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pb-4">
+                    <h3 class="dark-gray mb-2">Employee Relations Program</h3>
+                    <p class="dark-gray mb-2">Rate your satisfaction with the employee relations programs and support on
+                        a scale of 1 (Poor) to 5 (Excellent).</p>
+                    <table class="table survey-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="align-left body-regular dark-gray fw-medium"></th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">1</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">2</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">3</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">4</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Summer Outing
+                                </th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Summer" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Summer" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Summer" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Summer" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Summer" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Birthday
+                                    Celebration</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Birthday" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Birthday" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Birthday" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Birthday" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Birthday" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Christmas
+                                    Party/Family Day</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Christmas" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Christmas" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Christmas" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Christmas" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="Christmas" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Team Building</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="team_building" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="team_building" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="team_building" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="team_building" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="team_building" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pt-2">
+                    <h3 class="dark-gray mb-2">Feedback</h3>
+                    <p class="dark-gray mb-2">We value your opinion. Please share your thoughts and feedback.</p>
+                    <div class="pt-2">
+                        <div class="row">
+                            <div class="form-outline col-md-12 mb-2">
+                                <label class="form-label body-regular dark-gray fw-medium py-2"
+                                    for="years">Remarks</label>
+                                <textarea
+                                    class="rounded form-control form-control-sm body-regular dark-gray fw-medium"
+                                    name="remarks" rows="3"></textarea>
+                            </div>
+
+
+                            <div class="form-outline col-md-12 mb-2">
+                                <label class="form-label body-regular dark-gray fw-medium py-2"
+                                    for="years">Suggestions and Ideas</label>
+                                <textarea
+                                    class="rounded form-control form-control-sm body-regular dark-gray fw-medium"
+                                    rows="3" name="suggestions"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <div class="d-flex justify-content-end mb-4 gap-2">
+                    <a href="">
+                        <button type="button" class="cancel-button">
+                            Cancel
+                        </button>
+                    </a>
+                    <button type="button" class="custom-button" onclick="validateSurvey(event)">
+                        Submit Response
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</article>
+
+<script>
+    function validateSurvey(event) {
+        event.preventDefault();
+        const rows = document.querySelectorAll('table tbody tr');
+        let allRowsValid = true;
+        let firstInvalidRow = null;
+    
+        rows.forEach((row) => {
+            const radios = row.querySelectorAll('input[type="radio"]');
+            const isChecked = Array.from(radios).some(radio => radio.checked);
+    
+            const rowHeader = row.querySelector('td');
+    
+            if (!isChecked) {
+                rowHeader.classList.add('error-label');
+                allRowsValid = false;
+                if (!firstInvalidRow) {
+                    firstInvalidRow = row;
+                }
+            } else {
+                rowHeader.classList.remove('error-label');
+            }
+        });
+    
+        if (allRowsValid) {
+            // Redirect to the survey URL if all rows are valid
+            const form = event.target.closest('form');
+            form.submit();
+
+            // Redirect to the survey URL after form submission
+            form.addEventListener('submit', function() {
+                window.location.href = '/Survey/survey/';
+            });
+        } else {
+            // Scroll to the first incomplete row and focus it
+            if (firstInvalidRow) {
+                firstInvalidRow.scrollIntoView({ behavior: 'smooth' });
+                const firstRadio = firstInvalidRow.querySelector('input[type="radio"]');
+                if (firstRadio) {
+                    firstRadio.focus();
+                }
+            }
+        }
+    }    
+</script>
+{% endblock content %}

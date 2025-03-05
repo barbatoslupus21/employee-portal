@@ -1,0 +1,294 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url "Dashboard:admin-dashboard" %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <a href="" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">MIS Ticket</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <a href="" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Tickets</h5>
+            </a>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="survey-header">
+                <div>
+                    <h1 class="display-6 fw-bold dark-gray">Online MIS Ticketing</h1>
+                </div>
+                
+                <div class="d-flex justify-content-end gap-1 align-items-end">
+                    <a href="{% url 'export-ticket' %}" class="text-decoration-none">
+                        <button class="button-light">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+                              </svg>
+                            Export
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+            <div class="row px-2">
+                <!-- total ticket -->
+                <div class="col-12 col-md-4 p-1">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class=" d-flex align-items-center gap-3">
+                                <h2 class="display-6 fw-bold light-gray lh-1 p-2 rounded-3" style="background-color: #eef1ff; color: #7c92ff;">{{total_tickets|stringformat:"04d"}}</h2>
+                                <div>
+                                    <h5 class="dark-gray fw-bold m-0">Total Ticket</h5>
+                                    <p class="light-gray fw-medium m-0">Overall Count</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- total pending -->
+                <div class="col-12 col-md-4 p-1">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class=" d-flex align-items-center gap-3">
+                                <h2 class="display-6 fw-bold light-gray lh-1 p-2 rounded-3" style="background-color: #eef1ff; color: #7c92ff;">{{pending_tickets|stringformat:"04d"}}</h2>
+                                <div>
+                                    <h5 class="dark-gray fw-bold m-0">Pending Ticket</h5>
+                                    <p class="light-gray fw-medium m-0">Overall Count</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- average -->
+                <div class="col-12 col-md-4 p-1">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class=" d-flex align-items-center gap-3">
+                                <h2 class="display-6 fw-bold light-gray lh-1 p-2 rounded-3" style="background-color: #eef1ff; color: #7c92ff;">{{average_ticket}}</h2>
+                                <div>
+                                    <h5 class="dark-gray fw-bold m-0">Average Ticket</h5>
+                                    <p class="light-gray fw-medium m-0">Per Month</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if tickets %}
+            <div class="table-container">
+                <table id="requestTable">
+                <thead>
+                    <tr>
+                        <th class="light-gray">Date</th>
+                        <th class="light-gray">Ticket No.</th>
+                        <th class="light-gray">Device</th>
+                        <th class="light-gray">Category</th>
+                        <th class="light-gray">Level</th>
+                        <th class="light-gray">Status</th>
+                        <th class="light-gray">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="survey-admin-table">
+                    {% for ticket in tickets %}
+                    <tr>
+                        <td>{{ticket.date_submitted|date:' F d, Y'}}</td>
+                        <td>{{ticket.id|stringformat:"04d"}}</td>
+                        <td>{{ticket.device.Device_Code}}</td>
+                        <td>{{ticket.category}}</td>
+                        <td>{{ticket.level}}</td>
+                        <td>
+                            {% if ticket.status == "On Process" %}
+                            <span class="status-badge status-pending">On Process</span>
+                            {% elif ticket.status == "Approved" %}
+                            <span class="status-badge status-approve">Approved</span>
+                            {% else %}
+                            <span class="status-badge status-cancel">Disapproved</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="d-flex gap-1">
+                                {% if ticket.status == "On Process" %}
+                                <!-- open button -->
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#TicketDiagnosis{{ticket.id}}" class="button-light">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="#6EACDA" class="bi bi-pencil-square action-icon" viewBox="0 0 16 16">
+                                        <path fill="#0D9276"d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                        <path stroke="#7BD3EA" stroke-width="1" fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                    </svg>
+                                </button>
+
+                                <div class="modal fade" id="TicketDiagnosis{{ticket.id}}" tabindex="-1" aria-labelledby="TicketDiagnosis{{ticket.id}}Label" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="TicketDiagnosis{{ticket.id}}Label">Ticket {{ticket.id|stringformat:"04d"}} Details</h4>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form method="POST" action="{% url 'submit-diagnosis' pk=ticket.id %}">
+                                            {% csrf_token %}
+                                            <div class="modal-body">
+                                                <dl class="row">
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Department</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.department}}</h6></dd>
+
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Date Submitted</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.date_submitted|date:"Y-m-d"}}</h6></dd>
+
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Device</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.device}}</h6></dd>
+                    
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Category</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.category}}</h6></dd>
+
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Level</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.level}}</h6></dd>
+
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Problem Details</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.problem_details}}</h6></dd>
+
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Status</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.status}}</h6></dd>
+                                                </dl>
+                                                <hr>
+                                                <h4 class="dark-gray"> MIS Technician Diagnosis</h4>
+                                                <hr>
+                                                <dl class="row">
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Status</h6></dt>
+                                                    <dd class="col-sm-9">
+                                                        <select class="form-select body-regular dark-gray" name="status" required>
+                                                            <option selected disabled value="">Choose...</option>
+                                                            <option value="Approved">Approved</option>
+                                                            <option value="Disapproved">Disapproved</option>
+                                                        </select>
+                                                    </dd>
+
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Technician Name</h6></dt>
+                                                    <dd class="col-sm-9"><input type="text" class="form-control w-100" name="technician" required></dd>
+                        
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Diagnosis</h6></dt>
+                                                    <dd class="col-sm-9"><textarea type="text" class="form-control" name="diagnosis" required></textarea></dd>
+
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Action Taken</h6></dt>
+                                                    <dd class="col-sm-9"><textarea type="text" class="form-control" name="action" required></textarea></dd>
+
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Possible Reason</h6></dt>
+                                                    <dd class="col-sm-9"><textarea type="text" class="form-control" name="reason" required></textarea></dd>
+                        
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Recommendation</h6></dt>
+                                                    <dd class="col-sm-9"><textarea type="text" class="form-control" name="recommendation" required></textarea></dd>
+                                                </dl>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="custom-button">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    </div>
+                                </div>
+                                {% else %}
+
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#Ticket{{ticket.id}}" class="button-light">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="#6EACDA" class="bi bi-file-earmark-text" viewBox="0 0 16 16" stroke="#6EACDA" stroke-width="0.5">
+                                        <path d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5"/>
+                                        <path d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"/>
+                                      </svg>
+                                </button>
+
+                                <div class="modal fade" id="Ticket{{ticket.id}}" tabindex="-1" aria-labelledby="Ticket{{ticket.id}}Label" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="Ticket{{ticket.id}}Label">Ticket {{ ticket.id|stringformat:"04d" }} Details</h4>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                            <div class="modal-body">
+                                                <dl class="row">
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Department</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.department}}</h6></dd>
+
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Date Submitted</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.date_submitted|date:"Y-m-d"}}</h6></dd>
+
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Device</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.device}}</h6></dd>
+                    
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Category</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.category}}</h6></dd>
+
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Level</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.level}}</h6></dd>
+
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Problem Details</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.problem_details}}</h6></dd>
+
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Status</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.status}}</h6></dd>
+                                                </dl>
+                                                <hr>
+                                                <h4 class="dark-gray"> MIS Technician Diagnosis</h4>
+                                                <hr>
+                                                <dl class="row">
+                                                    {% if ticket.technician %}
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Technician Name</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.technician}}</h6></dd>
+                                                    {% endif %}
+                    
+                                                    {% if ticket.diagnosis %}
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Diagnosis</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.diagnosis}}</h6></dd>
+                                                    {% endif %}
+
+                                                    {% if ticket.action_taken %}
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Action Taken</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.action_taken}}</h6></dd>
+                                                    {% endif %}
+
+                                                    {% if ticket.possible_reason %}
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Possible Reason</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.possible_reason}}</h6></dd>
+                                                    {% endif %}
+
+                                                    {% if ticket.recommendation %}
+                                                    <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Recommendation</h6></dt>
+                                                    <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.recommendation}}</h6></dd>
+                                                    {% endif %}
+                                                </dl>
+                                            </div>
+
+                                    </div>
+                                    </div>
+                                </div>
+
+                                {% endif %}
+                            </div>  
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+</article>
+
+{% endblock content %}

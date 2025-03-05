@@ -1,0 +1,574 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:Dashboard' %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">PR-Form</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="row flex-lg-row-reverse align-items-center justify-content-center">
+                <div class="col-md-6 hero-image-size">
+                  <img src="{% static 'images/prf-form.jpg' %}" class="d-block mx-lg-auto img-fluid prf-img-banner" alt="Bootstrap Themes" loading="lazy">
+                </div>
+                <div class="col-md-6 px-4">
+                  <h1 class="display-6 fw-bold dark-gray mb-3">Personal Request Form (PRF)</h1>
+                  <p class="light-gray mb-3 hero-description">Need to request forms, loans, or uniforms? Our PR-Form is your one-stop solution. Submit your request easily and conveniently.</p>
+                  <!-- Button trigger modal -->
+                  <button type="button" class="custom-button mb-3" data-bs-toggle="modal" data-bs-target="#PRF_Request">+ Request PRF</button>
+
+                  <!-- Modal for New Request-->
+                  <div class="modal fade" id="PRF_Request" tabindex="-1" aria-labelledby="PRF_RequestLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title" id="PRF_RequestLabel">PR-Form Request</h4>
+                            </div>
+                            <form method="POST" action="{% url 'submit-prf' %}">
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                <div class="accordion mb-3 border-0" id="prf-category">
+                                    <h5 class="mb-2 body-regular fw-medium">Select a Request</h5>
+                                    <div class="container border rounded-3 p-3">
+                                        <!-- gov't benefits -->
+                                    <div class="accordion-item border-0">
+                                        <div class="accordion-header">
+                                        <button class="body-regular accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseone" aria-expanded="false" aria-controls="collapseone"  style="height: 40px;">
+                                            <h5 class="body-regular">Government Transactions</h5>
+                                        </button>
+                                        </div>
+                                        
+                                        <div id="collapseone" class="accordion-collapse collapse" data-bs-parent="#prf-category">
+                                        <div class="accordion-body mt-1">
+                                            <div class="row">
+                                                <div class="col-md-6 col-12 prf-radio">
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="pgibig_loan" value="PAG-IBIG Loan" name="prfform">
+                                                        <label class="form-check-label" for="pgibig_loan">PAG-IBIG Loan</label>
+                                                        </div>
+                                                    
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="pgibig_payment" value="PAG-IBIG Certificate of Payment" name="prfform">
+                                                        <label class="form-check-label" for="pgibig_payment">PAG-IBIG Certificate of Payment</label>
+                                                        </div>
+
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="pgibig_contri" value="PAG-IBIG Certificate of Contribution" name="prfform">
+                                                        <label class="form-check-label" for="pgibig_contri">PAG-IBIG Certificate of Contribution</label>
+                                                        </div>
+
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="philhealth_form" value="PHILHEALTH Form (CFI) + Certificate of Contribution + MDR" name="prfform">
+                                                        <label class="form-check-label" for="philhealth_form">PHILHEALTH Form</label>
+                                                        </div>
+
+                                                </div>
+
+                                                <div class="col-md-6 col-12 prf-radio">
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="sss_loan" value="SSS Loan" name="prfform">
+                                                        <label class="form-check-label" for="sss_loan">SSS Loan</label>
+                                                        </div>
+                                                    
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="sss_maternity" value="SSS Maternity Benefits" name="prfform">
+                                                        <label class="form-check-label" for="sss_maternity">SSS Maternity Benefits</label>
+                                                        </div>
+
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="sss_sickness" value="SSS Sickness Benefits" name="prfform">
+                                                        <label class="form-check-label" for="sss_sickness">SSS Sickness Benefits</label>
+                                                        </div>
+
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="bir_form" value="BIR Form (2316/1902)" name="prfform">
+                                                        <label class="form-check-label" for="bir_form">BIR Form (2316/1902)</label>
+                                                        </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Bank -->
+                                    <div class="accordion-item border-0">
+                                        <div class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo"  style="height: 40px;">
+                                                <h5 class="body-regular">Banking and Finance</h5>
+                                            </button>
+                                        </div>
+                                        
+                                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#prf-category">
+                                            <div class="accordion-body mt-1">
+                                            <div class="row">
+                                                <div class="col-md-12 col-12 prf-radio">
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="rcbc_form" value="RCBC Maintenance Form (ATM Concern)" name="prfform">
+                                                        <label class="form-check-label" for="rcbc_form">RCBC Maintenance Form</label>
+                                                        </div>
+
+                                                    <div class=" mb-2">  
+                                                        <input class="form-check-input" type="radio" id="bank_deposit" value="Bank Deposit" name="prfform">
+                                                        <label class="form-check-label" for="bank_deposit">Bank Deposit</label>
+                                                        </div>
+                                                </div>
+                                            </div>  
+                                            </div>
+                                        </div>
+                                        </div>
+
+                                    <!-- Human Resources and Payroll -->
+                                    <div class="accordion-item border-0">
+                                        <div class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree"  style="height: 40px;">
+                                                <h5 class="body-regular">Human Resources and Payroll</h5>
+                                            </button>
+                                        </div>
+                                        
+                                        <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#prf-category">
+                                            <div class="accordion-body mt-1">
+                                            <div class="row">
+                                                <div class="col-md-6 col-12 prf-radio">
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="adjustment" value="Payroll Adjustment" name="prfform">
+                                                        <label class="form-check-label" for="adjustment">Payroll Adjustment</label>
+                                                        </div>
+                                                    
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="id_replacement" value="ID Replacement" name="prfform">
+                                                        <label class="form-check-label" for="id_replacement">ID Replacement</label>
+                                                        </div>
+
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="compensation" value="COE with Compensation" name="prfform">
+                                                        <label class="form-check-label" for="compensation">PCOE with Compensation</label>
+                                                        </div>
+
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="cert_emp" value="Certificate of Employment" name="prfform">
+                                                        <label class="form-check-label" for="cert_emp">Certificate of Employment</label>
+                                                        </div>
+                                                    
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="clearance_form" value="Clearance Form" name="prfform">
+                                                        <label class="form-check-label" for="clearance_form">Clearance Form</label>
+                                                        </div>
+
+                                                </div>
+
+                                                <div class="col-md-6 col-12 prf-radio">
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="e_loan" value="Emergency Loan" name="prfform">
+                                                        <label class="form-check-label" for="e_loan">Emergency Loan</label>
+                                                        </div>
+                                                    
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="med_loan" value="Medical Assistance Loan" name="prfform">
+                                                        <label class="form-check-label" for="med_loan">Medical Assistance Loan</label>
+                                                        </div>
+
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="educ_loan" value="Educational Assistance Loan" name="prfform">
+                                                        <label class="form-check-label" for="educ_loan">Educational Assistance Loan</label>
+                                                        </div>
+
+                                                    <div class=" mb-2">
+                                                        <input class="form-check-input" type="radio" id="uniform" value="Uniform / Caps / PPE / T-shirt" name="prfform">
+                                                        <label class="form-check-label" for="uniform">Uniform / Caps / PPE / T-shirt</label>
+                                                        </div>
+
+                                                        <div class="mb-2">
+                                                            <input class="form-check-input" type="radio" id="others" value="Others" name="prfform">
+                                                            <label class="form-check-label" for="others">Others</label>
+                                                        </div>
+                                                        
+                                                        <div class="mb-1 px-4 input-box">
+                                                            <textarea class="rounded form-control form-control-sm prf-input" 
+                                                                    name="prf_others" id="prf_others" rows="2" placeholder="Specify"></textarea>
+                                                        </div>    
+                                                </div>
+                                            </div> 
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                
+                                </div>
+
+                                <div class="mb-2 input-box">
+                                <label for="recipient-name" class="col-form-label dark-gray body-regular m-0 fw-medium">Control Number</label>
+                                <input type="text" class="form-control dark-gray input-box.show" id="ctrl_no" name="ctrl_no">
+                                </div>
+                                <div class="mb-2">
+                                <label for="message-text" class="col-form-label dark-gray body-regular m-0 fw-medium">Purpose of Request</label>
+                                <textarea class="form-control" id="message-text dark-gray" id="purpose" name="purpose" required></textarea>
+                                </div>
+                            
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="custom-button">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+          </div>
+            <div class="">
+                 <!-- Search and Filter Section -->
+                <div class="d-flex justify-content-between gap-1">
+                    <div class="custom-select">
+                        <div class="select-selected light-gray">Filter
+                            <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="gray"><path d="M480-361q-8 0-15-2.5t-13-8.5L268-556q-11-11-11-28t11-28q11-11 28-11t28 11l156 156 156-156q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-6 6-13 8.5t-15 2.5Z"/></svg>                                    
+                        </div>
+                        <div class="select-items shadow select-hide">
+
+                            {% for type in types %}
+                                <div class="checkbox-wrapper-46">
+                                    <input type="checkbox" id="{{type}}" class="inp-cbx"  value="{{type}}"/>
+                                    <label for="{{type}}" class="cbx">
+                                        <span>
+                                            <svg viewBox="0 0 12 10" height="10px" width="12px">
+                                                <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                                            </svg>
+                                        </span>
+                                        <span class="body-regular dark-gray">{{type}}</span>
+                                    </label>
+                                </div>
+                            {% endfor %}
+
+                            <div class="checkbox-wrapper-46">
+                                <input type="checkbox" id="all" class="inp-cbx"  value="all"/>
+                                <label for="all" class="cbx">
+                                    <span>
+                                        <svg viewBox="0 0 12 10" height="10px" width="12px">
+                                            <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                                        </svg>
+                                    </span>
+                                    <span class="body-regular dark-gray">All</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="InputContainer">
+                        <input type="text" name="text" class="searchinput" id="searchInput" placeholder="Search" onkeyup="searchPRF()">
+                        <label for="searchInput" class="labelforsearch">
+                        <svg viewBox="0 0 512 512" class="searchIcon"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"></path></svg>
+                        </label>
+                    </div>
+                </div>
+
+                {% if prfs %}
+                <!-- Responsive Table -->
+                <div class="table-container">
+                    <table id="requestTable">
+                    <thead>
+                        <tr>
+                        <th class="light-gray" onclick="sortPRF(0)">Request Type</th>
+                        <th class="light-gray" onclick="sortPRF(1)">Date Filed</th>
+                        <th class="light-gray">Status</th>
+                        <th class="light-gray" onclick="sortPRF(3)">Approved By</th>
+                        <th class="light-gray">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="prf-table-history">
+                        {% for prf in prfs %}
+                        <tr>
+                            <td>{{prf.request_type}}</td>
+                            <td>{{prf.submitted_at|date:"F d, Y"}}</td>
+                            <td>
+                                {% if prf.status == "Pending" %}
+                                <span class="status-badge status-pending">Pending</span>
+
+                                {% elif prf.status == "Approved" %}
+                                <span class="status-badge status-approve">Approved</span>
+
+                                {% elif prf.status == "Cancelled" %}
+                                <span class="status-badge status-cancel">Cancelled</span>
+
+                                {% else %}
+                                <span class="status-badge status-cancel">Disapproved</span>
+                                {% endif %}
+                            </td>
+                            <td>{{prf.approved_by}}</td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <!-- edit button -->
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#Edit{{prf.id}}" class="button-light">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#6EACDA" class="bi bi-pencil-square action-icon" viewBox="0 0 16 16">
+                                            <path fill="#0D9276"d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                            <path stroke="#7BD3EA" stroke-width="1" fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                        </svg>
+                                    </button>
+                                    
+                                    <!-- Modal for Edit Request-->
+                                    <div class="modal fade" id="Edit{{prf.id}}" tabindex="-1" aria-labelledby="Edit{{prf.id}}Label" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h4 class="modal-title" id="Edit{{prf.id}}Label">Edit Request</h4>
+                                            </div>
+                                            <form class="needs-validation" novalidate method="POST" action="{% url 'edit-prf' pk=prf.id %}">
+                                                {% csrf_token %}
+                                                <div class="modal-body">
+                                                    <div>
+                                                        <label for="{{prf.request_type}}" class="form-label body-regular">Request Type</label>
+                                                        <input type="text" disabled class="form-control body-regular w-100" id="{{prf.request_type}}" value="{{prf.request_type}}" required>
+                                                    </div>
+
+                                                    <div>
+                                                        <label for="{{prf.ctrl_no}}" class="form-label body-regular">Control Number</label>
+                                                        <input type="text" class="form-control body-regular w-100" id="{{prf.ctrl_no}}" value="{{prf.ctrl_no}}" name="ctrl_no" required>
+                                                        <div class="invalid-feedback">
+                                                            Please corrent control number.
+                                                          </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <label for="{{prf.purpose}}" class="form-label body-regular">Purpose of Request</label>
+                                                        <textarea type="text" class="form-control body-regular w-100" id="{{prf.purpose}}" name="purpose" required>{{prf.purpose}}</textarea>
+                                                        <div class="invalid-feedback">
+                                                            Please provide the purpose.
+                                                          </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="custom-button">Save Changes</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- cancel button -->
+                                    <button  class="button-light" type="button" data-bs-toggle="modal" data-bs-target="#Delete{{prf.id}}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#f3473b" class="bi bi-x action-icon" viewBox="0 0 16 16" stroke="#f3473b" stroke-width="2">
+                                            <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                                        </svg>
+                                    </button>
+
+                                    <!-- modal for cancellation of request -->
+                                    <div class="modal fade" id="Delete{{prf.id}}" tabindex="-1" aria-labelledby="Delete{{prf.id}}Label" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h3 class="modal-title" id="Delete{{prf.id}}Label">Confirm Cancellation</h3>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p class="pb-2">Are you sure you want to cancel the PRF request?.</p>
+                                                <div class="alert alert-danger" role="alert">
+                                                    <p>Once you cancel the PRF, your request will no longer be under consideration by HR and Accounting.</p>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                                <form method="POST" action="{% url 'cancel-prf' pk=prf.id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="delete-button">Confirm</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="no-filed-prf-container">
+                    <div><h5 class="light-gray">You have not submitted any PRF requests yet.</h5></div>
+                    <img src="{% static 'images/empty-box.png' %}" alt="no data found">
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+    </div>
+    
+</article>
+
+<script>
+
+    (() => {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        Array.from(forms).forEach(form => {
+          form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+      
+            form.classList.add('was-validated')
+          }, false)
+        })
+      })()
+
+
+    function sortPRF(columnIndex) {
+        const table = document.getElementById("requestTable");
+        const rows = Array.from(table.rows).slice(1);
+        const sortedRows = rows.sort((a, b) => {
+          const aText = a.cells[columnIndex].innerText.toLowerCase();
+          const bText = b.cells[columnIndex].innerText.toLowerCase();
+          return aText.localeCompare(bText);
+        });
+      
+        sortedRows.forEach(row => table.tBodies[0].appendChild(row));
+      }
+      
+    function searchPRF() {
+        const input = document.getElementById("searchInput");
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById("requestTable");
+        const rows = table.getElementsByTagName("tr");
+      
+        for (let i = 1; i < rows.length; i++) {
+          const cells = rows[i].getElementsByTagName("td");
+          let shouldDisplay = false;
+          for (let j = 0; j < cells.length - 1; j++) {
+            if (cells[j].innerText.toLowerCase().includes(filter)) {
+              shouldDisplay = true;
+              break;
+            }
+          }
+          rows[i].style.display = shouldDisplay ? "" : "none";
+        }
+      }
+
+  // Function to filter the table by "Request Type"
+    function filterTable() {
+        const checkboxes = document.querySelectorAll('.select-items input[type="checkbox"]:not([value="all"])');
+        const selectedFilters = Array.from(checkboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.value.toLowerCase());
+    
+        const table = document.getElementById("requestTable");
+        const rows = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < rows.length; i++) {
+            const cell = rows[i].getElementsByTagName("td")[0];
+            const requestType = cell.innerText.toLowerCase();
+            
+            if (selectedFilters.length === 0 || selectedFilters.some(filter => requestType.includes(filter))) {
+                rows[i].style.display = "";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+    }
+
+    // Custom select dropdown functionality
+    const customSelect = document.querySelector('.custom-select');
+    const selectSelected = customSelect.querySelector('.select-selected');
+    const selectItems = customSelect.querySelector('.select-items');
+
+    selectSelected.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.classList.toggle('select-arrow-active');
+        selectItems.classList.toggle('select-show');
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!customSelect.contains(e.target)) {
+            selectSelected.classList.remove('select-arrow-active');
+            selectItems.classList.remove('select-show');
+        }
+    });
+
+    const checkboxes = selectItems.querySelectorAll('input[type="checkbox"]');
+    const allCheckbox = selectItems.querySelector('input[value="all"]');
+
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function(e) {
+            e.stopPropagation();
+            if (this.value === 'all') {
+                checkboxes.forEach(cb => {
+                    if (cb !== this) cb.checked = this.checked;
+                });
+            } else {
+                allCheckbox.checked = Array.from(checkboxes).every(cb => cb.checked || cb === allCheckbox);
+            }
+            filterTable();
+            updateSelectedText();
+        });
+    });
+
+    // Initial filter application
+    document.addEventListener('DOMContentLoaded', function() {
+        filterTable();
+    });   
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctrlNumberInput = document.getElementById('ctrl_no');
+        if (ctrlNumberInput) {
+            const radioButtons = document.querySelectorAll('input[name="prfform"]');
+            const relevantRadioIds = ['pgibig_loan', 'sss_loan', 'e_loan', 'educ_loan', 'med_loan'];
+
+            function toggleCtrlNumber() {
+                const isRelevantChecked = relevantRadioIds.some(id => document.getElementById(id).checked);
+            
+                if (isRelevantChecked) {
+                    ctrlNumberInput.parentElement.classList.add('show');
+                    ctrlNumberInput.setAttribute('required', 'required');
+                    setTimeout(() => ctrlNumberInput.focus(), 300);
+                } else {
+                    ctrlNumberInput.parentElement.classList.remove('show');
+                    ctrlNumberInput.removeAttribute('required');
+                }
+            }
+
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', toggleCtrlNumber);
+            });
+
+            toggleCtrlNumber();
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const othersNumberInput = document.getElementById('prf_others');
+        if (othersNumberInput) {
+            const radioButtons2 = document.querySelectorAll('input[name="prfform"]');
+            const othersRadio = ['others'];
+
+            function toggleCtrlNumber() {
+                const isRelevantChecked = othersRadio.some(id => document.getElementById(id).checked);
+            
+                if (isRelevantChecked) {
+                    othersNumberInput.parentElement.classList.add('show');
+                    othersNumberInput.setAttribute('required', 'required');
+                    setTimeout(() => othersNumberInput.focus(), 300);
+                } else {
+                    othersNumberInput.parentElement.classList.remove('show');
+                    othersNumberInput.removeAttribute('required');
+                }
+            }
+
+            radioButtons2.forEach(radio => {
+                radio.addEventListener('change', toggleCtrlNumber);
+            });
+
+            toggleCtrlNumber();
+        }
+    });
+</script>
+
+{% endblock content %}

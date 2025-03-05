@@ -1,0 +1,395 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:admin-dashboard' %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">Employees</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">Account Approval</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="pt-2">
+                <h1 class="display-6 fw-bold dark-gray mb-3">Account Approval</h1>
+            </div>
+
+            <div class="table-controls-admin">
+                <div class="d-flex gap-1">
+                    <div class="InputContainer">
+                        <input type="text" name="text" class="searchinput" id="searchInput" placeholder="Search" onkeyup="searchPRFTable()">
+                        <label for="searchInput" class="labelforsearch">
+                        <svg viewBox="0 0 512 512" class="searchIcon"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"></path></svg>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center gap-3">
+                    <div class="filter-select">
+                        <button class="btn border-0 p-0" onclick="toggleFilter()">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="32" width="32" viewBox="0 -960 960 960" fill="#343b48">
+                                <path d="M480-120q-17 0-28.5-11.5T440-160v-160q0-17 11.5-28.5T480-360q17 0 28.5 11.5T520-320v40h280q17 0 28.5 11.5T840-240q0 17-11.5 28.5T800-200H520v40q0 17-11.5 28.5T480-120Zm-320-80q-17 0-28.5-11.5T120-240q0-17 11.5-28.5T160-280h160q17 0 28.5 11.5T360-240q0 17-11.5 28.5T320-200H160Zm160-160q-17 0-28.5-11.5T280-400v-40H160q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520h120v-40q0-17 11.5-28.5T320-600q17 0 28.5 11.5T360-560v160q0 17-11.5 28.5T320-360Zm160-80q-17 0-28.5-11.5T440-480q0-17 11.5-28.5T480-520h320q17 0 28.5 11.5T840-480q0 17-11.5 28.5T800-440H480Zm160-160q-17 0-28.5-11.5T600-640v-160q0-17 11.5-28.5T640-840q17 0 28.5 11.5T680-800v40h120q17 0 28.5 11.5T840-720q0 17-11.5 28.5T800-680H680v40q0 17-11.5 28.5T640-600Zm-480-80q-17 0-28.5-11.5T120-720q0-17 11.5-28.5T160-760h320q17 0 28.5 11.5T520-720q0 17-11.5 28.5T480-680H160Z"/>
+                            </svg>
+                        </button>
+                        <div class="filter-option">
+
+                            <div class="mb-2">
+                                <h6 class="dark-gray py-2">Filter by Type</h6>
+                                <select class="form-select body-regular dark-gray" id= "type_filter">
+                                    <option selected value="All">All</option>
+                                    {% for status in statuses %}
+                                    <option value="{{status.name}}">{{status.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="mb-2">
+                                <h6 class="dark-gray py-2">Filter by Line</h6>
+                                <select class="form-select body-regular dark-gray" id="line_filter">
+                                    <option selected value="All">All</option>
+                                    {% for line in lines %}
+                                    <option value="{{line.line}}">{{line.line}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>   
+                            
+                            <div class="mb-2">
+                                <h6 class="dark-gray py-2">Filter by Approval</h6>
+                                <select class="form-select body-regular dark-gray" id="approval_filter">
+                                    <option selected value="All">All</option>
+                                    <option value="For Approval">For Approval</option>
+                                    <option value="Approved">Approved</option>
+                                    <option value="Disapproved">Disapproved</option>
+                                </select>
+                            </div> 
+                            
+                            <div class="mb-2">
+                                <h6 class="dark-gray py-2">Filter by Status</h6>
+                                <select class="form-select body-regular dark-gray" id="status_filter">
+                                    <option selected value="All">All</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                            </div> 
+                        </div>
+                    </div>
+
+                    <form id="accounts" method="POST" action="{% url 'import-account' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" id="accountInput" name="file" accept=".xlsx, .xls" style="display: none;">
+                        <button class="btn border-0 p-0" type="submit" id="accountBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="#FC8F54">
+                                <path d="M40-272q0-34 17.5-62.5T104-378q62-31 126-46.5T360-440q66 0 130 15.5T616-378q29 15 46.5 43.5T680-272v32q0 33-23.5 56.5T600-160H120q-33 0-56.5-23.5T40-240v-32Zm800 112H738q11-18 16.5-38.5T760-240v-40q0-44-24.5-84.5T666-434q51 6 96 20.5t84 35.5q36 20 55 44.5t19 53.5v40q0 33-23.5 56.5T840-160ZM360-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm400-160q0 66-47 113t-113 47q-11 0-28-2.5t-28-5.5q27-32 41.5-71t14.5-81q0-42-14.5-81T544-792q14-5 28-6.5t28-1.5q66 0 113 47t47 113ZM120-240h480v-32q0-11-5.5-20T580-306q-54-27-109-40.5T360-360q-56 0-111 13.5T140-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T440-640q0-33-23.5-56.5T360-720q-33 0-56.5 23.5T280-640q0 33 23.5 56.5T360-560Zm0 320Zm0-400Z"/>
+                            </svg>
+                        </button>
+                    </form>
+
+                    <form method="POST" action="{% url 'import-personal' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" id="fileInput2" name="file" accept=".xlsx, .xls" style="display: none;">
+                        <button class="btn border-0 p-0" type="submit" id="personalBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="#343b48">
+                                <path d="M40-272q0-34 17.5-62.5T104-378q62-31 126-46.5T360-440q66 0 130 15.5T616-378q29 15 46.5 43.5T680-272v32q0 33-23.5 56.5T600-160H120q-33 0-56.5-23.5T40-240v-32Zm800 112H738q11-18 16.5-38.5T760-240v-40q0-44-24.5-84.5T666-434q51 6 96 20.5t84 35.5q36 20 55 44.5t19 53.5v40q0 33-23.5 56.5T840-160ZM360-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm400-160q0 66-47 113t-113 47q-11 0-28-2.5t-28-5.5q27-32 41.5-71t14.5-81q0-42-14.5-81T544-792q14-5 28-6.5t28-1.5q66 0 113 47t47 113ZM120-240h480v-32q0-11-5.5-20T580-306q-54-27-109-40.5T360-360q-56 0-111 13.5T140-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T440-640q0-33-23.5-56.5T360-720q-33 0-56.5 23.5T280-640q0 33 23.5 56.5T360-560Zm0 320Zm0-400Z"/>
+                            </svg>
+                        </button>
+                    </form>
+                        
+                    <form id="employment" method="POST" action="{% url 'import-employment' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" id="ExcelInput" name="file" accept=".xlsx, .xls" style="display: none;">
+                        <button class="btn border-0 p-0" type="submit" id="employmentBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="#343b48">
+                                <path d="M160-120q-33 0-56.5-23.5T80-200v-440q0-33 23.5-56.5T160-720h160v-80q0-33 23.5-56.5T400-880h160q33 0 56.5 23.5T640-800v80h160q33 0 56.5 23.5T880-640v440q0 33-23.5 56.5T800-120H160Zm0-80h640v-440H160v440Zm240-520h160v-80H400v80ZM160-200v-440 440Z"/>
+                            </svg>
+                        </button>
+                    </form>
+
+                    <a href="{% url 'export-info' %}" class="text-decoration-none">
+                        <button class="btn border-0 p-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="#343b48">
+                                <path d="M240-160q-33 0-56.5-23.5T160-240v-80q0-17 11.5-28.5T200-360q17 0 28.5 11.5T240-320v80h480v-80q0-17 11.5-28.5T760-360q17 0 28.5 11.5T800-320v80q0 33-23.5 56.5T720-160H240Zm200-486-75 75q-12 12-28.5 11.5T308-572q-11-12-11.5-28t11.5-28l144-144q6-6 13-8.5t15-2.5q8 0 15 2.5t13 8.5l144 144q12 12 11.5 28T652-572q-12 12-28.5 12.5T595-571l-75-75v286q0 17-11.5 28.5T480-320q-17 0-28.5-11.5T440-360v-286Z"/>
+                            </svg>
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+            {% if accounts %}
+                <div class="table-container">
+                    <table id="requestTable">
+                    <thead>
+                        <th class="light-gray" onclick="sortAccountTable(0)">ID Number</th>
+                        <th class="light-gray" onclick="sortAccountTable(1)">Name</th>
+                        <th class="light-gray" onclick="sortAccountTable(2)">Type</th>
+                        <th class="light-gray" onclick="sortAccountTable(3)">Line</th>
+                        <th class="light-gray">Approval</th>
+                        <th class="light-gray">Status</th>
+                        <th class="light-gray" onclick="sortAccountTable(5)">Date Applied</th>
+                        <th class="light-gray">Actions</th>
+                    </thead>
+                    <tbody class="admin-account-approval-table">
+                        {% for account in accounts %}
+                            <tr>
+                                <td>{{ account.idnumber }}</td>
+                                <td>{{ account.name }}</td>
+                                <td>{{ account.status }}</td>
+                                <td>{{ account.line }}</td>
+                                <td>
+                                    {% if account.is_approved == "Approved" %}
+                                        <span class="status-badge status-approve">Approved</span>
+                                    {% elif account.is_approved == "Disapproved" %}
+                                        <span class="status-badge status-cancel">Disapproved</span>
+                                    {% else %}
+                                        <span class="status-badge status-pending">For Approval</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if account.is_active %}
+                                        <div class="state-indicator state-open fw-normal">
+                                            <span class="state-dot-open"></span> Active
+                                        </div>
+                                    {% else %}
+                                        <div class="state-indicator state-close fw-normal">
+                                            <span class="state-dot-close"></span> Inactive
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td>{{account.created_at|date:'m/d/Y'}}</td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        {% if account.is_approved == "Approved" %}
+                                            <!-- view account button -->
+                                            <a href="{% url "view-account" pk=account.id %}" class="text-decoration-none">
+                                                <button type="button" class="button-light">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="#E85C0D" class="bi bi-folder2-open action-icon" viewBox="0 0 16 16" stroke="#E85C0D" stroke-width="0.5">
+                                                        <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7z"/>
+                                                    </svg>
+                                                </button>
+                                            </a>
+
+                                            <!-- reset button -->
+                                            <button type="button" class="button-light" data-bs-toggle="modal" data-bs-target="#Account{{account.id}}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="#f3473b" class="bi bi-x-circle" viewBox="0 0 16 16" stroke="#f3473b" stroke-width="0.5">
+                                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                                                </svg>
+                                            </button>
+
+                                            <div class="modal fade" id="Account{{account.id}}" tabindex="-1" aria-labelledby="Account{{account.id}}Label" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                  <div class="modal-content">
+                                                    <div class="modal-header">
+                                                      <h4 class="modal-title" id="Account{{account.id}}Label">Reset Password?</h4>
+                                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p class="pb-2">The password change is permanent. The temporary password will be "12345."</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                      <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                                        <form method="POST" action="{% url "reset-password" pk=account.id %}">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="delete-button">Reset</button>
+                                                        </form>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            
+                                            {% if account.is_locked %}
+                                            <form action="{% url "unlock-account" pk=account.id %}" method="POST">
+                                                {% csrf_token %}
+                                                <button type="submit" class="button-light">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="#7386D5" class="bi bi-lock-fill" viewBox="0 0 16 16" stroke="#7386D5" stroke-width="0.5">
+                                                        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2"/>
+                                                      </svg>  
+                                                </button>
+                                            </form>
+                                            {% else %}
+                                            <form action="{% url "lock-account" pk=account.id %}" method="POST">
+                                                {% csrf_token %}
+                                                <button type="submit" class="button-light">  
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="#7386D5" class="bi bi-unlock" viewBox="0 0 16 16" stroke="#7386D5" stroke-width="0.5">
+                                                        <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2"/>
+                                                      </svg>
+                                                </button>
+                                            </form>
+                                            {% endif %}
+                                        {% elif account.is_approved == "For Approval" %}
+                                            <!-- approve button -->
+                                            <form method="POST" action="{% url 'approval' account.id 'approve' %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="button-light">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="#00712D" class="bi bi-check2 action-icon" viewBox="0 0 16 16">
+                                                        <path stroke="#00712D" stroke-width="2"  d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                            
+                                            <!-- disapprove button -->
+                                            <form method="POST" action="{% url 'approval' account.id 'disapprove' %}">
+                                                {% csrf_token %}
+                                                <button  class="button-light" type="submit">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="#f3473b" class="bi bi-x action-icon" viewBox="0 0 16 16" stroke="#f3473b" stroke-width="2">
+                                                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                                                </svg></button>
+                                            </form>
+                                        {% else %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="no-filed-prf-container">    
+                    <div><h5 class="light-gray">No account requests for approval yet.</h5></div>
+                    <img src="{% static 'images/empty-box.png' %}" alt="no data found">
+                </div>
+            {% endif %}
+        </div>
+    </div>           
+</article>
+
+<script>
+    function searchPRFTable() {
+        const input = document.getElementById("searchInput");
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById("requestTable");
+        const rows = table.getElementsByTagName("tr");
+      
+        for (let i = 1; i < rows.length; i++) {
+          const cells = rows[i].getElementsByTagName("td");
+          let shouldDisplay = false;
+          for (let j = 0; j < cells.length - 1; j++) {
+            if (cells[j].innerText.toLowerCase().includes(filter)) {
+              shouldDisplay = true;
+              break;
+            }
+          }
+          rows[i].style.display = shouldDisplay ? "" : "none";
+        }
+      }
+
+    function sortAccountTable(columnIndex) {
+        const table = document.getElementById("requestTable");
+        const rows = Array.from(table.rows).slice(1);
+        const sortedRows = rows.sort((a, b) => {
+          const aText = a.cells[columnIndex].innerText.toLowerCase();
+          const bText = b.cells[columnIndex].innerText.toLowerCase();
+          return aText.localeCompare(bText);
+        });
+      
+        sortedRows.forEach(row => table.tBodies[0].appendChild(row));
+      }
+
+    function toggleFilter() {
+        const filterOptions = document.querySelector('.filter-option');
+        filterOptions.classList.toggle('show');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const typeFilter = document.getElementById('type_filter');
+        const lineFilter = document.getElementById('line_filter');
+        const approvalFilter = document.getElementById('approval_filter');
+        const statusFilter = document.getElementById('status_filter');
+        const table = document.getElementById('requestTable');
+        const tbody = table.querySelector('.admin-account-approval-table');
+        const rows = tbody.getElementsByTagName('tr');
+    
+        function filterTable() {
+            const selectedType = typeFilter.value.toLowerCase();
+            const selectedLine = lineFilter.value.toLowerCase();
+            const selectedApproval = approvalFilter.value.toLowerCase();
+            const selectedStatus = statusFilter.value.toLowerCase();
+    
+            for (let row of rows) {
+                const type = row.cells[2].innerText.trim().toLowerCase();
+                const line = row.cells[3].innerText.trim().toLowerCase();
+                const approval = row.cells[4].innerText.trim().toLowerCase();
+                const status = row.cells[5].innerText.trim().toLowerCase();
+    
+                let showRow = true;
+    
+                // Check Status filter
+                if (selectedType !== 'all' && type !== selectedType) {
+                    showRow = false;
+                }
+    
+                // Check Line filter
+                if (selectedLine !== 'all' && line !== selectedLine) {
+                    showRow = false;
+                }
+
+                // Check Approval filter
+                if (selectedApproval !== 'all' && approval !== selectedApproval) {
+                    showRow = false;
+                }
+
+                // Check Status filter
+                if (selectedStatus !== 'all' && status !== selectedStatus) {
+                    showRow = false;
+                }
+    
+                // Show or hide row based on filter criteria
+                row.style.display = showRow ? '' : 'none';
+            }
+        }
+    
+        // Event listeners
+        typeFilter.addEventListener('change', filterTable);
+        lineFilter.addEventListener('change', filterTable);
+        approvalFilter.addEventListener('change', filterTable);
+        statusFilter.addEventListener('change', filterTable);
+    });
+
+    document.getElementById('accountBtn').addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('accountInput').click();
+    });
+
+    document.getElementById('accountInput').addEventListener('change', function() {
+        if (this.files.length > 0) {
+            document.getElementById('accounts').submit();
+        }
+    });
+
+    document.getElementById('employmentBtn').addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('ExcelInput').click();
+    });
+
+    document.getElementById('ExcelInput').addEventListener('change', function() {
+        if (this.files.length > 0) {
+            document.getElementById('employment').submit();
+        }
+    });
+    
+
+    document.getElementById('personalBtn').addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('fileInput2').click();
+    });
+
+    document.getElementById('fileInput2').addEventListener('change', function() {
+        if (this.files.length > 0) {
+            document.querySelector('form').submit();
+        }
+    });
+    
+</script>
+
+{% endblock content %}

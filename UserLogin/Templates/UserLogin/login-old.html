@@ -1,0 +1,243 @@
+{% extends "login-main.html" %}
+{% load static %}
+
+{% block content %}
+<div class="login-body">
+    <div id="mainContainer" class="login-container">
+        <!-- login form -->
+        <div class="login-form-section">               
+            <div id="loginForm" class="login-form-container">
+                <div id="loginContainer" class="d-flex justify-content-center align-items-center" style="height: 100%;">
+                    <div class="form-container" id="login">
+                        <div class="d-flex gap-2 align-items-center">
+                            <div class="logo-containe">
+                                <img src="{% static 'images/ryonanlogo.png' %}" class="company-logo" alt="company-logo">
+                            </div>
+                            <div class="logo-containe">
+                                <h4 class="logo-font1">RYONAN ELECTRIC</h4>
+                                <h6 class="logo-font2">Philippines Corporation</h6>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h2 class="fw-bold mb-2">Log in to your Account</h2>
+                            <p class="body-regular light-gray">Welcome back! Log in with your ID and password.</p>
+                        </div>         
+
+                        <form method="POST" action="{% url "login" %}">
+                            {% csrf_token %}
+                            <div>
+                                <div class="form-floating mb-2">
+                                    <input type="text" class="form-control body-regular" id="floatingInput" placeholder="name@example.com" name="username">
+                                    <label for="floatingInput" class="light-gray body-regular m-0">Username</label>
+                                </div>
+                                <div class="form-floating">
+                                    <input type="password" class="form-control body-regular" id="floatingPassword" placeholder="Password" name="password">
+                                    <label for="floatingPassword" class="light-gray body-regular m-0">Password</label>
+                                </div>
+                                
+                                <div class="login-checkbox-container px-1">
+                                    <div class="checkbox-wrapper-46">
+                                        <input type="checkbox" id="loginRemember" class="inp-cbx" />
+                                        <label for="loginRemember" class="cbx"><span>
+                                                <svg viewBox="0 0 12 10" height="10px" width="12px">
+                                                    <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                                                </svg></span><span class="body-text light-gray">Remember me</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <button type="submit" class="login-button w-100">Sign In</button>
+                                <div class="login-or-divider">or</div>
+                                <button type="button" class="login-button login-secondary-button" onclick="toggleForms('signup')">Register</button>
+                            </div>
+                        </form>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wallpaper -->
+        <div class="login-image-section">
+            <div>
+                <img src="{% static 'images/login-wallpaper-ryonan.png' %}" alt="login section">
+            </div>
+
+            <div>
+                <img src="{% static 'images/register-wallpaper-ryonan.jpg' %}" alt="register section">
+            </div>
+        </div>
+
+        <!-- Register form -->
+        <div class="login-form-section">               
+            <div id="loginForm" class="login-form-container">
+                <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
+                        <div class="signin-container">
+                            <div class="d-flex gap-2 align-items-center">
+                                <div class="logo-containe">
+                                    <img src="{% static 'images/ryonanlogo.png' %}" class="company-logo" alt="company-logo">
+                                </div>
+                                <div class="logo-containe">
+                                    <h4 class="logo-font1">RYONAN ELECTRIC</h4>
+                                    <h6 class="logo-font2">Philippines Corporation</h6>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h2 class="fw-bold">Create an Account</h2>
+                                <p class="body-regular light-gray">Begin your Ryonan experience by setting up an account.</p>
+                            </div>         
+
+                                <div>
+                                    <form id="passwordChangeForm" method="POST" action="{% url "register-user" %}">
+                                        {% csrf_token %}
+                                        <div class="form-floating mb-1">
+                                            <input type="text" class="form-control body-regular" id="Username" placeholder="name@example.com" name="username"required>
+                                            <label for="Username" class="light-gray body-regular m-0">Username</label>
+                                        </div>
+
+                                        <div class="form-floating mb-1">
+                                            <input type="text" class="form-control body-regular" id="idnumber" placeholder="name@example.com" name="idnumber"required>
+                                            <label for="idnumber" class="light-gray body-regular m-0">ID Number</label>
+                                        </div>
+
+                                        <div class="row g-1">
+                                            <div class="col-md-6">
+                                                <div class="form-floating mb-1">
+                                                    <input type="text" class="form-control body-regular input-height User-Input" id="firstname" placeholder="name@example.com" name="firstname"required>
+                                                    <label for="firstname" class="light-gray body-regular m-0">First Name</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-floating mb-1">
+                                                    <input type="text" class="form-control body-regular input-height User-Input" id="lastname" placeholder="name@example.com" name="lastname"required>
+                                                    <label for="lastname" class="light-gray body-regular m-0">Last Name</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-floating mb-1">
+                                            <input type="email" class="form-control body-regular input-height" id="email" placeholder="name@example.com" name="email"required>
+                                            <label for="email" class="light-gray body-regular m-0">Email</label>
+                                        </div>
+
+                                        <div class="form-floating mb-1">
+                                            <input type="password" class="form-control body-regular input-height" id="new_password" placeholder="name@example.com" name="password"required>
+                                            <label for="new_password" class="light-gray body-regular m-0">Password</label>
+                                        </div>
+
+                                        <div>
+                                            <ul class="password-criteria">
+                                                <li class="body-regular" id="length">Minimum Characters 12</li>
+                                                <li class="body-regular" id="uppercase">One uppercase character</li>
+                                                <li class="body-regular" id="lowercase">One lowercase character</li>
+                                                <li class="body-regular" id="special">One special character</li>
+                                                <li class="body-regular" id="number">One number</li>
+                                            </ul>
+                                        </div>
+                                        <div class="form-floating mb-2">
+                                            <input type="password" class="form-control body-regular input-height" id="confirm_password" placeholder="Password" name="confirm-password" required>
+                                            <label for="confirm_password" class="light-gray body-regular m-0"> Confirm Password</label>
+                                            <div id="password-match-error" class="invalid-feedback">
+                                                Password does not match.
+                                            </div>
+                                        </div>
+                                        
+                                        <button type="submit" class="login-button w-100">Register</button>
+                                    </form>
+                                    <div class="login-toggle-link body-regular">
+                                        Already Have an account? <a href="#" class="text-decoration-none" onclick="toggleForms('login')">Sign In</a>
+                                    </div>
+                                </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const userInputs = document.querySelectorAll('.User-Input');
+        userInputs.forEach(function(input) {
+            input.addEventListener('input', function() {
+                let value = this.value;
+                this.value = value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+            });
+        });
+    });
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const newPasswordInput = document.getElementById('new_password');
+        const confirmPasswordInput = document.getElementById('confirm_password');
+        const passwordCriteria = document.querySelectorAll('.password-criteria li');
+        const passwordMatchError = document.getElementById('password-match-error');
+        const form = document.getElementById('passwordChangeForm');
+    
+        if (!newPasswordInput || !confirmPasswordInput || !passwordMatchError || !form) {
+            console.error('One or more required elements are missing');
+            return;
+        }
+    
+        const criteria = {
+            length: password => password.length >= 12,
+            uppercase: password => /[A-Z]/.test(password),
+            lowercase: password => /[a-z]/.test(password),
+            special: password => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+            number: password => /\d/.test(password)
+        };
+    
+        function updatePasswordStrength(password) {
+            Object.keys(criteria).forEach((key, index) => {
+                const criteriaElement = passwordCriteria[index];
+                if (criteria[key](password)) {
+                    criteriaElement.style.color = 'green';
+                    criteriaElement.style.fontWeight = 'normal';
+                } else {
+                    criteriaElement.style.color = 'red';
+                    criteriaElement.style.fontWeight = 'normal';
+                }
+            });
+        }
+    
+        newPasswordInput.addEventListener('input', function() {
+            const password = this.value;
+            updatePasswordStrength(password);
+            validatePasswordMatch();
+        });
+    
+        confirmPasswordInput.addEventListener('input', validatePasswordMatch);
+    
+        function validatePasswordMatch() {
+            const isMatch = confirmPasswordInput.value === newPasswordInput.value;
+            passwordMatchError.style.display = isMatch || confirmPasswordInput.value === '' ? 'none' : 'block';
+        }
+
+    });
+
+    (() => {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+            }
+    
+            form.classList.add('was-validated')
+        }, false)
+        })
+    })()
+
+    function toggleForms(formType) {  
+        const mainContainer = document.getElementById('mainContainer');  
+        
+        if (formType === 'signup') {  
+            mainContainer.classList.add('login-slide-left');  
+        } else {  
+            mainContainer.classList.remove('login-slide-left');  
+        }  
+    }  
+</script>
+{% endblock content %}

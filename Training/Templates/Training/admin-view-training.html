@@ -1,0 +1,696 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:admin-dashboard' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Assessments</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Training Evaluation</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="survey-header">
+                <div>
+                    <h1 class="display-6 fw-bold dark-gray">{{training.training_title}} Training</h1>
+                </div>
+                
+                <div class="d-flex justify-content-end gap-1 align-items-end">
+                    {% if training.is_closed == False %}
+                        <button class="button-light" data-bs-toggle="modal" data-bs-target="#closetraining">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                            </svg>
+                            Close Training
+                        </button>
+
+                        <div class="modal fade" id="closetraining" tabindex="-1" aria-labelledby="closetrainingLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h3 class="modal-title" id="closetrainingLabel">Close Training?</h3>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="pb-2">Once the training is closed, it's no longer available to employees who haven't taken the survey.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                    <form method="POST" action="{% url 'close-training' pk=training.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="custom-button">Confirm</button>
+                                    </form>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <a href="{% url 'export-training' pk=training.id %}" class="text-decoration-none">
+                        <button class="button-light">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+                              </svg>
+                            Export
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+            <div class="row px-2">
+                <!-- total participants -->
+                <div class="col-12 col-md-3 p-1">
+                    <div class="card survey-card-container">
+                        <div class="card-body d-flex flex-column justify-content-betweengap-3">
+                            <h5 class="light-gray fw-medium">Participants</h5>
+                            <div>
+                                <div class="d-flex gap-2 align-items-end pt-2">
+                                    <img src="{% static 'images/icons/employees.png' %}" class="survey-img"
+                                        alt="employees count">
+                                    <h2 class="fw-bold dark-gray lh-1 m-0">{{total_participants}}</h2>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+                <!-- total respondent -->
+                <div class="col-12 col-md-3 p-1">
+                    <div class="card survey-card-container">
+                        <div class="card-body d-flex flex-column justify-content-betweengap-3">
+                            <h5 class="light-gray fw-medium">Respondent</h5>
+                            <div>
+                                <div class="d-flex gap-2 align-items-end pt-2">
+                                    <img src="{% static 'images/icons/respond.png' %}" class="survey-img"
+                                        alt="respondent" class="survey-img" class="survey-img">
+                                    <h2 class="fw-bold dark-gray lh-1 m-0">{{responded}}</h2>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+                <!-- total percentage -->
+                <div class="col-12 col-md-3 p-1">
+                    <div class="card survey-card-container">
+                        <div class="card-body d-flex flex-column justify-content-betweengap-3">
+                            <h5 class="light-gray fw-medium">Response Rate</h5>
+                            <div>
+                                <div class="d-flex gap-2 align-items-end pt-2">
+                                    <img src="{% static 'images/icons/graph.png' %}" class="survey-img"
+                                        alt="response rate">
+                                    <h2 class="fw-bold dark-gray lh-1 m-0">{{response_percentage}}%</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- total average -->
+                <div class="col-12 col-md-3 p-1">
+                    <div class="card survey-card-container">
+                        <div class="card-body d-flex flex-column justify-content-betweengap-3">
+                            <h5 class="light-gray fw-medium">Overall Average</h5>
+                            <div>
+                                <div class="d-flex gap-2 align-items-end pt-2">
+                                    <img src="{% static 'images/icons/graph.png' %}" class="survey-img"
+                                        alt="survey average">
+                                    <h2 class="fw-bold dark-gray lh-1 m-0">40%</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Content chart -->
+                <div class="col-12 col-md-6 p-1">
+                    <div class="card survey-chart">
+                        <h5 class="light-gray fw-medium">Training Content</h5>
+                        <canvas id="contentChart" data-quarter-id="{{ training.id }}" class="survey-graph"></canvas>
+                    </div>
+                </div>
+
+                <!--Structure -->
+                <div class="col-12 col-md-6 p-1">
+                    <div class="card survey-chart">
+                        <h5 class="light-gray fw-medium">Training Structure</h5>
+                        <canvas id="structureChart" data-quarter-id="{{ training.id }}" class="survey-graph"></canvas>
+                    </div>
+                </div>
+
+                <!--Speaker -->
+                <div class="col-12 col-md-6 p-1">
+                    <div class="card survey-chart">
+                        <h5 class="light-gray fw-medium">Training Speaker</h5>
+                        <canvas id="speakerChart" data-quarter-id="{{ training.id }}" class="survey-graph"></canvas>
+                    </div>
+                </div>
+
+                <!--Resources program -->
+                <div class="col-12 col-md-6 p-1">
+                    <div class="card survey-chart">
+                        <h5 class="light-gray fw-medium">Training Environment and Resources</h5>
+                        <canvas id="resourcesChart" data-quarter-id="{{ training.id }}" class="survey-graph"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="accordion pb-5" id="surveyresponse">
+                <!-- respondent dropdown -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#respondent" aria-expanded="false" aria-controls="respondent">
+                            <h4 class="fw-medium dark-gray">Participants</h4>
+                        </button>
+                    </h2>
+                    <div id="respondent" class="accordion-collapse collapse" data-bs-parent="#surveyresponse">
+                        <div class="accordion-body">
+                            <!-- Responsive Table -->
+                            <div class="table-container">
+                                <table id="requestTable">
+                                    <thead>
+                                        <tr>
+                                            <th class="light-gray">Date Submitted</th>
+                                            <th class="light-gray">ID Number</th>
+                                            <th class="light-gray">Name</th>
+                                            <th class="light-gray">Department</th>
+                                            <th class="light-gray">Line</th>
+                                            <th class="light-gray">Supervisor</th>
+                                            <th class="light-gray">Manager</th>
+                                            <th class="light-gray">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for participant in participants %}
+                                        <tr>
+                                            <td>{{participant.date_responded|date:'m/d/y'}}</td>
+                                            <td>{{participant.employee.idnumber}}</td>
+                                            <td>{{participant.employee.name}}</td>
+                                            <td>{{participant.department}}</td>
+                                            <td>{{participant.line}}</td>
+                                            <td>
+                                                {% if participant.is_evaluated %}
+                                                    <span class="status-badge status-answer">Evaluated</span>
+                                                {% else %}
+                                                    <span class="status-badge status-noanswer">For Evaluation</span>
+                                                {% endif %}
+                                            </td>
+
+                                            <td>
+                                                {% if participant.is_approved == "Approved"%}
+                                                    <span class="status-badge status-answer">Approved</span>
+                                                {% elif participant.is_approved == "Disapproved"%}
+                                                    <span class="status-badge status-noanswer">Disapproved</span>
+                                                {% else %}
+                                                    <span class="status-badge status-pending">Pending</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="d-flex gap-1">
+                                                    <!-- open button -->
+                                                    <a href="{% url 'view-response' pk=participant.id %}" class="text-decoration-none">
+                                                        <button type="button" class="button-light">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="#E85C0D" class="bi bi-folder2-open action-icon" viewBox="0 0 16 16" stroke="#E85C0D" stroke-width="0.5">
+                                                                <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7z"/>
+                                                            </svg>
+                                                        </button>
+                                                    </a>
+
+                                                    <!-- cancel button -->
+                                                    <button  class="button-light" type="button" data-bs-toggle="modal" data-bs-target="#Delete{{participant.id}}">
+                                                        <svg xmlns="http://www.w3.org/2000/svg"fill="#f3473b" class="bi bi-trash3-fill action-icon" viewBox="0 0 16 16">
+                                                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+                                                        </svg>
+                                                    </button>
+
+                                                    <!-- modal for deletion of training -->
+                                                    <div class="modal fade" id="Delete{{participant.id}}" tabindex="-1" aria-labelledby="Delete{{participant.id}}Label" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                            <h3 class="modal-title" id="Delete{{participant.id}}Label">Delete Participant?</h3>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p class="pb-2">All data collected from participant evaluations will be deleted. This cannot be undone.</p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                                                <form method="POST" action="{% url 'delete-participant' pk=participant.id %}">
+                                                                    {% csrf_token %}
+                                                                    <button type="submit" class="delete-button">Delete</button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+
+        </div>
+
+    </div>
+
+</article>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('contentChart');
+        let chart;
+    
+        function createOrUpdateChart(data) {
+            const config = {
+                type: 'line',
+                data: {
+                    labels: ['Job-Relevant', 'Work-Related', 'Suitable to Topic'],
+                    datasets: [{
+                        label: '',
+                        data: data,
+                        fill: 'start',
+                        backgroundColor: 'rgba(124, 146, 255, 0.2)',
+                        borderColor: '#7c92ff',
+                        borderWidth: 1.5,
+                        tension: 0.3,
+                        pointRadius: 0,
+                        pointHoverRadius: 10,
+                        pointHitRadius: 100,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.raw + '%';
+                                }
+                            },
+                            displayColors: false,
+                            bodyFont: {
+                                size: 15
+                            },
+                            titleFont: {
+                                size: 14
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 100,
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                callback: function (value) {
+                                    if (value === 100 || value === 50) return value + '%';
+                                    return '';
+                                }
+                            }
+                        },
+                        x: {
+                            offset: false,
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                align: 'center',
+                                font: {
+                                    size: 12,
+                                    weight: 'normal'
+                                },
+                                color: '#333'
+                            }
+                        }
+                    }
+                }
+            };
+    
+            if (chart) {
+                chart.data.datasets[0].data = data;
+                chart.update();
+            } else {
+                chart = new Chart(ctx, config);
+            }
+        }
+    
+        function updateChart() {
+            const pk = document.getElementById('contentChart').dataset.quarterId;
+            axios.get(`/Training-effectiveness/api/training-content/${pk}/`)
+                .then(response => {
+                    const data = [
+                        response.data.job_related,
+                        response.data.explain_clearly,
+                        response.data.suitable_topic
+                    ];
+                    createOrUpdateChart(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching survey stats:', error);
+                });
+        }
+        updateChart();
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('structureChart');
+        let chart;
+    
+        function createOrUpdateChart(data) {
+            const config = {
+                type: 'line',
+                data: {
+                    labels: ['Clear Goals', 'Met Program Goals', 'Easy to Follow', 'Easy to Understand'],
+                    datasets: [{
+                        label: '',
+                        data: data,
+                        fill: 'start',
+                        backgroundColor: 'rgba(124, 146, 255, 0.2)',
+                        borderColor: '#7c92ff',
+                        borderWidth: 1.5,
+                        tension: 0.3,
+                        pointRadius: 0,
+                        pointHoverRadius: 10,
+                        pointHitRadius: 100,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.raw + '%';
+                                }
+                            },
+                            displayColors: false,
+                            bodyFont: {
+                                size: 15
+                            },
+                            titleFont: {
+                                size: 14
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 100,
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                callback: function (value) {
+                                    if (value === 100 || value === 50) return value + '%';
+                                    return '';
+                                }
+                            }
+                        },
+                        x: {
+                            offset: false,
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                align: 'center',
+                                font: {
+                                    size: 12,
+                                    weight: 'normal'
+                                },
+                                color: '#333'
+                            }
+                        }
+                    }
+                }
+            };
+    
+            if (chart) {
+                chart.data.datasets[0].data = data;
+                chart.update();
+            } else {
+                chart = new Chart(ctx, config);
+            }
+        }
+    
+        function updateChart() {
+            const pk = document.getElementById('structureChart').dataset.quarterId;
+            axios.get(`/Training-effectiveness/api/training-structure/${pk}/`)
+                .then(response => {
+                    const data = [
+                        response.data.clear_goals,
+                        response.data.met_goals,
+                        response.data.easy_follow,
+                        response.data.easy_understand
+                    ];
+                    createOrUpdateChart(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching survey stats:', error);
+                });
+        }
+        updateChart();
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('speakerChart');
+        let chart;
+    
+        function createOrUpdateChart(data) {
+            const config = {
+                type: 'line',
+                data: {
+                    labels: ['Speaker Knowledge', 'Clear Communication', 'Answered Questions'],
+                    datasets: [{
+                        label: '',
+                        data: data,
+                        fill: 'start',
+                        backgroundColor: 'rgba(124, 146, 255, 0.2)',
+                        borderColor: '#7c92ff',
+                        borderWidth: 1.5,
+                        tension: 0.3,
+                        pointRadius: 0,
+                        pointHoverRadius: 10,
+                        pointHitRadius: 100,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.raw + '%';
+                                }
+                            },
+                            displayColors: false,
+                            bodyFont: {
+                                size: 15
+                            },
+                            titleFont: {
+                                size: 14
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 100,
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                callback: function (value) {
+                                    if (value === 100 || value === 50) return value + '%';
+                                    return '';
+                                }
+                            }
+                        },
+                        x: {
+                            offset: false,
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                align: 'center',
+                                font: {
+                                    size: 12,
+                                    weight: 'normal'
+                                },
+                                color: '#333'
+                            }
+                        }
+                    }
+                }
+            };
+    
+            if (chart) {
+                chart.data.datasets[0].data = data;
+                chart.update();
+            } else {
+                chart = new Chart(ctx, config);
+            }
+        }
+    
+        function updateChart() {
+            const pk = document.getElementById('speakerChart').dataset.quarterId;
+            axios.get(`/Training-effectiveness/api/training-speaker/${pk}/`)
+                .then(response => {
+                    const data = [
+                        response.data.speaker_knowledge,
+                        response.data.clear_communication,
+                        response.data.answered_questions
+                    ];
+                    createOrUpdateChart(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching survey stats:', error);
+                });
+        }
+        updateChart();
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('resourcesChart');
+        let chart;
+    
+        function createOrUpdateChart(data) {
+            const config = {
+                type: 'line',
+                data: {
+                    labels: ['Training Organization', 'Suitable Facilities', 'Helpful Materials'],
+                    datasets: [{
+                        label: '',
+                        data: data,
+                        fill: 'start',
+                        backgroundColor: 'rgba(124, 146, 255, 0.2)',
+                        borderColor: '#7c92ff',
+                        borderWidth: 1.5,
+                        tension: 0.3,
+                        pointRadius: 0,
+                        pointHoverRadius: 10,
+                        pointHitRadius: 100,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.raw + '%';
+                                }
+                            },
+                            displayColors: false,
+                            bodyFont: {
+                                size: 15
+                            },
+                            titleFont: {
+                                size: 14
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 100,
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                callback: function (value) {
+                                    if (value === 100 || value === 50) return value + '%';
+                                    return '';
+                                }
+                            }
+                        },
+                        x: {
+                            offset: false,
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                align: 'center',
+                                font: {
+                                    size: 12,
+                                    weight: 'normal'
+                                },
+                                color: '#333'
+                            }
+                        }
+                    }
+                }
+            };
+    
+            if (chart) {
+                chart.data.datasets[0].data = data;
+                chart.update();
+            } else {
+                chart = new Chart(ctx, config);
+            }
+        }
+    
+        function updateChart() {
+            const pk = document.getElementById('resourcesChart').dataset.quarterId;
+            axios.get(`/Training-effectiveness/api/training-resources/${pk}/`)
+                .then(response => {
+                    const data = [
+                        response.data.training_org,
+                        response.data.facilities,
+                        response.data.materials
+                    ];
+                    createOrUpdateChart(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching survey stats:', error);
+                });
+        }
+        updateChart();
+    });
+</script>
+
+{% endblock content %}

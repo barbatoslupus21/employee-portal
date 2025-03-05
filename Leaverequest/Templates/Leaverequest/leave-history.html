@@ -1,0 +1,340 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:Dashboard' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Leave Application</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Requests History</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="pt-3 pb-1">
+                <h1 class="display-6 fw-bold dark-gray mb-3">Requests History</h1>
+            </div>
+            <div class="card survey-chart mt-2">
+                <div class="d-flex justify-content-between">
+                    <h5 class="dark-gray body-title">Leave Requests Breakdown</h5>
+                </div>
+                <canvas id="classificationChart" class="survey-graph"></canvas>
+            </div>
+            <div class="table-controls-admin mt-2">
+                <div class="d-flex gap-1">
+                    <div class="InputContainer">
+                        <input type="text" name="text" class="searchinput" id="searchInput" placeholder="Search" onkeyup="searchPRFTable()">
+                        <label for="searchInput" class="labelforsearch">
+                        <svg viewBox="0 0 512 512" class="searchIcon"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"></path></svg>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            {% if requests %}
+            <div class="table-container">
+                <table id="requestTable">
+                <thead>
+                    <tr>
+                    <th class="light-gray" onclick="sortIAD(0)">Leave Type</th>
+                    <th class="light-gray">Name</th>
+                    <th class="light-gray">Department</th>
+                    <th class="light-gray">Line</th>
+                    <th class="light-gray">Duration</th>
+                    <th class="light-gray">Reason</th>
+                    <th class="light-gray">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="admin-leave-container">
+                    {% for request in requests %}
+                    <tr>
+                        <td id="LeaveType">{{request.leave_request.leave_type}}</td>
+                        <td>{{request.leave_request.employee.name}}</td>
+                        <td>{{ request.leave_request.employee.employment_info.first.department.abreviation }}</td>
+                        <td>{{ request.leave_request.employee.employment_info.first.line.line }}</td>
+                        <td>{{request.leave_request.hrs}} Hrs</td>
+                        <td>{{request.leave_request.reason}}</td>
+                        <td>
+                             <!-- open leave -->
+                            <button type="button" class="button-light" data-bs-toggle="offcanvas" data-bs-target="#View{{request.leave_request.id}}" aria-controls="View{{request.leave_request.id}}">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="#4B70F5" class="bi bi-file-earmark-text action-icon" viewBox="0 0 16 16">
+                                    <path stroke="#4B70F5" stroke-width="0.5" d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5"/>
+                                    <path stroke="#4B70F5" stroke-width="0.5" d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"/>
+                                  </svg>
+                            </button>
+
+                            <!-- offcanvas leave view -->
+                            <div class="offcanvas offcanvas-end" style="width: 700px;" data-bs-scroll="true" tabindex="-1" id="View{{request.leave_request.id}}" aria-labelledby="View{{request.leave_request.id}}Label">
+                                <div class="offcanvas-header">
+                                    <h3 class="offcanvas-title light-gray fw-bold" id="View{{request.leave_request.id}}Label">Leave Details</h3>
+                                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                </div>
+                                <div class="offcanvas-body"> 
+                                  <!-- timeline -->
+                                  <div class="timeline" id="timeline{{request.leave_request.id}}"></div>
+                                  <script>
+                                    async function fetchLeaveRoutingData(leaveRequestId) {
+                                        try {
+                                            const response = await axios.get(`/Leave/api/leaverouting/${leaveRequestId}/`);
+                                            const timelineData = response.data;
+                                            renderTimeline(timelineData, leaveRequestId);
+                                        } catch (error) {
+                                            console.error('Error fetching leave routing data:', error);
+                                        }
+                                    }
+                                
+                                    function getStatusColor(status) {
+                                        switch(status.toLowerCase()) {
+                                            case 'approved': return '#88D66C';
+                                            case 'pending': return '#FCDE70';
+                                            case 'waiting for approval': return '#7c92ff';
+                                            case 'disapproved':
+                                            case 'cancelled': return '#FF7777';
+                                            default: return '#888888';
+                                        }
+                                    }
+                                
+                                    function createTimelineItem(item) {
+                                        const itemElement = document.createElement('div');
+                                        itemElement.className = `timeline-item ${item.status.toLowerCase() === 'waiting for approval' ? 'current' : ''}`;
+                                        
+                                        const iconElement = document.createElement('div');
+                                        iconElement.className = 'timeline-icon';
+                                        iconElement.style.backgroundColor = getStatusColor(item.status);
+                                        
+                                        const contentElement = document.createElement('div');
+                                        contentElement.className = `timeline-content ${item.status.toLowerCase().replace(/\s/g, '')}`;
+                                        
+                                        const headerElement = document.createElement('div');
+                                        headerElement.className = 'timeline-header';
+                                        
+                                        const titleElement = document.createElement('h3');
+                                        titleElement.className = 'timeline-title';
+                                        titleElement.textContent = item.title;
+                                        
+                                        const dateElement = document.createElement('div');
+                                        dateElement.className = 'timeline-date';
+                                        
+                                        const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                                        dateElement.textContent = new Date(item.date).toLocaleDateString('en-US', dateOptions); 
+                                        
+                                        headerElement.appendChild(titleElement);
+                                        headerElement.appendChild(dateElement);
+                                        
+                                        const statusElement = document.createElement('div');
+                                        statusElement.className = 'timeline-status';
+                                        statusElement.textContent = item.status;
+                                        
+                                        contentElement.appendChild(headerElement);
+                                        contentElement.appendChild(statusElement);
+                                        
+                                        itemElement.appendChild(iconElement);
+                                        itemElement.appendChild(contentElement);
+                                        
+                                        return itemElement;
+                                    }
+                                
+                                    function renderTimeline(data, id) {
+                                        const timelineElement = document.getElementById(`timeline${id}`);
+                                        if (!timelineElement) {
+                                            console.error("Timeline element not found");
+                                            return;
+                                        }
+                                        timelineElement.innerHTML = '';
+                                        data.forEach((item) => {
+                                            const timelineItem = createTimelineItem(item);
+                                            timelineElement.appendChild(timelineItem);
+                                        });
+                                    }
+                                
+                                    document.addEventListener("DOMContentLoaded", () => {
+                                        const leaveRequestId = "{{ request.leave_request.id }}";
+                                        fetchLeaveRoutingData(leaveRequestId);
+                                    });
+                                </script>
+                                  <hr>
+                                  <!-- details -->
+                                  <div class="container">
+                                    <div class="row">
+                                        <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">Control Number</h6></dt>
+                                        <dd class="col-sm-9 col-7 details-position"> <h6 class="body-regular light-gray fw-bold">{{request.leave_request.id|stringformat:"05d"}}</h6></dd>
+
+                                        <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">ID Number</h6></dt>
+                                        <dd class="col-sm-9 col-7 details-position"> <h6 class="body-regular light-gray fw-bold">{{request.leave_request.employee.idnumber}}</h6></dd>
+
+                                        <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">Name</h6></dt>
+                                        <dd class="col-sm-9 col-7 details-position"> <h6 class="body-regular light-gray fw-bold">{{request.leave_request.employee.name}}</h6></dd>
+
+                                        <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">Leave Type</h6></dt>
+                                        <dd class="col-sm-9 col-7 details-position"> <h6 class="body-regular light-gray fw-bold">{{request.leave_request.leave_type}}</h6></dd>
+        
+                                        <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">Start Date</h6></dt>
+                                        <dd class="col-sm-9 col-7 details-position"><h6 class="body-regular light-gray fw-bold">{{request.leave_request.from_date|date:'F d, Y'}}</h6></dd>
+        
+                                        <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">End Date</h6></dt>
+                                        <dd class="col-sm-9 col-7 details-position"><h6 class="body-regular light-gray fw-bold">{{request.leave_request.to_date|date:'F d, Y'}}</h6></dd>
+
+                                        <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">No of Days</h6></dt>
+                                        <dd class="col-sm-9 col-7 details-position"><h6 class="body-regular light-gray fw-bold">{{request.leave_request.days}}</h6></dd>
+        
+                                        <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">No of Hours</h6></dt>
+                                        <dd class="col-sm-9 col-7 details-position"><h6 class="body-regular light-gray fw-bold">{{request.leave_request.hrs}}</h6></dd>
+
+                                        <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">Category</h6></dt>
+                                        <dd class="col-sm-9 col-7 details-position"><h6 class="body-regular light-gray fw-bold">{{request.leave_request.category.category_name}}</h6></dd>
+
+                                        <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">Reason</h6></dt>
+                                        <dd class="col-sm-9 col-7 details-position"><h6 class="body-regular light-gray fw-bold">{{request.leave_request.reason}}</h6></dd>
+                                    </div>
+                                  </div>
+
+                                  <hr>
+                                    <!-- remarks -->
+                                    <div class="container">
+                                        <h6 class="offcanvas-title light-gray fw-bold">Remarks</h6>
+                                        {% for leave_routing in request.leave_request.routings.all %}
+                                                {% if leave_routing.remarks %}
+                                                    <div class="p-2 my-2 border rounded-3">
+                                                        <p class="body-regular fw-bold light-gray">{{ leave_routing.approver.name }}</p>
+                                                        <p class="dark-gray body-text">{{ leave_routing.remarks }}</p>
+                                                    </div>
+                                                {% endif %}
+                                        {% endfor %}
+                                      </div> 
+                                </div>
+                              </div>
+                        </td>
+                    </tr>  
+                    {% endfor %} 
+                </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-filed-prf-container">      
+                <div><h5 class="light-gray">No leave request filed yet.</h5></div>
+                <img src="{% static 'images/empty-box.png' %}" alt="no data found">
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</article>
+
+<script>
+    function searchPRFTable() {
+        const input = document.getElementById("searchInput");
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById("requestTable");
+        const rows = table.getElementsByTagName("tr");
+      
+        for (let i = 1; i < rows.length; i++) {
+          const cells = rows[i].getElementsByTagName("td");
+          let shouldDisplay = false;
+          for (let j = 0; j < cells.length - 1; j++) {
+            if (cells[j].innerText.toLowerCase().includes(filter)) {
+              shouldDisplay = true;
+              break;
+            }
+          }
+          rows[i].style.display = shouldDisplay ? "" : "none";
+        }
+      }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        axios.get('/Leave/api/leave-percentages/')
+            .then(function (response) {
+                const data = response.data;
+    
+                const ctx = document.getElementById('classificationChart');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Employee Percentage by Department',
+                            data: data.percentages,
+                            fill: 'start',
+                            backgroundColor: 'rgba(124, 146, 255, 0.2)',
+                            borderColor: '#7c92ff',
+                            borderWidth: 1.5,
+                            tension: 0.3,
+                            pointRadius: 0,
+                            pointHoverRadius: 10,
+                            pointHitRadius: 100,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (tooltipItem) {
+                                        return tooltipItem.raw + '%';
+                                    }
+                                },
+                                displayColors: false,
+                                bodyFont: {
+                                    size: 15
+                                },
+                                titleFont: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                min: 0,
+                                max: 100,
+                                grid: {
+                                    display: false,
+                                },
+                                ticks: {
+                                    callback: function (value) {
+                                        if (value === 100 || value === 50) return value + '%';
+                                        return '';
+                                    }
+                                }
+                            },
+                            x: {
+                                offset: false,
+                                grid: {
+                                    display: false,
+                                },
+                                ticks: {
+                                    align: 'center',
+                                    font: {
+                                        size: 12,
+                                        weight: 'normal'
+                                    },
+                                    color: '#333'
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(function (error) {
+                console.error('Error fetching department percentages:', error);
+            });
+    });
+</script>
+{% endblock content %}

@@ -1,0 +1,163 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% if request.user.is_admin %}{% url "Dashboard:admin-dashboard" %}{% else %}{% url "Dashboard:Dashboard" %}{% endif %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Account Settings</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="pt-2">
+                <h1 class="display-6 fw-bold dark-gray mb-3">Account Settings</h1>
+            </div>
+            <!-- password -->
+             <div class="password-img-container">
+                <!-- change password -->
+                <div class="card border-0 w-100 img-block">
+                    <img src="{% static 'images/change-password.jpg' %}" alt="change password" class="img-password">
+                </div>
+       
+                <div class="card border-0 w-100">
+                    <div class="card-body">
+                        <h4 class="dark-gray fw-medium">Change Password</h4>
+                        <div class="password-container">
+                            <form id="passwordChangeForm" method="POST" action="{% url 'change-password' %}">
+                                {% csrf_token %}
+                                <div>
+                                    <div class="mb-2">
+                                        <label for="old_password" class="form-label light-gray body-regular">Old Password</label>
+                                        <input type="password" class="form-control custom-border-bottom" id="old_password" name="old_password" required>
+                                        <div class="invalid-feedback">
+                                            Password Incorrect.
+                                        </div>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="new_password" class="form-label light-gray body-regular">New Password</label>
+                                        <input type="password" class="form-control custom-border-bottom" id="new_password" name="new_password" required>
+                                    </div>
+                                    <div>
+                                        <ul class="password-criteria">
+                                            <li class="body-regular" id="length">Minimum Characters 12</li>
+                                            <li class="body-regular" id="uppercase">One uppercase character</li>
+                                            <li class="body-regular" id="lowercase">One lowercase character</li>
+                                            <li class="body-regular" id="special">One special character</li>
+                                            <li class="body-regular" id="number">One number</li>
+                                        </ul>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label for="confirm_password" class="form-label light-gray body-regular">Confirm Password</label>
+                                        <input type="password" class="form-control custom-border-bottom" id="confirm_password" name="confirm_password" required>
+                                        <div id="password-match-error" class="invalid-feedback">
+                                            Password does not match.
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-end">
+                                        <button class="custom-button mt-2" type="submit">Change Password</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>           
+             </div>
+
+             <!-- account deletion -->
+             <div class="card border w-100 mb-3" style="background-color:#EEEEFF;">
+                <div class="card-body">
+                    <h4 class="light-gray fw-medium">Account Deactivation</h4>
+                    <div class="password-container">
+                        <p class="body-regular light-gray">For security reasons, you must deactivate your account when your employment ends. This helps safeguard our company information. Clicking "Deactivate Account" means you understand that this action is final and you agree to follow our company rules.</p>
+                        <div class="d-flex justify-content-end pt-3">
+                            <form method="POST" action="{% url "deactivate" pk=request.user.id %}">
+                                {% csrf_token %}
+                                    <button type="submit" class="delete-button">Deactivate Account</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             
+        </div>
+    </div>
+
+</article>
+
+<script>
+    const newPasswordInput = document.getElementById('new_password');
+    const confirmPasswordInput = document.getElementById('confirm_password');
+    const passwordCriteria = document.querySelectorAll('.password-criteria li');
+    const passwordMatchError = document.getElementById('password-match-error');
+    const form = document.getElementById('passwordChangeForm');
+
+    const criteria = {
+        length: password => password.length >= 12,
+        uppercase: password => /[A-Z]/.test(password),
+        lowercase: password => /[a-z]/.test(password),
+        special: password => /[!@#$%^&*(),.?"_:{}|<>]/.test(password),
+        number: password => /\d/.test(password)
+    };
+
+    newPasswordInput.addEventListener('input', function() {
+        const password = this.value;
+        let allCriteriaMet = true;
+
+        Object.keys(criteria).forEach((key, index) => {
+            if (criteria[key](password)) {
+                passwordCriteria[index].classList.add('met');
+                passwordCriteria[index].classList.remove('not-met');
+            } else {
+                passwordCriteria[index].classList.remove('met');
+                passwordCriteria[index].classList.add('not-met');
+                allCriteriaMet = false;
+            }
+        });
+
+        if (allCriteriaMet) {
+            this.classList.add('input-valid');
+            this.classList.remove('input-invalid');
+        } else {
+            this.classList.remove('input-valid');
+            this.classList.add('input-invalid');
+        }
+    });
+
+    confirmPasswordInput.addEventListener('input', function() {
+        if (this.value === newPasswordInput.value) {
+            this.classList.add('input-valid');
+            this.classList.remove('input-invalid');
+            passwordMatchError.style.display = 'none';
+        } else {
+            this.classList.remove('input-valid');
+            this.classList.add('input-invalid');
+        }
+    });
+
+    (() => {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        Array.from(forms).forEach(form => {
+          form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+      
+            form.classList.add('was-validated')
+          }, false)
+        })
+      })()
+</script>
+
+{% endblock content %}

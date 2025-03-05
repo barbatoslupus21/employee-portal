@@ -1,0 +1,192 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url "Dashboard:Dashboard" %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Assessments</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <a href="{% url 'manager-view-quarter' pk=responder.quarter.id %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">{{responder.quarter}}</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">{{responder.employee.name}}</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-4">
+            <div class="pt-2">
+                <h1 class="display-6 fw-bold dark-gray">Self Evaluation Result</h1>
+            </div>
+            <hr>
+            <div class="pb-2">
+                <h3 class="dark-gray mb-3">Employee Profile</h3>
+                <div class="row p-3">
+                    <div class="col-12 col-md-12">
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Name</h5>
+                            </dt>
+                            <dd class="col-sm-10">
+                                <h5 class="body-regular dark-gray">{{responder.employee.name}}</h5>
+                            </dd>
+
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Position</h5>
+                            </dt>
+                            <dd class="col-sm-10">
+                                <h5 class="body-regular dark-gray">{{responder.employee.employment_info.first.position.name}}</h5>
+                            </dd>
+
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Department</h5>
+                            </dt>
+                            <dd class="col-sm-10">
+                                <h5 class="body-regular dark-gray">{{responder.employee.employment_info.first.department}}</h5>
+                            </dd>
+
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Line</h5>
+                            </dt>
+                            <dd class="col-sm-10">
+                                <h5 class="body-regular dark-gray">{{responder.employee.employment_info.first.line.line}}</h5>
+                            </dd>
+
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Supervisor</h5>
+                            </dt>
+                            <dd class="col-sm-10">
+                                <h5 class="body-regular dark-gray">{{responder.employee.employment_info.first.approver.name}}</h5>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            {% if training %}
+            <div class="pb-2">
+                <h3 class="dark-gray mb-3">Requested Training</h3>
+                <div class="row p-3">
+                    <div class="col-12 col-md-12">
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Training</h5>
+                            </dt>
+                            <dd class="col-sm-10">
+                                <h5 class="body-regular dark-gray">{{training.training}}</h5>
+                            </dd>
+
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Objective of Training</h5>
+                            </dt>
+                            <dd class="col-sm-10">
+                                <h5 class="body-regular dark-gray">{{training.objective}}</h5>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if recommendation %}
+            <div class="pb-2">
+                <h3 class="dark-gray mb-3">Recommendation and Comments</h3>
+                <div class="row p-3">
+                    <div class="col-12 col-md-12">
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Strengths</h5>
+                            </dt>
+                            <dd class="col-sm-10">
+                                <h5 class="body-regular dark-gray">{{recommendation.strength}}</h5>
+                            </dd>
+
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Weaknesses</h5>
+                            </dt>
+                            <dd class="col-sm-10">
+                                <h5 class="body-regular dark-gray">{{recommendation.weakness}}</h5>
+                            </dd>
+
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Training Required</h5>
+                            </dt>
+                            <dd class="col-sm-10">
+                                <h5 class="body-regular dark-gray">{{recommendation.training_required}}</h5>
+                            </dd>
+
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Comment</h5>
+                            </dt>
+                            <dd class="col-sm-10">
+                                <h5 class="body-regular dark-gray">{{recommendation.comment}}</h5>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="pb-2">
+                <h3 class="dark-gray mb-3">Evaluation Responses</h3>
+                <div class="row p-3">
+                    <div class="col-12 col-md-12">
+                        <table id="requestTable">
+                            <thead>
+                                <tr>
+                                    <th class="light-gray" style="width: 60%;">Tasklists</th>
+                                    <th class="light-gray text-center">Self</th>
+                                    <th class="light-gray text-center">Superior</th>
+                                </tr>
+                            </thead>
+                            <tbody class="accordion-table-container">
+                                {% for assessment in assessments %}
+                                    <tr>
+                                        <td style="width: 60%;">{{assessment.tasklist}}</td>
+                                        <td class="text-center">{{assessment.self_assessment}}</td>
+                                        <td class="text-center">{% if assessment.supervisor_assessment %}{{assessment.supervisor_assessment}}{% else %}Not yet assessed{% endif %}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        
+                        {% if status == "Pending" %}
+                        <div class="py-3">
+                            <form method="POST" action="{% url 'manager-evaluation-approval' pk=responder.id %}">
+                                {% csrf_token %}
+
+                                <div class="mb-3">
+                                    <label for="overall_comment" class="form-label">Overall Comment</label>
+                                    <textarea type="text" class="form-control" id="overall_comment" row="5" name="overall_comment"></textarea>
+                                </div>
+
+                                <div class="d-flex gap-2 align-items-center justify-content-end ">
+                                    <button type="submit" name="action" value="approve" class="custom-button">Approve</button>
+                                    <button type="submit" name="action" value="disapprove" class="delete-button">Disapprove</button>
+                                </div>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</article>
+
+{% endblock content %}

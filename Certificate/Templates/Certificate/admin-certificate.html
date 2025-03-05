@@ -1,0 +1,263 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:admin-dashboard' %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">Certificate</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-4">
+            <div class="row flex-lg-row-reverse align-items-center justify-content-center">
+                <div class="col-md-6 hero-image-size">
+                    <img src="{% static 'images/certificate-image.jpg' %}" class="d-block mx-lg-auto survey-img-banner" alt="Bootstrap Themes" loading="lazy">
+                  </div>
+                <div class="col-md-6 px-4">
+                  <h4 class="display-6 fw-bold dark-gray lh-1 mb-3">Employee's Certificate</h4>
+                  <p class="light-gray mb-3 hero-description">This section honors the achievements of our dedicated employee's. Here, you'll find a collection of certificates and awards earned by individuals across our organization. These recognitions showcase the exceptional contributions, dedication, and achievements of our employees. We celebrate their hard work and commitment to excellence.</p>
+                    <!-- Button trigger modal for new survey -->
+                  <button type="button" class="custom-button mb-5" data-bs-toggle="modal" data-bs-target="#new_cert">+ New Certificate</button>
+
+                  <!-- Modal for New certificate-->
+                  <div class="modal fade" id="new_cert" tabindex="-1" aria-labelledby="new_certLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h3 class="modal-title" id="new_certLabel">Create New Certification</h3>
+                            </div>
+                            <form class="needs-validation" novalidate method="POST" action="{% url 'create-certificate' %}">
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                    <div class="mb-2">
+                                        <label class="form-label body-regular dark-gray" for="certificate_date" id="certificate_date">Certification  Date</label>
+                                        <input type="date" class="form-control dark-gray body-regular" id="certificate_date" name="certificate_date" required>
+                                        <div class="invalid-feedback">
+                                            Please specify the date
+                                          </div>
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <label class="form-label body-regular dark-gray" for="certificate_name" id="certificate_name">Certification Title</label>
+                                        <input type="text" class="form-control dark-gray body-regular" id="certificate_name" name="certificate_name" required>
+                                        <div class="invalid-feedback">
+                                            Please specify the certificate title.
+                                          </div>
+                                    </div>
+
+                                    <div class="mb-2 selection">
+                                        <label for="template" class="form-label body-regular dark-gray">Template</label>
+                                        <select class="form-select" id="template" name="template" required>
+                                            <option selected disabled value="">Choose...</option>
+                                            {% for template in templates %}
+                                            <option values="{{template.title}}">{{template.title}}</option>
+                                            {% endfor %}
+                                          </select>
+                                    </div>
+
+                                    <div class="mb-2 selection">
+                                        <label for="template" class="form-label body-regular dark-gray">Speaker</label>
+                                        <select class="form-select" id="speaker" name="speaker" required>
+                                            <option selected disabled value="">Choose...</option>
+                                            {% for speaker in speakers %}
+                                            <option values="{{speaker.name}}">{{speaker.name}}</option>
+                                            {% endfor %}
+                                          </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Awardees</label>
+                                        <div class="card p-3">
+                                            <div class="mb-2">
+                                                <input type="text" class="form-control" id="searchParticipant" placeholder="Search Awardees" onkeyup="searchParticipants()">
+                                            </div>
+                                            <div class="table-container">
+                                                <table id="participantTable" class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="participant-col1"></th>
+                                                            <th class="participant-col2">ID Number</th>
+                                                            <th>Name</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="training-participant">
+                                                        {% for awardee in awardees %}
+                                                            <tr>
+                                                                <td class="participant-col1">
+                                                                    <div class="checkbox-wrapper-46">
+                                                                        <input type="checkbox" id="{{awardee.idnumber}}" class="inp-cbx participant-checkbox" />
+                                                                        <label for="{{awardee.idnumber}}" class="cbx">
+                                                                            <span>
+                                                                                <svg width="12px" height="10px" viewbox="0 0 12 10">
+                                                                                    <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                                                                                </svg>
+                                                                            </span>
+                                                                        </label>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="participant-col2">{{awardee.idnumber}}</td>
+                                                                <td>{{awardee.name}}</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Hidden input for selected participants -->
+                                    <input type="hidden" name="selected_participants" id="selected_participants">
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="custom-button">Create</button>
+                                </div>
+                            </form>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+          </div>
+
+          {% if certificates %}
+            <div class="table-container">
+                <table id="requestTable">
+                <thead>
+                    <tr>
+                    <th>Date</th>
+                    <th>Title</th>
+                    <th>Speaker</th>
+                    <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="certificate-table">
+                    {% for certificate in certificates %}
+                        <tr>
+                            <td>{{certificate.cert_date|date:'F d, Y'}}</td>
+                            <td>{{certificate.cert_name}}</td>
+                            <td>{{certificate.cert_speaker}}</td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <!-- open button -->
+                                    <a href="{% url 'awardees' pk=certificate.id %}" class="text-decoration-none">
+                                        <button type="button" class="button-light">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="#E85C0D" class="bi bi-folder2-open action-icon" viewBox="0 0 16 16" stroke="#E85C0D" stroke-width="0.5">
+                                                <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7z"/>
+                                            </svg>
+                                        </button>
+                                    </a>
+
+                                    <!-- cancel button -->
+                                    <button  class="button-light" type="button" data-bs-toggle="modal" data-bs-target="#Delete{{certificate.id}}">
+                                        <svg xmlns="http://www.w3.org/2000/svg"fill="#f3473b" class="bi bi-trash3-fill action-icon" viewBox="0 0 16 16">
+                                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+                                        </svg>
+                                    </button>
+
+                                    <!-- modal for deletion of certificate -->
+                                    <div class="modal fade" id="Delete{{certificate.id}}" tabindex="-1" aria-labelledby="Delete{{certificate.id}}Label" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h3 class="modal-title" id="Delete{{certificate.id}}Label">Delete Certificate?</h3>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="alert alert-danger" role="alert">
+                                                    <p>Please be aware that deleting this certificate cannot be undone, and all awardees certificates will also be deleted.</p>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                                <form method="POST" action="{% url 'delete-certificate' pk=certificate.id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="delete-button">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+
+                                </div>  
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+            </div>
+          {% else %}
+            <div class="no-filed-prf-container">
+                <div><h5 class="light-gray">You haven't created any certification yet.</h5></div>
+                <img src="{% static 'images/empty-box.png' %}" alt="no data found">
+            </div>
+          {% endif %}
+        </div>  
+    </div>
+    
+</article>
+
+<script>
+    (() => {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        Array.from(forms).forEach(form => {
+          form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+      
+            form.classList.add('was-validated')
+          }, false)
+        })
+      })()
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const participantCheckboxes = document.querySelectorAll('.participant-checkbox');
+        const selectedParticipantsInput = document.getElementById('selected_participants');
+
+        form.addEventListener('submit', function(e) {
+            const selectedParticipants = [];
+            participantCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    selectedParticipants.push(checkbox.id);
+                }
+            });
+            selectedParticipantsInput.value = JSON.stringify(selectedParticipants);
+        });
+    });
+
+    function searchParticipants() {
+        let input = document.getElementById('searchParticipant');
+        let filter = input.value.toUpperCase();
+        
+        let table = document.getElementById('participantTable');
+        let tr = table.getElementsByTagName('tr');
+        
+        for (let i = 1; i < tr.length; i++) {
+            let tdId = tr[i].getElementsByTagName('td')[1];
+            let tdName = tr[i].getElementsByTagName('td')[2];
+
+            if (tdId || tdName) {
+                let txtValueId = tdId.textContent || tdId.innerText;
+                let txtValueName = tdName.textContent || tdName.innerText;
+                
+                if (txtValueId.toUpperCase().indexOf(filter) > -1 || txtValueName.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = '';
+                } else {
+                    tr[i].style.display = 'none';
+                }
+            }
+        }
+    }
+</script>
+
+{% endblock content %}

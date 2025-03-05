@@ -1,0 +1,81 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:Dashboard' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Assessments</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Feedback</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-4">
+            <div class="pt-3 pb-1">
+                <h1 class="display-6 fw-bold dark-gray">Feedback</h1>
+                <p class="dark-gray mb-3">Share your thoughts on our company.</p>
+            </div>
+            <form class="needs-validation" novalidate method="POST" action="{% url 'submit-feedback' %}">
+                {% csrf_token %}
+                <div>
+                    <textarea class="form-control body-regular dark-gray" name="feedback" rows="12" required></textarea>
+                    <div class="invalid-feedback">
+                        Please enter your feedback.
+                    </div>
+
+                    <div class="d-flex justify-content-end m-3">
+                        <div class="checkbox-wrapper-46">
+                            <input type="checkbox" id="cbx-46" class="inp-cbx" name='identity' />
+                            <label for="cbx-46" class="cbx"><span>
+                                    <svg viewBox="0 0 12 10" height="10px" width="12px">
+                                        <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                                    </svg></span><span class="body-regular dark-gray">Hide my
+                                    Identity</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <div class="d-flex justify-content-end mb-4 gap-2">
+                    <button type="submit" class="custom-button">
+                        Submit Feedback
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</article>
+
+<script>
+    (() => {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')    
+        Array.from(forms).forEach(form => {
+          form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+      
+            form.classList.add('was-validated')
+          }, false)
+        })
+      })()
+</script>
+
+{% endblock content %}

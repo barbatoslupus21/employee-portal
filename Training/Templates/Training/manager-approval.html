@@ -1,0 +1,206 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% if request.user.is_admin %}{% url 'Dashboard:admin-dashboard' %}{% else %}{% url 'Dashboard:Dashboard' %}{% endif %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Assessments</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <a href="{% url "manager-training-view" %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Training Approval</h5>
+            </a>
+            {% if request.user.is_approver or request.user.is_admin %}
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">{{selectedSurvey.employee.name}}</h5>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="pt-2">
+                <h1 class="display-6 fw-bold dark-gray">{{selectedSurvey.evaluation_to.training.training_title}} Training</h1>
+                <p class="dark-gray mb-3">Examine the participants' feedback and the supervisor's assessment.</p>
+            </div>
+            <hr>
+            <div class="pb-2">
+                <h3 class="dark-gray mb-2">Training Details</h3>
+                <div class="row p-3">
+                    <div class="col-12 col-md-12">
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Objectives</h5>
+                            </dt>
+                            <dd class="col-sm-10 pb-1">
+                                <h5 class="body-regular dark-gray">{{selectedSurvey.evaluation_to.training.training_objective}}</h5>
+                            </dd>
+
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Speaker</h5>
+                            </dt>
+                            <dd class="col-sm-10 pb-1">
+                                <h5 class="body-regular dark-gray">{{selectedSurvey.evaluation_to.training.training_speaker}}</h5>
+                            </dd>
+
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Date</h5>
+                            </dt>
+                            <dd class="col-sm-10 pb-1">
+                                <h5 class="body-regular dark-gray">{{selectedSurvey.evaluation_to.training.training_date|date:'F d, Y'}}</h5>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pb-2">
+                <h3 class="dark-gray mb-2">Participant Responses</h2>
+                <div class="row p-3">
+                    <div class="col-12 col-md-12">
+                        <dl class="row">
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Most Interesting</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-1">
+                                <h5 class="body-regular dark-gray">{{selectedSurvey.interest}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Feedback for Improvement</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-1">
+                                <h5 class="body-regular dark-gray">{{selectedSurvey.future_recommendations}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Future Learning Interests</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-1">
+                                <h5 class="body-regular dark-gray">{{selectedSurvey.related_subjects}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">New Learning to Enhance Job Effectiveness</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-1">
+                                <h5 class="body-regular dark-gray">{{selectedSurvey.app_work1}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Applying Training Insights to Improve Work
+                                    Performance</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-1">
+                                <h5 class="body-regular dark-gray">{{selectedSurvey.app_work2}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Planned Implementation Date</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-1">
+                                <h5 class="body-regular dark-gray">{{selectedSurvey.target_date|date:'F d,Y'}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Actual Implementation Date</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-1">
+                                <h5 class="body-regular dark-gray">{{selectedSurvey.actual_date|date:'F d,Y'}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">New Skills for Use Beyond Work</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-1">
+                                <h5 class="body-regular dark-gray">{{selectedSurvey.app_self1}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Applying Training Insights to Daily Life</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-1">
+                                <h5 class="body-regular dark-gray">{{selectedSurvey.app_self2}}</h5>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pb-2">
+                <h3 class="dark-gray mb-2">Supervisor Training Assessment</h2>
+                <div class="row p-3">
+                    <div class="col-12 col-md-12">
+                        <dl class="row">
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Date Evaluated</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-1">
+                                <h5 class="body-regular dark-gray">{{selectedSurvey.updated_at|date:'F d, Y'}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Result and Impact</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-1">
+                                <h5 class="body-regular dark-gray">{{selectedSurvey.result_impact}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Recommendation</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-1">
+                                <h5 class="body-regular dark-gray">{{selectedSurvey.recommendation}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Overall Assessment</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-1">
+                                <h5 class="body-regular dark-gray">{{selectedSurvey.assessment}}</h5>
+                            </dd>
+                    </div>
+                </div>
+            </div>
+
+            {% if selectedSurvey.evaluation_to.is_approved == "Pending" %}
+                <div class="mb-4">
+                    <form method="POST" action="{% url 'manager-training-approval' pk=selectedSurvey.evaluation_to.id %}">
+                        {% csrf_token %}
+                        <div class="d-flex gap-2 align-items-center justify-content-end ">
+                            <button type="submit" name="action" value="approve" class="custom-button">Approve</button>
+                            <button type="submit" name="action" value="disapprove" class="delete-button">Disapprove</button>
+                        </div>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+</article>
+
+{% endblock content %}

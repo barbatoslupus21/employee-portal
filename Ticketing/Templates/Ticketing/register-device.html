@@ -1,0 +1,204 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:Dashboard' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">MIS Ticket</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">My Devices</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-4">
+            <div class="pt-3 pb-1">
+                <h1 class="display-6 fw-bold dark-gray">Registered Devices</h1>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-md-4 d-flex align-items-start justify-content-between">
+                    <h4>Device</h4> 
+                </div>
+                
+                <div class="col-md-7">
+                    <div class="border rounded-2 settings-table-container">
+                        <ul class="list-group list-group-flush">
+                            {% if userDevices %}
+                                {% for userDevice in userDevices %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div class="py-2">
+                                            <h6 class="body-regular fw-normal m-0">{{userDevice.Device_Code}}</h6>
+                                        </div>     
+                                        <div class="settings-list department_list">
+                                            <button class="button-light border-0 p-1" type="button" data-bs-toggle="modal" data-bs-target="#editDevice{{userDevice.id}}">
+                                                <span class="material-symbols-rounded" style="color: #929393;">
+                                                    edit
+                                                    </span>
+                                            </button>
+
+                                            <!-- modal for edit -->
+                                            <div class="modal fade" id="editDevice{{userDevice.id}}" tabindex="-1" aria-labelledby="editDevice{{userDevice.id}}Label" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                    <h4 class="modal-title fs-5" id="editDevice{{userDevice.id}}Label">Edit {{userDevice.Device_Code}}</h4>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <form class="needs-validation" novalidate method="POST" action="{% url 'edit-user-device' pk=userDevice.id %}">
+                                                        {% csrf_token %}
+                                                        <div class="modal-body">
+                                                            <label for="newDevice" class="form-label">Device</label>
+                                                            <input type="text" class="form-control User-Input" id="newDevice" value="{{userDevice.Device}}" name="Device" required>
+                                                            <div class="invalid-feedback">
+                                                                Invalid device.
+                                                            </div>
+                                                            <label for="newDevice_code" class="form-label">Device Code</label>
+                                                            <input type="text" class="form-control Upper-Input" id="newDevice_code" value="{{userDevice.Device_Code}}" name="Device_code" required>
+                                                            <div class="invalid-feedback">
+                                                                Invalid device code.
+                                                            </div>
+                                                            <label for="newDevice_name" class="form-label">Device Name</label>
+                                                            <input type="text" class="form-control Upper-Input" id="newDevice_name" value="{{userDevice.Device_Name}}" name="Device_name" required>
+                                                            <div class="invalid-feedback">
+                                                                Invalid device name.
+                                                            </div>
+                                                            <label for="newDevice_location" class="form-label">Device Location</label>
+                                                            <input type="text" class="form-control User-Input" id="newDevice_location" value="{{userDevice.Device_location}}" name="Device_location" required>
+                                                            <div class="invalid-feedback">
+                                                                Invalid device location.
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                        <button type="button" class="cancel-button" data-bs-dismiss="modal">Close</button>
+                                                        <button type="submit" class="custom-button">Save changes</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                </div>
+                                            </div>
+
+                                            <button class="button-light border-0 p-1" type="button" data-bs-toggle="modal" data-bs-target="#deleteDevice">                                                       
+                                                <span class="material-symbols-rounded" style="color:#929393 ;">
+                                                    delete
+                                                    </span>
+                                            </button>
+
+                                            <!-- modal for deleting certificate type -->
+                                            <div class="modal fade" id="deleteDevice" tabindex="-1" aria-labelledby="deleteDeviceLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                        <h4 class="modal-title" id="deleteDeviceLabel">Confirm Deletion</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p class="pb-2">Are you sure to delete "Perfect Attendance"?</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                                            <form method="POST" action="{% url 'delete-device' pk=userDevice.id %}">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="delete-button">Delete</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> 
+                                    </li>
+                                {% endfor %}
+                            {% else %}
+                            <li class="list-group-item">
+                                <h6 class="dark-gray fw-normal m-0">Devices haven't been established yet.</h6> 
+                            </li>
+                            {% endif %}
+                          </ul>
+                    </div>
+                </div>
+                <div class="col-md-1 d-flex gap-1 justify-content-end align-items-start">
+                    <div class="button-container">
+                        <button class="button-light" data-bs-toggle="modal" data-bs-target="#RegisterDevice">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="#929393" class="bi bi-plus-square" viewBox="0 0 16 16" stroke="#929393" stroke-width="0.6">
+                                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+                                <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                              </svg>
+                        </button>
+
+                        <!-- modal for new device -->
+                        <div class="modal fade" id="RegisterDevice" tabindex="-1" aria-labelledby="RegisterDeviceLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h4 class="modal-title fs-5" id="RegisterDeviceLabel">Register Device</h4>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form class="needs-validation" novalidate method="POST" action="{% url 'create-device' %}">
+                                    {% csrf_token %}
+                                    <div class="modal-body">
+                                        <label for="newDevice" class="form-label">Device</label>
+                                          <input type="text" class="form-control User-Input" id="newDevice" name="newDevice" required>
+                                          <div class="invalid-feedback">
+                                              Invalid device.
+                                          </div>
+                                          <label for="newDevice_code" class="form-label">Device Code</label>
+                                          <input type="text" class="form-control Upper-Input" id="newDevice_code" name="newDevice_code" required>
+                                          <div class="invalid-feedback">
+                                              Invalid device code.
+                                          </div>
+                                          <label for="newDevice_name" class="form-label">Device Name</label>
+                                          <input type="text" class="form-control Upper-Input" id="newDevice_name" name="newDevice_name" required>
+                                          <div class="invalid-feedback">
+                                              Invalid device name.
+                                          </div>
+                                          <label for="newDevice_location" class="form-label">Device Location</label>
+                                          <input type="text" class="form-control User-Input" id="newDevice_location" name="newDevice_location" required>
+                                          <div class="invalid-feedback">
+                                              Invalid device location.
+                                          </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="cancel-button" data-bs-dismiss="modal">Close</button>
+                                      <button type="submit" class="custom-button">Register</button>
+                                    </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                    </div>
+                </div>
+                
+            </div>             
+        </div>
+    </div>
+
+</article>
+
+<script>
+    (() => {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')    
+        Array.from(forms).forEach(form => {
+          form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+      
+            form.classList.add('was-validated')
+          }, false)
+        })
+      })()
+</script>
+
+{% endblock content %}

@@ -1,0 +1,305 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .header-background {
+        background-image: url("{% static 'images/ryonan.png' %}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 200px;
+    }
+</style>
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url "Dashboard:Dashboard" %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">Profile</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="card profile-card mt-4">
+            <div class="header-background"></div>
+            <div class="profile-content">
+                <img src="{{request.user.avatar.url}}" alt="Profile Picture" class="profile-image">
+                <div class="user-detail">
+                    <div>
+                        <h2 class="dark-gray fw-bold text-start">{{request.user.firstname}} {% if PersonalInfo.middlename %}{{PersonalInfo.middlename}}{% endif %} {{request.user.lastname}}</h2>
+                        <p class="fw-medium light-gray text-start">{{EmpInfo.position}}</p>
+                        <p class="fw-medium light-gray text-start">Joined {{EmpInfo.date_hired|date:'F Y'}} • {{EmpInfo.Status}}</p>
+                        <p class="fw-medium light-gray text-start mb-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+                              </svg>
+                               {{request.user.email}}</p>
+                    </div>
+                    
+                    <div class="actions">
+                        <a href="{% url 'edit-profile' %}">
+                            <button class="button-light">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="#495057" class="bi bi-pencil-square" viewBox="0 0 16 16" stroke="#495057" stroke-width=".5">
+                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                </svg>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="card profile-card mt-2">
+            <div class="profile-container-padding">
+                <h4 class="dark-gray body-regular fw-medium">Training Attended</h4>
+                <div class="inner-userprofile-padding">
+                    {% for training in trainings %}
+                        <a href="{% url 'view-response' pk=training.id %}"><div class="skills-container"><span class="dark-gray body-regular m-0">{{training.training.training_title}}</span></div></a> 
+                    {% endfor %}
+                    {% if trainingCount > 5 %}
+                        <a href="{% url 'training' %}">
+                            <div class="skills-container">
+                                <span class="dark-gray body-regular m-0">
+                                    {% if trainingCount > 5 %}
+                                        + {{ extra_training_count }}
+                                    {% else %}
+                                        {{ trainingCount }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </a>   
+                    {% endif %}
+     
+                </div>
+            </div>
+        </div>
+
+        <div class="card profile-card mt-2">
+            <div class="profile-container-padding">
+                <h4 class="dark-gray body-regular fw-medium">Certificate</h4>
+                <div class="inner-userprofile-padding">
+                    {% for certificate in certificates %}
+                        <a href="{% url 'certificate' %}"><div class="skills-container"><span class="dark-gray body-regular m-0">{{certificate.certificate.cert_name}}</span></div></a>
+                    {% endfor %}
+                    {% if certificate_count > 5 %}
+                        <a href="{% url 'certificate' %}">
+                            <div class="skills-container">
+                                <span class="dark-gray body-regular m-0">
+                                    {% if certificate_count > 5 %}
+                                        + {{ extra_certificate_count }}
+                                    {% else %}
+                                        {{ certificate_count }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </a>   
+                    {% endif %}             
+                </div>
+            </div>
+        </div>
+
+        <div class="card profile-card mt-2 mb-3">
+            <div class="profile-container-padding">
+
+                <!-- tab content -->
+                <div class="tab-dashboard">
+                    <div class="tab-button">
+                        <button class="tab active body-regular m-0 light-gray fw-medium" data-tab="personal">Personal</button>
+                        <button class="tab body-regular m-0 light-gray fw-medium" data-tab="Employment">Employment</button>
+                        <button class="tab body-regular m-0 light-gray fw-medium" data-tab="Others">Others</button>
+                    </div>
+
+                    <div class="content-wrapper">
+
+                        <!-- Personal Details -->
+                        <div class="content" id="personal">
+                            <div class="inner-userprofile-padding">
+                                <div class="row">
+                                    <div class="col-12 col-md-5">
+                                        <dl class="row">
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Nickname</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.nickname}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Gender</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.gender.name}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Date of Birth</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.birth_date|date:'F d, Y'}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Place of Birth</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.birth_place}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Contact Number</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.contact_number}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Mother's Name</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.mother}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Father's Name</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.father}}</dd>
+                                        </dl>
+                                    </div>
+        
+                                    <div class="col-12 col-md-7">
+                                        <dl class="row">
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Personal Email</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{request.user.email}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Work Email</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.work_email}}</dd>
+
+                                            <dt class="col-sm-4 body-regular light-gray">Present Address</dt>
+                                            <dd class="col-sm-8 personal-content body-regular dark-gray">{{PersonalInfo.present_street}}, {{PersonalInfo.present_baranggay}}, {{PersonalInfo.present_city}}, {{PersonalInfo.present_province}}</dd>
+                                            
+                                            <dt class="col-sm-4 body-regular light-gray">Provincial Address</dt>
+                                            <dd class="col-sm-8 personal-content body-regular dark-gray">{{PersonalInfo.provincial_street}}, {{PersonalInfo.provincial_baranggay}}, {{PersonalInfo.provincial_city}}, {{PersonalInfo.provincial_province}}</dd>    
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Contact Person</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.contact_firstname}} {{PersonalInfo.contact_middlename}} {{PersonalInfo.contact_lastname}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Contact Person Relation</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.contact_relation}}</dd>
+
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Contact Number</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.contact_no}}</dd>
+
+                                            <dt class="col-sm-4 body-regular light-gray">Contact Person Address</dt>
+                                            <dd class="col-sm-8 personal-content body-regular dark-gray">{{PersonalInfo.contact_street}}, {{PersonalInfo.contact_baranggay}}, {{PersonalInfo.contact_city}}, {{PersonalInfo.contact_province}}</dd>  
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- employment -->
+                        <div class="content" id="Employment">
+                            <div class="members-content">
+                                <div class="inner-userprofile-padding">
+                                    <div class="row">
+                                        <div class="col-12 col-md-5">
+                                            <dl class="row">
+                                                <dt class="col-sm-4 col-5 body-regular light-gray">ID Number</dt>
+                                                <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{request.user.idnumber}}</dd>
+                                                
+                                                <dt class="col-sm-4 col-5 body-regular light-gray">Position</dt>
+                                                <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{EmpInfo.position.name}}</dd>
+                                                
+                                                <dt class="col-sm-4 col-5 body-regular light-gray">Line</dt>
+                                                <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{EmpInfo.line.line}}</dd>
+                                                
+                                                <dt class="col-sm-4 col-5 body-regular light-gray">Department</dt>
+                                                <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{EmpInfo.department.description}}</dd>
+                                                
+                                                <dt class="col-sm-4 col-5 body-regular light-gray">Status</dt>
+                                                <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{EmpInfo.Status.name}}</dd>
+                                                
+                                                <dt class="col-sm-4 col-5 body-regular light-gray">Type</dt>
+                                                <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{EmpInfo.type}}</dd>
+
+                                                <dt class="col-sm-4 col-5 body-regular light-gray">Date Hired</dt>
+                                                <dd class="col-sm-8 col-7 mb-0 personal-content body-regular dark-gray">{{EmpInfo.date_hired|date:'F Y'}}</dd>
+                                            </dl>
+                                        </div>
+            
+                                        <div class="col-12 col-md-7">
+                                            <dl class="row">
+                                                <dt class="col-sm-4 col-5 body-regular light-gray">Approver</dt>
+                                                <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{EmpInfo.approver.name}}</dd>
+
+                                                <dt class="col-sm-4 col-5 body-regular light-gray">TIN Number</dt>
+                                                <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{EmpInfo.tin_number}}</dd>
+                                                
+                                                <dt class="col-sm-4 col-5 body-regular light-gray">SSS Number</dt>
+                                                <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{EmpInfo.sss_number}}</dd>    
+                                                
+                                                <dt class="col-sm-4 col-5 body-regular light-gray">HDMF Number</dt>
+                                                <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{EmpInfo.hdmf_number}}</dd>
+                                                
+                                                <dt class="col-sm-4 col-5 body-regular light-gray">PHILHEALTH</dt>
+                                                <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{EmpInfo.philhealth}}</dd>
+
+                                                <dt class="col-sm-4 col-5 body-regular light-gray">Bank Account</dt>
+                                                <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{EmpInfo.bank_account}}</dd>  
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Others -->
+                        <div class="content" id="Others">
+                            <div class="inner-userprofile-padding">
+                                <div class="row">
+                                    <div class="col-12 col-md-5">
+                                        <dl class="row">
+                                            <dt class="col-sm-4 col-5 body-regular fw-medium light-gray">Elementary</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.primary_school}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular fw-medium light-gray">Secondary</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.secondary_school}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular fw-medium light-gray">Vocational</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.vocational_school}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular fw-medium light-gray">College</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.tertiary_school}}</dd>
+                                        </dl>
+                                    </div>
+        
+                                    <div class="col-12 col-md-7">
+                                        <dl class="row">
+                                            <dt class="col-sm-4 body-regular fw-medium light-gray">Spouse Name</dt>
+                                            <dd class="col-sm-8 personal-content body-regular dark-gray">{{PersonalInfo.spouse}}</dd>
+                                            
+                                            <dt class="col-sm-4 body-regular fw-medium light-gray">Children</dt>
+                                            <dd class="col-sm-8 personal-content body-regular dark-gray">{{PersonalInfo.children}}</dd>    
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                       
+                
+            </div>
+        </div>               
+    </div>         
+</article>
+
+<script>
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.content');
+
+    function setActiveTab(tabName) {
+        tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-tab') === tabName));
+        contents.forEach(content => {
+            if (content.id === tabName) {
+                content.classList.add('active');
+                content.style.transform = 'translateX(0)';
+            } else {
+                content.classList.remove('active');
+                content.style.transform = 'translateX(100%)';
+            }
+        });
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            setActiveTab(tab.getAttribute('data-tab'));
+        });
+    });
+
+    // Set initial active tab
+    setActiveTab('personal');
+</script>
+
+{% endblock content %}

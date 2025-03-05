@@ -1,0 +1,96 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% if request.user.is_admin %}{% url "Dashboard:admin-dashboard" %}{% else %}{% url "Dashboard:Dashboard" %}{% endif %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <a href="{% url "the-wire" %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">The Wire</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">Read News</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="introduction">
+            <div class="d-flex flex-column align-items-center">
+                <h6 class="body-text light-gray text-space text-center mb-2 mt-0">WELCOME TO THE WIRE</h6>
+                <h4 class="text-center text-gradient fw-medium m-0">Stay updated on company news, industry insights, and announcements.</h4>
+            </div>                    
+          </div>
+        
+        <div class="card border-0">
+            <div class="card-body">
+                <div class="d-flex flex-column align-items-start justify-content-center mb-3">
+                    <h5 class="headline-text text-dark">{{selectedNews.news_title}}</h5> 
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="{{selectedNews.author.avatar.url}}" class="rounded-circle the-wire-avatar" alt="user avatar">
+                            <h5 class="m-0 fw-medium light-gray">{{selectedNews.author.name}}</h5>
+                        </div> 
+                            <h4 class="light-gray">|</h4>
+                            <h6 class="m-0 fw-normal light-gray body-text">{{selectedNews.published_at|timesince}} ago</h6>             
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <img src="{{selectedNews.image.url}}" class="rounded headline-view-img" alt="{{selectedNews.news_title}}">
+                </div>
+            
+                <div class="col-md-12 padding-content">
+                    <h5 class="fw-normal lh-lg" style=" text-indent: 5em;">{{selectedNews.news_content}}</h5>
+                </div>
+            </div>
+        </div>
+          
+        {% if otherNews %}
+            <div class="container-fluid mt-5 d-flex justify-content-between align-items-center">
+                <h4>Related News</h4>
+                <a href="{% url "browse-news" %}" class="text-decoration-none">
+                    <div class="d-flex align-items-center gap-2">
+                        <p class="text-danger body-text">See All</p>
+                        <span class="material-symbols-rounded text-danger">
+                            trending_flat
+                            </span>
+                    </div>
+                </a>
+            </div>
+        {% endif %}
+
+        <div class="container-fluid mt-3">
+            <div class="row row-cols-1 row-cols-md-5 g-3">
+                {% for others in otherNews %}
+                    <a href="{% url "view-selected-news" pk=others.id %}" class="text-decoration-none">
+                        <div class="col">
+                            <div class="card border-0">
+                            <img src="{{others.image.url}}" class="card-img-top rounded-2" alt="{{others.news_title}}">
+                            <div class="card-body-container d-flex flex-column justify-content-between">
+                                <div class="news-text-container">
+                                    <h3 class="body-title">{{others.news_title}}</h3>
+                                </div>
+                                <div class="news-text-container my-3">
+                                    <p class="body-text">{{others.news_content|truncatechars:150}}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="border-0">
+                                <small class="text-body-secondary">Posted {{others.published_at|timesince}} ago</small>
+                            </div>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+</article>
+
+{% endblock content %}

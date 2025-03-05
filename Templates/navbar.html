@@ -1,0 +1,263 @@
+{% load static %}
+<header>
+    <button id="hamburger" class="hamburger">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" class="bi bi-list" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
+          </svg>
+    </button>
+
+        <!-- company logo -->
+        <div class="d-flex justify-content-center gap-2 align-items-center mx-3 logo-container">
+            <div class="logo-containe">
+                <img src="{% static 'images/ryonanlogo.png' %}" class="company-logo" alt="company-logo">
+            </div>
+            <div class="logo-containe">
+                <h4 class="logo-font1">RYONAN ELECTRIC</h4>
+                <h6 class="logo-font2">Philippines Corporation</h6>
+            </div>
+        </div>
+
+        <div class="notif-container">
+            <button type="button" class="position-relative btn" data-bs-toggle="modal" data-bs-target="#notification">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" class="notification-bell">
+                    <path d="M200-200q-17 0-28.5-11.5T160-240q0-17 11.5-28.5T200-280h40v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h40q17 0 28.5 11.5T800-240q0 17-11.5 28.5T760-200H200Zm280-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/>
+                </svg>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger paragraph fs-normal badge" style="display: none;">
+                    0
+                    <span class="visually-hidden">unread messages</span>
+                </span>
+            </button>
+            
+
+            <!-- Modal for notification-->
+            <div class="modal fade" id="notification" tabindex="-1" aria-labelledby="notificationLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable modal-lg" >
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="body-title" id="notificationLabel">Notification</h2>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <ul class="list-group list-group-flush">
+                                {% if notifications %}
+                                    {% for notification in notifications %}
+                                    <li class="list-group-item notification-list">
+                                        <a href="{% url notification.page %}" onclick="markAsSeen({{ notification.id }})" class="text-decoration-none">
+                                            <div class="d-block">
+                                                <div class="d-flex gap-2 flex-grow-1 align-items-center">
+                                                    <img src="{{ notification.notifier.avatar.url }}" alt="avatar" class="border rounded-circle notification-avatar">
+                                                    <div class="w-100">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span class="body-regular">
+                                                                <span class="body-regular fw-bold m-0">{{ notification.notifier.name }}</span> 
+                                                                {{ notification.message }}
+                                                            </span>
+                                                            {% if not notification.is_seen %}
+                                                                <div class="notification-badge"></div>
+                                                            {% endif %}
+                                                        </div>
+                                                        <div class="d-flex justify-content-between">
+                                                            <p class="body-text light-gray m-0">{{ notification.notified_at|date:"F d, Y g:i A" }}</p>
+                                                            <p class="body-text light-gray m-0">{{ notification.notified_at|timesince }} ago</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% if notification.remarks %}
+                                                    <div class="notification-remarks">
+                                                        <p class="body-regular">{{ notification.remarks }}</p>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </a>
+                                    </li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li class="list-group-item">
+                                        <p class="text-center m-0">No notifications</p>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {% comment %} <button type="button" class="position-relative btn" data-bs-toggle="modal" data-bs-target="#messages">
+                <img src="{% static 'images/icons/Message.svg' %}" alt="messages">
+                    {% if unread_counts > 0 %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger paragraph fw-normal">
+                        {{unread_counts}}
+                        <span class="visually-hidden border">unread messages</span>
+                        </span>
+                    {% endif %}
+              </button> {% endcomment %}
+
+            <!-- Modal for message-->
+            <div class="modal fade" id="messages" tabindex="-1" aria-labelledby="messagesLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable" >
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 class="body-title" id="messagesLabel">Messages</h2>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body messages-container">
+                            <div class="messages_lists">
+                                <div class="d-flex justify-content-between py-3 gap-1">
+                                    <div class="InputContainer">
+                                        <input type="text" name="text" class="searchinput" id="searchMessages" placeholder="Search">
+                                        <label for="searchMessages" class="labelforsearch">
+                                            <svg viewBox="0 0 512 512" class="searchIcon"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"></path></svg>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="d-flex gap-1">
+                                        <button class="button-light active" id="messageListsBtn">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#7c92ff" class="bi bi-chat-square-dots-fill" viewBox="0 0 16 16">
+                                                <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.5a1 1 0 0 0-.8.4l-1.9 2.533a1 1 0 0 1-1.6 0L5.3 12.4a1 1 0 0 0-.8-.4H2a2 2 0 0 1-2-2zm5 4a1 1 0 1 0-2 0 1 1 0 0 0 2 0m4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+                                            </svg>
+                                        </button>
+                                        
+                                        <button class="button-light" id="newMessageBtn">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#bec0cc" class="bi bi-pencil-square" viewBox="0 0 16 16" stroke="#bec0cc" stroke-width="1">
+                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <ul class="list-group list-group-flush" id="messagesList">
+                                    {% if convos %}
+                                        {% for convo in convos %}
+                                            <li class="list-group-item messages-list">
+                                                <a href="#" class="text-decoration-none message-link" id='message_conversation' data-convo-id="{{ convo.id }}" data-messages='{{ convo.messages|safe }}'>
+                                                    <div class="d-block">
+                                                        {% if convo.user1 == request.user %}
+                                                        <div class="d-flex gap-2 flex-grow-1 align-items-center">
+                                                            <img src="{{convo.user2.avatar.url}}" alt="avatar" class="border rounded-circle messages-avatar">
+                                                            <div class="w-100">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <span class="body-regular m-0"><span class="body-regular fw-bold m-0">{{convo.user2.name}}</span></span>
+                                                                    {% if convo.latest_is_read == False %}
+                                                                        <div class="messages-badge"></div>
+                                                                    {% endif %}
+                                                                </div>
+                                                                <div class="d-flex justify-content-between">
+                                                                    <p class="body-text light-gray m-0">{{convo.latest_message|truncatechars:35}}</p>
+                                                                    <p class="body-text light-gray m-0">{{convo.updated_at|timesince}}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {% else %}
+                                                        <div class="d-flex gap-2 flex-grow-1 align-items-center">
+                                                            <img src="{{convo.user1.avatar.url}}" alt="avatar" class="border rounded-circle messages-avatar">
+                                                            <div class="w-100">
+                                                                <div class="d-flex justify-content-between align-items-center">
+                                                                    <span class="body-regular m-0"><span class="body-regular fw-bold m-0">{{convo.user1.name}}</span></span>
+                                                                    {% if convo.latest_is_read == False %}
+                                                                        <div class="messages-badge"></div>
+                                                                    {% endif %}
+                                                                </div>
+                                                                <div class="d-flex justify-content-between">
+                                                                    <p class="body-text light-gray m-0">{{convo.latest_message|truncatechars:35}}</p>
+                                                                    <p class="body-text light-gray m-0">{{convo.updated_at|timesince}}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    {% else %}
+                                        <li class="list-group-item">
+                                            <p class="text-center m-0">No messages</p>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            <div class="message_body">
+                                <div class="message-content">
+                                    <div class="d-flex gap-2 align-items-center mt-2">
+                                        <button class="back-button">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"/>
+                                              </svg>
+                                        </button>
+                                        <div class="d-block">
+                                            <div class="d-flex gap-2 flex-grow-1 align-items-center">
+                                                <img src="" alt="avatar" class="border rounded-circle messages-avatar message-content-avatar">
+                                                <div class="w-100">
+                                                    <span class="body-regular m-0"><span class="body-regular fw-bold m-0 message-content-name"></span></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex flex-column gap-1" style="height: 100%;">
+                                        <div class="chat-container">
+                                            <div class="chat sent">
+                                                <div class="chat-content">Hello, I'd like to book a spa service.</div>
+                                            </div>
+                                            <div class="chat received">
+                                                <div class="chat-content">Certainly! What time works for you?</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="chat-input sticky-bottom">
+                                            <input type="text" id="messageInput" placeholder="Type a message...">
+                                            <button>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#9fadff" class="bi bi-send-fill" viewBox="0 0 16 16">
+                                                    <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z"/>
+                                                  </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="new-message">    
+                                <div class="message-content">
+                                    <div class="d-flex gap-2 align-items-center">
+                                        <button class="back-button">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-arrow-left-short" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd" d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"/>
+                                              </svg>
+                                        </button>
+                                        <h5 class="fw-bold">New Message</h5>
+                                    </div>
+                                    <div class="d-flex flex-column gap-1 mt-2" style="height: 100%;">
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#9fadff" class="bi bi-person-lines-fill" viewBox="0 0 16 16">
+                                                    <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z"/>
+                                                  </svg>
+                                            </span>
+                                            <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                                        </div>
+
+                                        <div class="chat-container mt-3">
+                                            <div class="chat sent">
+                                                <div class="chat-content">Hello, I'd like to book a spa service.</div>
+                                            </div>
+                                            <div class="chat received">
+                                                <div class="chat-content">Certainly! What time works for you?</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="chat-input sticky-bottom">
+                                            <input type="text" id="messageInput" placeholder="Type a message...">
+                                            <button>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#9fadff" class="bi bi-send-fill" viewBox="0 0 16 16">
+                                                    <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z"/>
+                                                  </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+</header>

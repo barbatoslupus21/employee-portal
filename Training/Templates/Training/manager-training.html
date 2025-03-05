@@ -1,0 +1,111 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:Dashboard' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Assessments</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Training Approval</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="row flex-lg-row-reverse align-items-center justify-content-center">
+                <div class="col-md-6 hero-image-size">
+                    <img src="../../static/images/Training-effectiveness.jpg"
+                        class="d-block mx-lg-auto survey-img-banner" alt="Bootstrap Themes" loading="lazy">
+                </div>
+                <div class="col-md-6 px-4">
+                    <h1 class="display-6 fw-bold dark-gray mb-3">Training Effectiveness Approval</h1>
+                    <p class="dark-gray hero-description">We value your feedback on the training. Please take a moment to evaluate the subordinates who participated and help us improve future trainings.</p>
+                </div>
+            </div>
+        </div>
+        <div class="">
+            <div class="table-controls-admin">
+                <div class="d-flex gap-1">
+                    <div class="InputContainer">
+                        <input type="text" name="text" class="searchinput" id="searchInput" placeholder="Search" onkeyup="searchTrainingTable()">
+                        <label for="searchInput" class="labelforsearch">
+                        <svg viewBox="0 0 512 512" class="searchIcon"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"></path></svg>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            {% if participants %}
+            <div class="table-container">
+                <table id="requestTable">
+                    <thead>
+                        <tr>
+                            <th class="light-gray" onclick="sortTrainingType(0)">Training Title</th>
+                            <th class="light-gray" onclick="sortTrainingType(1)">Training Date</th>
+                            <th class="light-gray" onclick="sortTrainingType(2)">Participant</th>
+                            <th class="light-gray" onclick="sortTrainingType(3)">Line</th>
+                            <th class="light-gray">Status</th>
+                            <th class="light-gray">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="training-table-container">
+                        {% for participant in participants %}
+                        <tr>
+                            <td>{{participant.training.training.training_title}}</td>
+                            <td>{{participant.training.training.training_date|date:'F d, Y'}}</td>
+                            <td>{{participant.training.employee.name}}</td>
+                            <td>{{participant.department}}</td>
+                            <td>
+                                {% if participant.training.is_evaluated %}
+                                <span class="status-badge status-answer">Evaluated</span>
+                                {% else %}
+                                <span class="status-badge status-noanswer">For Evaluation</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    {% if participant.training.is_approved != "Pending" %}
+                                        <a href="{% url 'manager-approval' pk=participant.training.id %}" class="text-decoration-none">
+                                            <button type="button" class="button-light">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="#E85C0D" class="bi bi-folder2-open action-icon" viewBox="0 0 16 16" stroke="#E85C0D" stroke-width="0.5">
+                                                    <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7z"/>
+                                                </svg>
+                                            </button>
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'manager-approval' pk=participant.training.id %}" class="text-decoration-none">
+                                            <button type="button" class="custom-button">Approve</button>
+                                        </a>
+                                    {% endif %}
+                                </div>                                    
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <div class="no-filed-prf-container">
+                    <div><h5 class="light-gray">There are no training for approval at this time.</h5></div>
+                    <img src="{% static 'images/empty-box.png' %}" alt="no data found">
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    </div>
+
+</article>
+
+{% endblock content %}

@@ -1,0 +1,232 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .certificate {
+        width: 100%;
+        padding: 100px 20px;
+        text-align: center;
+        background-image: url({{certificate.certificate.cert_template.template.url}});
+        background-size: contain; /* Fallback */
+        background-size: cover; /* Standard behavior */
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:Dashboard' %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">Certificate</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-2">
+            <div class="row flex-lg-row-reverse align-items-center justify-content-center">
+                <div class="col-md-6 hero-image-size">
+                  <img src="{% static 'images/certificate-image.jpg' %}" class="d-block mx-lg-auto survey-img-banner" alt="Bootstrap Themes" loading="lazy">
+                </div>
+                <div class="col-md-6 px-4">
+                  <h1 class="display-6 fw-bold dark-gray mb-3">Certificate of Achievements</h1>
+                  <p class="light-gray hero-description">This section honors the achievements of our dedicated team members. Here, you'll find a collection of certificates and awards earned by individuals across our organization. These recognitions showcase the exceptional contributions, dedication, and achievements of our employees. We celebrate their hard work and commitment to excellence.</p>
+                </div>
+            </div>
+          <div class="">
+                {% if certificates %}
+                <div class="table-container">
+                    <table id="requestTable">
+                    <thead>
+                        <tr>
+                        <th class="light-gray" >Certificate</th>
+                        <th class="light-gray">Speaker</th>
+                        <th class="light-gray">Issued On</th>
+                        <th class="light-gray">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="user-certificate-table">
+                        {% for certificate in certificates %}
+                        <tr>
+                            <td>{{certificate.certificate.cert_name}}</td>
+                            <td>{{certificate.certificate.cert_speaker.name}}</td>
+                            <td>{{certificate.certificate.posted_at|date:'F d, Y'}}</td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <!-- view certificate -->
+                                    <button type="button" class="prf button-light" data-bs-toggle="modal" data-bs-target="#certificate{{certificate.id}}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#E85C0D" class="bi bi-award" viewBox="0 0 16 16" stroke="#E85C0D" stroke-width="0.5">
+                                            <path d="M9.669.864 8 0 6.331.864l-1.858.282-.842 1.68-1.337 1.32L2.6 6l-.306 1.854 1.337 1.32.842 1.68 1.858.282L8 12l1.669-.864 1.858-.282.842-1.68 1.337-1.32L13.4 6l.306-1.854-1.337-1.32-.842-1.68zm1.196 1.193.684 1.365 1.086 1.072L12.387 6l.248 1.506-1.086 1.072-.684 1.365-1.51.229L8 10.874l-1.355-.702-1.51-.229-.684-1.365-1.086-1.072L3.614 6l-.25-1.506 1.087-1.072.684-1.365 1.51-.229L8 1.126l1.356.702z"/>
+                                            <path d="M4 11.794V16l4-1 4 1v-4.206l-2.018.306L8 13.126 6.018 12.1z"/>
+                                        </svg>
+                                    </button>
+
+                                    <!-- modal to view certificate -->
+                                    <div class="modal modal-xl fade" id="certificate{{certificate.id}}" tabindex="-1" aria-labelledby="certificate{{certificate.id}}Label" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h5 class="modal-title light-gray fw-normal" id="certificate{{certificate.id}}Label">{{certificate.certificate.cert_name}}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="modal-body">
+                                                    <div class="certificate" id="certificate" style="background-image: url({{ certificate.certificate.cert_template.template.url }});">
+                                                        <p class="title">Certificate of {{certificate.certificate.cert_template.certificate_type}}</p>
+                                                        <div style="padding: 0px 150px;">
+                                                            <p>This certificate is presented to</p>
+                                                            <div class="recipient">{{certificate.awardeee.name}}</div>
+                                                            
+                                                            {% if certificate.cert_template.certificate_type == "Attendance" %}
+                                                                <p class="description">
+                                                                    In recognition of your outstanding achievement of {{certificate.certificate.cert_name}}, 
+                                                                    this certificate is presented to you on {{certificate.certificate.cert_date|date:'F d, Y'}}. Your dedication and reliability are a model for others.
+                                                                </p>
+                                                                
+                                                            {% else %}
+                                                                <p class="description">
+                                                                    In recognition of your participation in the <span>{{certificate.certificate.cert_name}}</span> on {{certificate.certificate.cert_date|date:'F d, Y'}}, 
+                                                                    as a symbol of our gratitude for your dedication to learning and professional growth.
+                                                                </p>
+                                                            {% endif %}
+                                                        </div>
+                                                        
+                                                        <div class="d-flex justify-content-evenly">
+                                                            <div class="signature-container text-center">
+                                                                <div class="signature mb-2">
+                                                                    <img src="{{certificate.certificate.cert_speaker.signature.url}}" alt="" class="img-fluid">
+                                                                </div>
+                                                                <div class="signer-title">
+                                                                    <p class="body-regular m-0 border-bottom border-black">{{certificate.certificate.cert_speaker}}</p>
+                                                                    <p class="body-text m-0">{{certificate.certificate.cert_speaker.position}}</p>
+                                                                </div>
+                                                            </div>
+        
+                                                            {% for approver in certificate.approvers %}
+                                                            <div class="signature-container text-center">
+                                                                <div class="signature mb-2">
+                                                                    <img src="{{approver.approver.signature.url}}" alt="" class="img-fluid">
+                                                                </div>
+                                                                <div class="signer-title">
+                                                                    <p class="body-regular m-0 border-bottom border-black">{{approver.approver.name}}</p>
+                                                                    <p class="body-text m-0">{{approver.approver.position}}</p>
+                                                                </div>
+                                                            </div>
+                                                            {% endfor %}
+        
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                            <button type="button" class="cancel-button" data-bs-dismiss="modal">Close</button>
+                                            <button id="Send{{certificate.id}}" class="custom-button">Send to Email</button>
+                                            <script>
+                                                document.addEventListener('DOMContentLoaded', function () {
+                                                    document.querySelectorAll('[id^="Send"]').forEach(button => {
+                                                        button.addEventListener('click', function () {
+                                                            const certificateId = this.id.replace('Send', '');
+                                                            // Change this to target only the modal body
+                                                            const certificateElement = document.querySelector(`#certificate${certificateId} .modal-body`); // Update selector if needed
+                                                
+                                                            html2canvas(certificateElement).then(function (canvas) {
+                                                                const imgData = canvas.toDataURL('image/png');
+                                                
+                                                                const certificateData = {
+                                                                    image: imgData,
+                                                                    recipient: '{{ request.user.email }}', 
+                                                                    recipient_name: document.querySelector(`#certificate${certificateId} .recipient`).innerText,
+                                                                    cert_type: '{{ certificate.certificate.cert_template.certificate_type }}',
+                                                                    cert_name: '{{ certificate.certificate.cert_name }}',
+                                                                    cert_date: '{{ certificate.certificate.cert_date|date:"F d, Y" }}'
+                                                                };
+                                                
+                                                                fetch('/Certificate/send-certificate/', {
+                                                                    method: 'POST',
+                                                                    headers: {
+                                                                        'Content-Type': 'application/json',
+                                                                        'X-CSRFToken': '{{ csrf_token }}'
+                                                                    },
+                                                                    body: JSON.stringify(certificateData)
+                                                                })
+                                                                .then(response => response.json())
+                                                                .then(data => alert(data.message))
+                                                                .catch(error => console.error('Error:', error));
+                                                            });
+                                                        });
+                                                    });
+                                                });                                                
+                                            </script>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+
+                                    <button type="button" class="prf button-light" data-bs-toggle="modal" data-bs-target="#Info{{certificate.id}}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#185519" class="bi bi-award" viewBox="0 0 16 16" stroke="#185519" stroke-width="0.5">
+                                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+                                        </svg>
+                                    </button>
+
+                                    <!-- Modal for details-->
+                                    <div class="modal fade" id="Info{{certificate.id}}" tabindex="-1" aria-labelledby="Info{{certificate.id}}Label" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h4 class="modal-title body-title" id="Info{{certificate.id}}Label">Details</h4>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <dl class="row">
+                                                    <dt class="col-sm-3 pb-2">
+                                                        <p class="light-gray fw-bold">Title</p>
+                                                    </dt>
+                                                    <dd class="col-sm-9 pb-2 body-regular dark-gray">
+                                                        <p class="body-regular dark-gray">{{certificate.certificate.cert_name}}</p>
+                                                    </dd>
+
+                                                    <dt class="col-sm-3 pb-2">
+                                                        <p class="light-gray fw-bold">Speaker</p>
+                                                    </dt>
+                                                    <dd class="col-sm-9 pb-2 body-regular dark-gray">
+                                                        <p class="body-regular dark-gray">{{certificate.certificate.cert_speaker}}</p>
+                                                    </dd>
+
+                                                    <dt class="col-sm-3 pb-2">
+                                                        <p class="light-gray fw-bold">Date</p>
+                                                    </dt>
+                                                    <dd class="col-sm-9 pb-2 body-regular dark-gray">
+                                                        <p class="body-regular dark-gray">{{certificate.certificate.cert_date|date:'F d, Y'}}</p>
+                                                    </dd>
+                                                </dl>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="no-filed-prf-container">       
+                    <div><h5 class="light-gray">You have no certificate posted at this time.</h5></div>
+                    <img src="{% static 'images/empty-box.png' %}" alt="no data found">
+                </div>
+                {% endif %}
+           </div>
+        </div>
+    </div>            
+</article>
+
+{% endblock content %}

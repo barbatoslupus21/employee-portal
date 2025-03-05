@@ -1,0 +1,286 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="Dashboard:admin-dashboard" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">Finances</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="pt-2">
+                <h1 class="display-6 dark-gray fw-bold mb-3">Finances</h1>
+            </div>
+            <div class="">
+                 <!-- Search and Filter Section -->
+                <div class="table-controls-admin">
+                    <div class="d-flex gap-1">
+                        <div class="InputContainer">
+                            <input type="text" name="text" class="searchinput" id="searchInput" placeholder="Search" onkeyup="searchLoan()">
+                            <label for="searchInput" class="labelforsearch">
+                            <svg viewBox="0 0 512 512" class="searchIcon"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"></path></svg>
+                            </label>
+                        </div>
+                    </div>
+                    
+
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="filter-select">
+                            <button class="btn border-0 p-0" onclick="toggleFilter()">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="32" width="32" viewBox="0 -960 960 960" fill="#343b48">
+                                    <path d="M480-120q-17 0-28.5-11.5T440-160v-160q0-17 11.5-28.5T480-360q17 0 28.5 11.5T520-320v40h280q17 0 28.5 11.5T840-240q0 17-11.5 28.5T800-200H520v40q0 17-11.5 28.5T480-120Zm-320-80q-17 0-28.5-11.5T120-240q0-17 11.5-28.5T160-280h160q17 0 28.5 11.5T360-240q0 17-11.5 28.5T320-200H160Zm160-160q-17 0-28.5-11.5T280-400v-40H160q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520h120v-40q0-17 11.5-28.5T320-600q17 0 28.5 11.5T360-560v160q0 17-11.5 28.5T320-360Zm160-80q-17 0-28.5-11.5T440-480q0-17 11.5-28.5T480-520h320q17 0 28.5 11.5T840-480q0 17-11.5 28.5T800-440H480Zm160-160q-17 0-28.5-11.5T600-640v-160q0-17 11.5-28.5T640-840q17 0 28.5 11.5T680-800v40h120q17 0 28.5 11.5T840-720q0 17-11.5 28.5T800-680H680v40q0 17-11.5 28.5T640-600Zm-480-80q-17 0-28.5-11.5T120-720q0-17 11.5-28.5T160-760h320q17 0 28.5 11.5T520-720q0 17-11.5 28.5T480-680H160Z"/>
+                                </svg>
+                            </button>
+                            <div class="filter-option">
+
+                                <div class="mb-2">
+                                    <form id="loanForm" method="POST" action="{% url 'import-loans' %}" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <input type="file" id="loanFileInput" name="file" accept=".xlsx, .xls" style="display: none;">
+                                        <button id="loanUploadBtn" type="button" class="button-light w-100">Loans</button>
+                                    </form>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <form id="savingsForm" method="POST" action="{% url 'import-savings' %}" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <input type="file" id="savingsFileInput" name="file" accept=".xlsx, .xls" style="display: none;">
+                                        <button id="savingsUploadBtn" type="button" class="button-light w-100">Savings</button>
+                                    </form>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <form id="medicineForm" method="POST" action="{% url 'import-medicine' %}" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <input type="file" id="medicineFileInput" name="file" accept=".xlsx, .xls" style="display: none;">
+                                        <button id="medicineUploadBtn" type="button" class="button-light w-100">Medicine</button>
+                                    </form>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <form id="attendanceForm" method="POST" action="{% url 'import-attendance' %}" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <input type="file" id="attendanceFileInput" name="file" accept=".xlsx, .xls" style="display: none;">
+                                        <button id="attendanceUploadBtn" type="button" class="button-light w-100">Attendance</button>
+                                    </form>
+                                </div>  
+                            </div>
+                        </div>
+
+                        <div>
+                            <button id="attendanceUploadBtn" type="button" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="#343b48">
+                                    <path d="M240-160q-33 0-56.5-23.5T160-240v-80q0-17 11.5-28.5T200-360q17 0 28.5 11.5T240-320v80h480v-80q0-17 11.5-28.5T760-360q17 0 28.5 11.5T800-320v80q0 33-23.5 56.5T720-160H240Zm200-486-75 75q-12 12-28.5 11.5T308-572q-11-12-11.5-28t11.5-28l144-144q6-6 13-8.5t15-2.5q8 0 15 2.5t13 8.5l144 144q12 12 11.5 28T652-572q-12 12-28.5 12.5T595-571l-75-75v286q0 17-11.5 28.5T480-320q-17 0-28.5-11.5T440-360v-286Z"/>
+                                </svg>
+                            </button>
+                            <!-- Modal for upload payslip-->
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form method="post" action="{% url 'upload-payslip' %}" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="modal-header">
+                                        <h4 class="modal-title" id="exampleModalLabel">Upload Payslip</h4>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-group">
+                                                <label for="payroll_date">Cut-Off Start:</label>
+                                                <input type="date" name="payroll_start" class="form-control body-text" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="payroll_date">Cut-Off End:</label>
+                                                <input type="date" name="payroll_end" class="form-control body-text" required>
+                                            </div>
+
+                                            <div class="form-group mt-3">
+                                                <label for="payslips">Payslip Files:</label>
+                                                <input type="file" name="payslips" class="form-control" multiple accept=".pdf" required>
+                                                <small class="form-text text-muted">
+                                                    Upload PDF files named with employee ID numbers (e.g., "960001.pdf").<br>
+                                                    Maximum file size: 400KB per file
+                                                </small>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                        <button type="button" class="cancel-button" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" class="custom-button">Upload Payslip</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                {% if employees %}
+                <div class="table-container pb-3">
+                    <table id="requestTable">
+                    <thead>
+                        <tr>
+                            <th class="light-gray" onclick="sortTable(0)">ID Number</th>
+                            <th class="light-gray" onclick="sortTable(1)">Name</th>
+                            <th class="light-gray" onclick="sortTable(2)">Department</th>
+                            <th class="light-gray" onclick="sortTable(3)">Line</th>
+                            <th class="light-gray">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="admin-employee-loan">
+                        {% for employee in employees %}
+                        <tr>
+                            <td>{{employee.idnumber}}</td>
+                            <td>{{employee.name}}</td>
+                            <td>{{employee.department}}</td>
+                            <td>{{employee.line}}</td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <!-- loan and allowances button -->
+                                    <a href="{% url 'loan-allowances' pk=employee.id %}" class="text-decoration-none">
+                                        <button type="button" class="button-light">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="#00712D" class="bi bi-collection" viewBox="0 0 16 16" stroke="#00712D" stroke-width="0.5">
+                                                <path d="M2.5 3.5a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1zm2-2a.5.5 0 0 1 0-1h7a.5.5 0 0 1 0 1zM0 13a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 16 13V6a1.5 1.5 0 0 0-1.5-1.5h-13A1.5 1.5 0 0 0 0 6zm1.5.5A.5.5 0 0 1 1 13V6a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-.5.5z"/>
+                                              </svg>
+                                        </button>
+                                    </a>
+
+                                    <!-- payslip button -->
+                                    <a href="{% url 'payslip' pk=employee.id %}" class="text-decoration-none">
+                                        <button type="button" class="button-light">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="#E85C0D" class="bi bi-layers" viewBox="0 0 16 16" stroke="#E85C0D" stroke-width="0.5">
+                                                <path d="M8.235 1.559a.5.5 0 0 0-.47 0l-7.5 4a.5.5 0 0 0 0 .882L3.188 8 .264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l2.922-1.559a.5.5 0 0 0 0-.882zm3.515 7.008L14.438 10 8 13.433 1.562 10 4.25 8.567l3.515 1.874a.5.5 0 0 0 .47 0zM8 9.433 1.562 6 8 2.567 14.438 6z"/>
+                                              </svg>
+                                        </button>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                {% else %}
+                    <div class="no-filed-prf-container">
+                        <div><h5 class="light-gray">No employees registered yet.</h5></div>
+                        <img src="{% static 'images/empty-box.png' %}" alt="no data found">
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+    </div>
+    
+</article>
+
+<script>
+    function sortTable(columnIndex) {
+        const table = document.getElementById("requestTable");
+        const rows = Array.from(table.rows).slice(1);
+        const sortDirection = table.getAttribute("data-sort-direction") === "asc" ? "desc" : "asc";
+    
+        const sortedRows = rows.sort((a, b) => {
+            const aText = a.cells[columnIndex].innerText.toLowerCase();
+            const bText = b.cells[columnIndex].innerText.toLowerCase();
+            
+            if (sortDirection === "asc") {
+                return aText.localeCompare(bText);
+            } else {
+                return bText.localeCompare(aText);
+            }
+        });
+    
+        sortedRows.forEach(row => table.tBodies[0].appendChild(row));
+        table.setAttribute("data-sort-direction", sortDirection);
+    
+        const headers = table.getElementsByTagName("th");
+        for (let i = 0; i < headers.length; i++) {
+            headers[i].classList.remove("asc", "desc");
+        }
+        headers[columnIndex].classList.add(sortDirection);
+    }
+
+    function searchLoan() {
+        const input = document.getElementById("searchInput");
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById("requestTable");
+        const rows = table.getElementsByTagName("tr");
+      
+        for (let i = 1; i < rows.length; i++) {
+          const cells = rows[i].getElementsByTagName("td");
+          let shouldDisplay = false;
+          for (let j = 0; j < cells.length - 1; j++) {
+            if (cells[j].innerText.toLowerCase().includes(filter)) {
+              shouldDisplay = true;
+              break;
+            }
+          }
+          rows[i].style.display = shouldDisplay ? "" : "none";
+        }
+      }
+
+    function toggleFilter() {
+        const filterOptions = document.querySelector('.filter-option');
+        filterOptions.classList.toggle('show');
+    }
+
+    // Loan form
+    document.getElementById('loanUploadBtn').addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('loanFileInput').click();
+    });
+
+    document.getElementById('loanFileInput').addEventListener('change', function() {
+        if (this.files.length > 0) {
+            document.getElementById('loanForm').submit();
+        }
+    });
+
+    // Savings form
+    document.getElementById('savingsUploadBtn').addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('savingsFileInput').click();
+    });
+
+    document.getElementById('savingsFileInput').addEventListener('change', function() {
+        if (this.files.length > 0) {
+            document.getElementById('savingsForm').submit();
+        }
+    });
+
+    // Medicine form
+    document.getElementById('medicineUploadBtn').addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('medicineFileInput').click();
+    });
+
+    document.getElementById('medicineFileInput').addEventListener('change', function() {
+        if (this.files.length > 0) {
+            document.getElementById('medicineForm').submit();
+        }
+    });
+
+    // Attendance form
+    document.getElementById('attendanceUploadBtn').addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('attendanceFileInput').click();
+    });
+
+    document.getElementById('attendanceFileInput').addEventListener('change', function() {
+        if (this.files.length > 0) {
+            document.getElementById('attendanceForm').submit();
+        }
+    });
+
+</script>
+
+{% endblock content %}

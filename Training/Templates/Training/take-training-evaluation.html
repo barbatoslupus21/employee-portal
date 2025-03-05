@@ -1,0 +1,615 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url "Dashboard:Dashboard" %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Assessments</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <a href="{% url 'training' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Training Evaluation</h5>
+            </a>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="pt-2">
+                <h1 class="display-6 fw-bold dark-gray">{{selectedTraining.training_title}} Training Evaluation</h1>
+                <p class="dark-gray mb-4">Let us know if the program was helpful.</p>
+            </div>
+            <hr>
+            <form method="POST" action="{% url 'submit-training' pk=selectedTraining.id %}">
+                {% csrf_token %}
+                <div class="pb-4">
+                    <h3 class="dark-gray mb-3">How Helpful Was the Content?</h3>
+                    <table class="table survey-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="align-left body-regular dark-gray fw-medium"></th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">1</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">2</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">3</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">4</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="align-left  body-regular dark-gray fw-medium">Related to the Job</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="job_related" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="job_related" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="job_related" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="job_related" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="job_related" value="5">
+                                    </div>
+                                </td>
+                            <tr>
+                                <th scope="row" class="align-left  body-regular dark-gray fw-medium">Explained Clearly</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="explain_clearly" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="explain_clearly" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="explain_clearly" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="explain_clearly" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="explain_clearly" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="align-left  body-regular dark-gray fw-medium">Suitable for the Topic</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="suitable_topic" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="suitable_topic" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="suitable_topic" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="suitable_topic" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="suitable_topic" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pb-4">
+                    <h3 class="dark-gray mb-3">How Well Organized Was the Program?</h3>
+                    <table class="table survey-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="align-left body-regular dark-gray fw-medium"></th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">1</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">2</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">3</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">4</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="align-left  body-regular dark-gray fw-medium">Clear Goals</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="clear_goals" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="clear_goals" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="clear_goals" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="clear_goals" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="clear_goals" value="5">
+                                    </div>
+                                </td>
+                            <tr>
+                                <th scope="row" class="align-left  body-regular dark-gray fw-medium">Met Program Goals</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="met_goals" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="met_goals" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="met_goals" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="met_goals" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="met_goals" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="align-left  body-regular dark-gray fw-medium">Easy to Follow</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="easy_follow" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="easy_follow" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="easy_follow" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="easy_follow" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="easy_follow" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th scope="row" class="align-left  body-regular dark-gray fw-medium">Easy to Understand</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="easy_understand" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="easy_understand" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="easy_understand" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="easy_understand" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="easy_understand" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pb-4">
+                    <h3 class="dark-gray mb-3">How Effective Was the Speaker?</h3>
+                    <table class="table survey-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="align-left body-regular dark-gray fw-medium"></th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">1</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">2</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">3</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">4</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="align-left  body-regular dark-gray fw-medium">Speaker Knowledge</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="speaker_knowledge" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="speaker_knowledge" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="speaker_knowledge" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="speaker_knowledge" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="speaker_knowledge" value="5">
+                                    </div>
+                                </td>
+                            <tr>
+                                <th scope="row" class="align-left  body-regular dark-gray fw-medium">Clear Communication</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="communication" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="communication" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="communication" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="communication" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="communication" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="align-left  body-regular dark-gray fw-medium">Answered Questions</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="questions" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="questions" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="questions" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="questions" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="questions" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pb-4">
+                    <h3 class="dark-gray mb-3">Training Environment and Resources</h3>
+                    <table class="table survey-table">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="align-left body-regular dark-gray fw-medium"></th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">1</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">2</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">3</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">4</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="align-left  body-regular dark-gray fw-medium">Training Organization</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="training_org" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="training_org" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="training_org" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="training_org" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="training_org" value="5">
+                                    </div>
+                                </td>
+                            <tr>
+                                <th scope="row" class="align-left  body-regular dark-gray fw-medium">Suitable Facilities</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="facilities" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="facilities" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="facilities" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="facilities" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="facilities" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="align-left  body-regular dark-gray fw-medium">Helpful Materials</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="material" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="material" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="material" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="material" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="material" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pb-4">
+                    <div class="row">  
+                        <div class="form-outline col-md-12 mb-4">  
+                            <label class="form-label body-regular dark-gray fw-medium" for="topic_interest" id="topic_interestlabel">Which topic captured your interest the most? Can you explain why?</label>            
+                            <textarea class="rounded form-control form-control-sm body-regular dark-gray" name="topic_interest" rows="4" id="topic_interest" required></textarea>                               
+                        </div>           
+                      
+                        <div class="form-outline col-md-12 mb-2">  
+                            <label class="form-label body-regular dark-gray fw-medium" for="recommendation" id="recommendationlabel">Please provide specific feedback or recommendations to enhance future training and seminars.</label>            
+                            <textarea class="rounded form-control form-control-sm body-regular dark-gray" rows="4" name="recommendation" id="recommendation" required></textarea>                              
+                        </div>
+
+                        <div class="form-outline col-md-12 mb-2">  
+                            <label class="form-label body-regular dark-gray fw-medium" for="related_topic" id="related_topiclabel">What other related subjects would you like to learn about in upcoming seminars or trainings?</label>            
+                            <textarea class="rounded form-control form-control-sm body-regular dark-gray" rows="4" name="related_topic" id="related_topic" required></textarea>                              
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pb-4">
+                    <h3 class="dark-gray mb-3">Application to Work</h3>
+                    <div class="row">  
+                        <div class="form-outline col-md-12 mb-4">  
+                            <label class="form-label body-regular dark-gray fw-medium" for="app_work1" id="app_work1_label">What new things did you learn in the training/seminar that can help you do your job better?</label>            
+                            <textarea class="rounded form-control form-control-sm body-regular dark-gray" name="app_work1" rows="4" id="app_work1" required></textarea>                               
+                        </div>           
+                      
+
+                        <div class="form-outline col-md-12 mb-4">  
+                            <label class="form-label body-regular dark-gray fw-medium" for="app_work2" id="app_work2_label">How will you apply what you learned from the training/seminar to your work?</label>            
+                            <textarea class="rounded form-control form-control-sm body-regular dark-gray" rows="4" name="app_work2" id="app_work2" required></textarea>                              
+                        </div>
+
+                        <div class="form-outline col-md-6 mb-index">
+                            <label class="form-label body-regular dark-gray fw-medium" for="targetDate" id="targetDatelabel">Target Date of Implementation</label>
+                            <input type="date" class="rounded form-control form-control-sm body-regular dark-gray inputheight" id="targetDate" name="targetDate" required>
+                          </div>
+                    
+                          <div class="form-outline col-md-6 mb-index">
+                            <label class="form-label body-regular dark-gray fw-medium" for="actualDate" id="actualDatelabel">Actual Date of Implementation</label>
+                            <input type="date" class="rounded form-control form-control-sm body-regular dark-gray inputheight" id="actualDate" name="actualDate" required>
+                          </div>
+                    </div>
+                </div>
+
+                <div class="pb-4">
+                    <h3 class="dark-gray mb-3">Application to Self</h3>
+                    <div class="row">  
+                        <div class="form-outline col-md-12 mb-4">  
+                            <label class="form-label body-regular dark-gray fw-medium" for="app_life1" id="app_life1_label">What new things did you learn that you can use outside of work?</label>            
+                            <textarea class="rounded form-control form-control-sm body-regular dark-gray" name="app_life1" rows="4" id="app_life1" required></textarea>                               
+                        </div>           
+                      
+
+                        <div class="form-outline col-md-12 mb-2">  
+                            <label class="form-label body-regular dark-gray fw-medium" for="app_life2" id="app_life2_label">How will you apply what you learned from the training/seminar to your daily life?</label>            
+                            <textarea class="rounded form-control form-control-sm body-regular dark-gray" rows="4" name="app_life2" id="app_life2" required></textarea>                              
+                        </div>
+                    </div> 
+                </div>
+
+                <hr>
+                <div class="d-flex justify-content-end mb-4 gap-2">
+                    <button type="button" class="custom-button" onclick="validateEvaluation()">
+                        Submit Evaluation
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</article>
+
+<script>
+    function validateEvaluation() {
+        const fields = [
+            { input: document.getElementById('topic_interest'), label: document.getElementById('topic_interestlabel') },
+            { input: document.getElementById('recommendation'), label: document.getElementById('recommendationlabel') },
+            { input: document.getElementById('related_topic'), label: document.getElementById('related_topiclabel') },
+            { input: document.getElementById('app_work1'), label: document.getElementById('app_work1_label') },
+            { input: document.getElementById('app_work2'), label: document.getElementById('app_work2_label') },
+            { input: document.getElementById('targetDate'), label: document.getElementById('targetDatelabel') },
+            { input: document.getElementById('actualDate'), label: document.getElementById('actualDatelabel') },
+            { input: document.getElementById('app_life1'), label: document.getElementById('app_life1_label') },
+            { input: document.getElementById('app_life2'), label: document.getElementById('app_life2_label') }
+        ];
+    
+        let allFieldsValid = true;
+        let firstInvalidField = null;
+    
+        // Validate text fields
+        fields.forEach(function(field) {
+            if (field.input.value.trim() === '') {
+                field.input.classList.add('is-invalid');
+                if (!field.label.textContent.includes('*')) {
+                    field.label.textContent += ' *'; // Add asterisk if not present
+                }
+                allFieldsValid = false;
+                if (!firstInvalidField) {
+                    firstInvalidField = field.input;
+                }
+            } else {
+                field.input.classList.remove('is-invalid');
+                field.label.textContent = field.label.textContent.replace(' *', ''); // Remove asterisk if valid
+            }
+        });
+    
+        // Scroll to the first invalid field
+        if (!allFieldsValid && firstInvalidField) {
+            firstInvalidField.scrollIntoView({ behavior: 'smooth' });
+            firstInvalidField.focus(); // Focus on the first invalid field
+            return; // Exit if fields are invalid
+        }
+    
+        const rows = document.querySelectorAll('table tbody tr');
+        let allRadioRowsValid = true;
+        let firstInvalidRow = null;
+    
+        // Validate radio button selections
+        rows.forEach((row) => {
+            const radios = row.querySelectorAll('input[type="radio"]');
+            const isChecked = Array.from(radios).some(radio => radio.checked);
+            if (!isChecked) {
+                row.querySelector('th').classList.add('error-label');
+                allRadioRowsValid = false;
+                if (!firstInvalidRow) {
+                    firstInvalidRow = row;
+                }
+            } else {
+                row.querySelector('th').classList.remove('error-label');
+            }
+        });
+    
+        // Scroll to the first invalid row if any
+        if (!allRadioRowsValid && firstInvalidRow) {
+            firstInvalidRow.scrollIntoView({ behavior: 'smooth' });
+            firstInvalidRow.querySelector('input[type="radio"]').focus();
+            return; // Exit if radio rows are invalid
+        }
+    
+        const form = document.querySelector('form');
+        form.submit(); // Submit the form directly
+    }
+    
+</script>
+{% endblock content %}

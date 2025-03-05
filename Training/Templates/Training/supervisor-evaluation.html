@@ -1,0 +1,334 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:Dashboard' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Assessments</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <a href="{% url 'supervisor-view' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Training Evaluation</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">{{selectedParticipant.employee.name}}</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="pt-2">
+                <h1 class="display-6 fw-bold dark-gray">{{selectedParticipant.evaluation_to.training.training_title}} Training</h1>
+                <p class="dark-gray mb-4">Review training results to assess your team's progress and identify training needs.</p>
+            </div>
+            <hr>
+            <div class="pb-2">
+                <h3 class="dark-gray mb-2">Training Details</h3>
+                <div class="row p-3">
+                    <div class="col-12 col-md-12">
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular body-regular light-gray fw-medium">Objectives</h5>
+                            </dt>
+                            <dd class="col-sm-10 pb-1 body-regular dark-gray">
+                                <h5 class="body-regular dark-gray">{{selectedParticipant.evaluation_to.training.training_objective}}</h5>
+                            </dd>
+
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Speaker</h5>
+                            </dt>
+                            <dd class="col-sm-10 pb-1 body-regular dark-gray">
+                                <h5 class="body-regular dark-gray">{{selectedParticipant.evaluation_to.training.training_speaker}}</h5>
+                            </dd>
+
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Date</h5>
+                            </dt>
+                            <dd class="col-sm-10 pb-1 body-regular dark-gray">
+                                <h5 class="body-regular dark-gray">{{selectedParticipant.evaluation_to.training.training_date|date:'F d, Y'}}</h5>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pb-2">
+                <h3 class="dark-gray mb-2">Participant Profile</h3>
+                <div class="row p-3">
+                    <div class="col-12 col-md-12">
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Name</h5>
+                            </dt>
+                            <dd class="col-sm-10 pb-1 body-regular dark-gray">
+                                <h5 class="body-regular dark-gray">{{selectedParticipant.employee.name}}</h5>
+                            </dd>
+
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Position</h5>
+                            </dt>
+                            <dd class="col-sm-10 pb-1 body-regular dark-gray">
+                                <h5 class="body-regular dark-gray">{{department.position.name}}</h5>
+                            </dd>
+
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Department</h5>
+                            </dt>
+                            <dd class="col-sm-10 pb-1 body-regular dark-gray">
+                                <h5 class="body-regular dark-gray">{{department.department.description}}</h5>
+                            </dd>
+
+                            <dt class="col-sm-2">
+                                <h5 class="body-regular light-gray fw-medium">Line</h5>
+                            </dt>
+                            <dd class="col-sm-10 pb-1 body-regular dark-gray">
+                                <h5 class="body-regular dark-gray">{{department.line.line}}</h5>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pb-2">
+                <h3 class="dark-gray mb-3">Participant Responses</h3>
+                <div class="row p-3">
+                    <div class="col-12 col-md-12">
+                        <dl class="row">
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Most Interesting</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-2 body-regular dark-gray">
+                                <h5 class="body-regular dark-gray">{{selectedParticipant.interest}}</h5>
+                            </dd>
+
+                            <hr>
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Feedback for Improvement</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-2 body-regular dark-gray">
+                                <h5 class="body-regular dark-gray">{{selectedParticipant.future_recommendations}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Future Learning Interests</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-2 body-regular dark-gray">
+                                <h5 class="body-regular dark-gray">{{selectedParticipant.related_subjects}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">New Learning to Enhance Job Effectiveness</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-2 body-regular dark-gray">
+                                <h5 class="body-regular dark-gray">{{selectedParticipant.app_work1}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Applying Training Insights to Improve Work
+                                    Performance</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-2 body-regular dark-gray">
+                                <h5 class="body-regular dark-gray">{{selectedParticipant.app_work2}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Planned Implementation Date</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-2 body-regular dark-gray">
+                                <h5 class="body-regular dark-gray">{{selectedParticipant.target_date}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Actual Implementation Date</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-2 body-regular dark-gray">
+                                <h5 class="body-regular dark-gray">{{selectedParticipant.actual_date}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">New Skills for Use Beyond Work</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-2 body-regular dark-gray">
+                                <h5 class="body-regular dark-gray">{{selectedParticipant.app_self1}}</h5>
+                            </dd>
+                            <hr>
+
+                            <dt class="col-sm-5 pb-2">
+                                <h5 class="body-regular light-gray fw-medium">Applying Training Insights to Daily Life</h5>
+                            </dt>
+                            <dd class="col-sm-7 pb-2 body-regular dark-gray">
+                                <h5 class="body-regular dark-gray">{{selectedParticipant.app_self2}}</h5>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <form method="POST" action="{% url 'submit-evaluation' pk=selectedParticipant.evaluation_to.id %}">
+                {% csrf_token %}
+                <div class="pb-2">
+                    <h3 class="dark-gray mb-3">Supervisor Training Assessment</h3>
+                    <div class="row">  
+                        <div class="form-outline col-md-12 mb-4">  
+                            <label class="form-label body-regular dark-gray" for="supervisor_result" id="supervisor_result_label">Result and Impact</label>            
+                            <textarea class="rounded form-control form-control-sm body-regular dark-gray" name="supervisor_result" rows="3" id="supervisor_result" required></textarea>                               
+                        </div>           
+                      
+
+                        <div class="form-outline col-md-12 mb-4">  
+                            <label class="form-label body-regular dark-gray" for="supervisor_recommendation" id="supervisor_recommendation_label">Recommendations</label>            
+                            <textarea class="rounded form-control form-control-sm body-regular dark-gray" rows="3" name="supervisor_recommendation" id="supervisor_recommendation" required></textarea>                              
+                        </div>
+                    </div> 
+                </div>
+
+                <div class="pb-2">
+                    <h2 class="dark-gray lh-1 mb-3">Overall Assessment</h2>
+                    <table class="table paragraph">
+                        <thead>
+                            <tr>
+                                <th scope="col" class="align-left body-regular dark-gray fw-medium"></th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">1</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">2</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">3</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">4</th>
+                                <th scope="col" class="align-center body-regular dark-gray fw-medium">5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="align-left body-regular dark-gray fw-medium">Assessment</th>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="assessment" value="1">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="assessment" value="2">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="assessment" value="3">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="assessment" value="4">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="assessment" value="5">
+                                    </div>
+                                </td>
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr>
+                <div class="d-flex justify-content-end mb-4 gap-2">
+                    <a href="">
+                        <button type="button" class="cancel-button">
+                            Cancel
+                        </button>
+                    </a>
+
+                    <button type="button" class="custom-button" onclick="validateSupervisorEvaluation()">
+                        Submit Evaluation
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</article>
+
+<script>
+    function validateSupervisorEvaluation() {
+        const fields = [
+            { input: document.getElementById('supervisor_result'), label: document.getElementById('supervisor_result_label') },
+            { input: document.getElementById('supervisor_recommendation'), label: document.getElementById('supervisor_recommendation_label') },
+        ];
+    
+        let allFieldsValid = true;
+        let firstInvalidField = null;
+    
+        // Validate text fields
+        fields.forEach(function(field) {
+            if (field.input.value.trim() === '') {
+                field.input.classList.add('is-invalid');
+                if (!field.label.textContent.includes('*')) {
+                    field.label.textContent += ' *';
+                }
+    
+                allFieldsValid = false;
+                if (!firstInvalidField) {
+                    firstInvalidField = field.input;
+                }
+            } else {
+                field.input.classList.remove('is-invalid');
+                field.label.textContent = field.label.textContent.replace(' *', '');
+            }
+        });
+    
+        // If any text field is invalid, scroll to the first one
+        if (!allFieldsValid && firstInvalidField) {
+            firstInvalidField.scrollIntoView({ behavior: 'smooth' });
+            firstInvalidField.focus();
+            return; // Stop form submission
+        }
+    
+        // Validate radio buttons in the table
+        const rows = document.querySelectorAll('table tbody tr');
+        let allRadioRowsValid = true;
+        let firstInvalidRow = null;
+    
+        rows.forEach((row) => {
+            const radios = row.querySelectorAll('input[type="radio"]');
+            const isChecked = Array.from(radios).some(radio => radio.checked);
+    
+            if (!isChecked) {
+                row.querySelector('th').classList.add('error-label');
+                allRadioRowsValid = false;
+                if (!firstInvalidRow) {
+                    firstInvalidRow = row;
+                }
+            } else {
+                row.querySelector('th').classList.remove('error-label');
+            }
+        });
+    
+        // If any radio button row is invalid, scroll to the first one
+        if (!allRadioRowsValid && firstInvalidRow) {
+            firstInvalidRow.scrollIntoView({ behavior: 'smooth' });
+            firstInvalidRow.querySelector('input[type="radio"]').focus();
+            return; // Stop form submission
+        }
+    
+        // If all fields and radio button rows are valid, submit the form
+        if (allFieldsValid && allRadioRowsValid) {
+            const form = document.querySelector('form');
+            form.submit(); // Use form.submit() to submit the form directly
+        }
+    }    
+</script>
+{% endblock content %}

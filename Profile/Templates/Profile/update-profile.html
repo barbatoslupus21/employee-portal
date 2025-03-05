@@ -1,0 +1,446 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url "Dashboard:Dashboard" %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <a href="{% url 'user-profile' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Profile</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Update Profile</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="pt-2">
+                <h1 class="display-6 fw-bold dark-gray mb-3">Update Profile</h1>
+            </div>
+            
+            <div class="update-profile-container mb-3">
+                <form class="row g-2 needs-validation" novalidate method="POST" action="{% url 'update-profile' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="col-md-12">
+                        <p class="body-title fw-medium dark-gray mb-2">Personal Information</p>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="user_avatar" class="form-label light-gray body-regular">Profile Picture</label>
+                                <input type="file" class="form-control custom-border-bottom" id="user_avatar" name="user_avatar" accept="image/*">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="first_name" class="form-label light-gray body-regular">First Name</label>
+                        <input type="text" class="form-control form-control custom-border-bottom" id="first_name" name="first_name" value="{{request.user.firstname}}" required>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="middle_name" class="form-label light-gray body-regular">Middle Name</label>
+                        <input type="text" class="form-control custom-border-bottom" id="middle_name" value="{{personalInfo.middlename}}" name="middle_name">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="last_name" class="form-label light-gray body-regular">Last Name</label>
+                        <input type="text" class="form-control custom-border-bottom" id="last_name" value="{{request.user.lastname}}" name="last_name" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="middle_name" class="form-label light-gray body-regular">Personal Email</label>
+                        <input type="email" class="form-control custom-border-bottom" id="middle_name" value="{{request.user.email}}" name="personal_email" required>
+                        <div class="invalid-feedback">
+                            Please input valid email address.
+                          </div>
+                    </div>
+
+                    <div class="col-md-6">
+                          <label for="last_name" class="form-label light-gray body-regular">Work Email</label>
+                          <input type="email" class="form-control custom-border-bottom" id="last_name" value="{{personalInfo.work_email}}" name="work_email" required>
+                          <div class="invalid-feedback">
+                            Please input valid email address.
+                          </div>
+                    </div>     
+
+                    <div class="col-md-4">
+                        <label for="birthplace" class="form-label light-gray body-regular">Place of Birth</label>
+                        <input type="text" class="form-control custom-border-bottom" id="birthplace" value="{{personalInfo.birth_place}}" name="birthplace" required>
+                        <div class="invalid-feedback">
+                            Please input valid address.
+                          </div>
+                    </div>
+
+                    <div class="col-md-3">
+                          <label for="birthdate" class="form-label light-gray body-regular">Date of Birth</label>
+                          <input type="date" class="form-control custom-border-bottom" id="birthdate" value="{{ personalInfo.birth_date|date:'Y-m-d' }}" name="birthdate" required>
+                          <div class="invalid-feedback">
+                            Please input valid birthdate.
+                          </div>
+                    </div>
+                    
+                    <div class="col-md-5">
+                        <label for="contact_number" class="form-label light-gray body-regular">Contact Number</label>
+                        <input type="text" class="form-control custom-border-bottom" id="contact_number" value="{{personalInfo.contact_number}}" name="contact_number" required>
+                        <div class="invalid-feedback">
+                            Please input contact number.
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="contact_number" class="form-label light-gray body-regular">Mother's Name</label>
+                        <input type="text" class="form-control custom-border-bottom" id="contact_number" value="{{personalInfo.mother}}" name="mother" required>
+                        <div class="invalid-feedback">
+                          Please input contact number.
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="birthdate" class="form-label light-gray body-regular">Father's Name</label>
+                        <input type="text" class="form-control custom-border-bottom" id="birthdate" value="{{personalInfo.father}}" name="father" required>
+                        <div class="invalid-feedback">
+                          Please input valid birthdate.
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                      <label for="username" class="form-label light-gray body-regular">Nickname</label>
+                      <div class="input-group has-validation">
+                        <span class="input-group-text" id="inputGroupPrepend">@</span>
+                        <input type="text" class="form-control custom-border-bottom" id="username" aria-describedby="inputGroupPrepend" value="{{personalInfo.nickname}}" name="username" required>
+                        <div class="invalid-feedback">
+                            Please provide your username.
+                          </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-3 selection">
+                        <label for="Gender" class="form-label light-gray body-regular">Gender</label>
+                        <select class="form-select custom-border-bottom" id="Gender" name="gender" required>
+                            {% if personalInfo.gender %}
+                                <option selected value="{{personalInfo.gender.name}}">{{personalInfo.gender}}</option>
+                            {% else %}
+                                <option selected disabled value="">Choose...</option>
+                            {% endif %}
+                            {% for gender in genders %}
+                                <option value="{{gender.name}}">{{gender.name}}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">
+                            Please choose your gender.
+                          </div>
+                    </div>
+
+                    <div class="col-md-3 selection">
+                        <label for="Line" class="form-label light-gray body-regular">Line</label>
+                        <select class="form-select custom-border-bottom" id="Line" name="line" required>
+                            {% if empInfo.line %}
+                                <option selected value="{{empInfo.line.line}}">{{empInfo.line.line}}</option>
+                            {% else %}
+                                <option selected disabled value="">Choose...</option>
+                            {% endif %}
+                            {% for line in lines %}
+                                <option value="{{line.line}}">{{line.line}}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">
+                            Please choose your line assignment.
+                          </div>
+                    </div>
+
+                    <div class="col-md-3 selection">
+                        <label for="Department" class="form-label light-gray body-regular">Department</label>
+                        <select class="form-select custom-border-bottom" id="Department" name="department" required>
+                            {% if empInfo.department %}
+                                <option selected value="{{empInfo.department.abreviation}}">{{empInfo.department.abreviation}}</option>
+                            {% else %}
+                                <option selected disabled value="">Choose...</option>
+                            {% endif %}
+                            {% for department in departments %}
+                                <option value="{{department.abreviation}}">{{department.abreviation}}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">
+                            Please choose your department.
+                          </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <p class="body-title fw-medium dark-gray mb-2">Present Address</p>
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <label for="present_street" class="form-label light-gray body-regular">Street Address</label>
+                                <input type="text" class="form-control custom-border-bottom" id="present_street" value="{{personalInfo.present_street}}" name="present_street" required>
+                                <div class="invalid-feedback">
+                                Please provide Street.
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="present_baranggay" class="form-label light-gray body-regular">Baranggay</label>
+                                <input type="text" class="form-control custom-border-bottom" id="present_baranggay" value="{{personalInfo.present_baranggay}}" name="present_baranggay" required>
+                                <div class="invalid-feedback">
+                                Please provide baranggay.
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label for="present_city" class="form-label light-gray body-regular">City / Municipality</label>
+                                <input type="text" class="form-control custom-border-bottom" id="present_city" value="{{personalInfo.present_city}}" name="present_city" required>
+                                <div class="invalid-feedback">
+                                Please provide city.
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="present_province" class="form-label light-gray body-regular">Province</label>
+                                <input type="text" class="form-control custom-border-bottom" id="present_province" value="{{personalInfo.present_province}}" name="present_province" required>
+                                <div class="invalid-feedback">
+                                Please provide province.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <p class="body-title fw-medium dark-gray mb-2">Provincial Address</p>
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <label for="provincial_street" class="form-label light-gray body-regular">Street Address</label>
+                                <input type="text" class="form-control custom-border-bottom" id="provincial_street" value="{{personalInfo.provincial_street}}" name="provincial_street" required>
+                                <div class="invalid-feedback">
+                                Please provide street.
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="provincial_baranggay" class="form-label light-gray body-regular">Baranggay</label>
+                                <input type="text" class="form-control custom-border-bottom" id="provincial_baranggay" value="{{personalInfo.provincial_baranggay}}" name="provincial_baranggay" required>
+                                <div class="invalid-feedback">
+                                Please provide baranggay.
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label for="provincial_city" class="form-label light-gray body-regular">City / Municipality</label>
+                                <input type="text" class="form-control custom-border-bottom" id="provincial_city" value="{{personalInfo.provincial_city}}" name="provincial_city" required>
+                                <div class="invalid-feedback">
+                                Please provide city.
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="provincial_province" class="form-label light-gray body-regular">Province</label>
+                                <input type="text" class="form-control custom-border-bottom" id="provincial_province" value="{{personalInfo.provincial_province}}" name="provincial_province" required>
+                                <div class="invalid-feedback">
+                                Please provide province.
+                                </div>
+                            </div>
+                        </div>
+                    </div>                  
+
+                    <div class="col-md-12">
+                        <p class="body-title fw-medium dark-gray mb-2">Approver</p>
+                        <div class="row g-2">
+                            <div class="col-md-4 selection">
+                                <label for="supervisor" class="form-label light-gray body-regular">Supervisor</label>
+                                <select class="form-select custom-border-bottom" id="supervisor" name="supervisor" required>
+                                    {% if empInfo.approver %}
+                                        <option selected value="{{empInfo.approver.id}}">{{empInfo.approver.name}}</option>
+                                    {% else %}
+                                        <option selected disabled value="">Choose...</option>
+                                    {% endif %}
+                                    {% for leader in leaders %}
+                                        <option value="{{leader.id}}">{{leader.name}}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please choose your line leader.
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <p class="body-title fw-medium dark-gray mb-2">Shuttle Service</p>
+                        <div class="row g-2">
+                            <div class="col-md-4 selection">
+                                <label for="shuttle" class="form-label light-gray body-regular">Pick Up Point</label>
+                                <select class="form-select custom-border-bottom" id="shuttle" name="shuttle" required>
+                                    {% if empInfo.shuttle %}
+                                        <option selected value="{{empInfo.shuttle.id}}">{{empInfo.shuttle}}</option>
+                                    {% else %}
+                                        <option selected disabled value="">Choose...</option>
+                                    {% endif %}
+                                    {% for pick_up in pick_ups %}
+                                        <option value="{{pick_up.id}}">{{pick_up.location_name}} - {{pick_up.pick_up}}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please choose your shuttle destination.
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <p class="body-title fw-medium dak-gray mb-2">Emergency Contact</p>
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <label for="contact_first" class="form-label light-gray body-regular">First Name</label>
+                                <input type="text" class="form-control custom-border-bottom" id="contact_first" value="{{personalInfo.contact_firstname}}" name="contact_first" required>
+                                <div class="invalid-feedback">
+                                    Please provide first name.
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="contact_middle" class="form-label light-gray body-regular">Middle Name</label>
+                                <input type="text" class="form-control custom-border-bottom" id="contact_middle" value="{{personalInfo.contact_middlename}}" name="contact_middle">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="contact_last" class="form-label light-gray body-regular">Last Name</label>
+                                <input type="text" class="form-control custom-border-bottom" id="contact_last" value="{{personalInfo.contact_lastname}}" name="contact_last" required>
+                                <div class="invalid-feedback">
+                                    Please provide last name.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="emergency_street" class="form-label light-gray body-regular">Contact Number</label>
+                        <input type="text" class="form-control custom-border-bottom" id="emergency_street" value="{{personalInfo.contact_no}}" name="emergency_number" required>
+                        <div class="invalid-feedback">
+                        Please provide a contact number.
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="emergency_street" class="form-label light-gray body-regular">Relation</label>
+                        <input type="text" class="form-control custom-border-bottom" id="emergency_street" value="{{personalInfo.contact_relation}}" name="emergency_relation" required>
+                        <div class="invalid-feedback">
+                        Please provide a relation.
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="emergency_street" class="form-label light-gray body-regular">Street Address</label>
+                        <input type="text" class="form-control custom-border-bottom" id="emergency_street" value="{{personalInfo.contact_street}}" name="emergency_street" required>
+                        <div class="invalid-feedback">
+                        Please provide a Street.
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="emergency_baranggay" class="form-label light-gray body-regular">Baranggay</label>
+                        <input type="text" class="form-control custom-border-bottom" id="emergency_baranggay" value="{{personalInfo.contact_baranggay}}" name="emergency_baranggay" required>
+                        <div class="invalid-feedback">
+                        Please provide a baranggay.
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <label for="emergency_city" class="form-label light-gray body-regular">City / Municipality</label>
+                        <input type="text" class="form-control custom-border-bottom" id="emergency_city" value="{{personalInfo.contact_city}}" name="emergency_city" required>
+                        <div class="invalid-feedback">
+                        Please provide a city.
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="emergency_province" class="form-label light-gray body-regular">Province</label>
+                        <input type="text" class="form-control custom-border-bottom" id="emergency_province" value="{{personalInfo.contact_province}}" name="emergency_province" required>
+                        <div class="invalid-feedback">
+                        Please provide a province.
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <p class="body-title fw-medium dark-gray mb-2">Educational Background</p>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label for="Primary" class="form-label light-gray body-regular">Primary</label>
+                                <input type="text" class="form-control custom-border-bottom" value="{{personalInfo.primary_school}}" id="Primary" name="Primary">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="Secondary" class="form-label light-gray body-regular">Secondary</label>
+                                <input type="text" class="form-control custom-border-bottom" value="{{personalInfo.secondary_school}}" id="Secondary" name="Secondary">
+                            </div>
+                        </div>
+                    </div>
+                       
+                    <div class="col-md-6">
+                        <label for="Vocational" class="form-label light-gray body-regular">Vocational</label>
+                        <input type="text" class="form-control custom-border-bottom" id="Vocational" value="{{personalInfo.vocational_school}}" name="Vocational">
+                        
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="Tertiary" class="form-label light-gray body-regular">Tertiary</label>
+                        <input type="text" class="form-control custom-border-bottom" id="Tertiary" value="{{personalInfo.tertiary_school}}" name="Tertiary">
+                    </div>
+
+                    <div class="col-md-12">
+                        <p class="body-title fw-medium dark-gray mb-2">Other Information</p>
+                        <div class="row g-2">
+                            <div class="col-md-9">
+                                <label for="spouse_name" class="form-label light-gray body-regular">Spouse Name</label>
+                                <input type="text" class="form-control custom-border-bottom" id="spouse_name" value="{{personalInfo.spouse}}" name="spouse_name">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="no_of_children" class="form-label light-gray body-regular">No. of Children</label>
+                                <input type="number" class="form-control custom-border-bottom" id="no_of_children" value="{{personalInfo.no_of_children}}" name="no_of_children">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label for="children_name" class="form-label light-gray body-regular">Children Name</label>
+                        <textarea type="text" class="form-control custom-border-bottom" id="children_name" name="children_name">{{personalInfo.children}}</textarea>
+                    </div>
+
+
+                    <div class="col-12 d-flex justify-content-end mt-4">
+                      <button class="custom-button" type="submit">Submit form</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</article>
+
+<script>
+    (() => {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        Array.from(forms).forEach(form => {
+          form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+      
+            form.classList.add('was-validated')
+          }, false)
+        })
+      })()
+</script>
+
+{% endblock content %}

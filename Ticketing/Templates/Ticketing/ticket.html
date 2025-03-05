@@ -1,0 +1,247 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url "Dashboard:Dashboard" %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <a href="" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">MIS Ticket</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <a href="" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium"> My Ticket</h5></a>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="row flex-lg-row-reverse align-items-center justify-content-center">
+                <div class="col-md-6 hero-image-size">
+                  <img src="{% static 'images/mis-ticketing.jpg' %}" class="d-block mx-lg-auto survey-img-banner" alt="Bootstrap Themes" loading="lazy">
+                </div>
+                <div class="col-md-6 px-4">
+                  <h1 class="display-6 fw-bold dark-gray">Online MIS Ticketing</h1>
+                  <p class="light-gray mb-3 hero-description">The Online MIS Ticketing system efficiently manages inquiries and support requests. Employees can easily submit issues, track ticket statuses, and receive updates, ensuring prompt resolution. This platform enhances communication between staff and IT, streamlining problem-solving and boosting productivity. Your feedback is vital for refining our support processes.</p>
+                    <!-- Button trigger modal for new survey -->
+                  <button type="button" class="custom-button mb-5" data-bs-toggle="modal" data-bs-target="#new_survey">+ New Ticket</button>
+
+                  <!-- Modal for New ticket-->
+                  <div class="modal fade" id="new_survey" tabindex="-1" aria-labelledby="new_surveyLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h4 class="modal-title" id="new_surveyLabel">Create New Ticket</h4>
+                            </div>
+                            <form class="needs-validation" novalidate method="POST" action="{% url 'submit-ticket' %}">
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                    <div class="row g-1">
+                                        <div class="col-md-12">
+                                            <label class="dark-gray form-label" for="quarterSelect">Select Device</label>
+                                            <select id="quarterSelect" class="form-select body-regular dark-gray" name="device" required>
+                                                <option selected disabled value="">Choose...</option>
+                                                {% for userDevice in userDevices %}
+                                                    <option value="{{userDevice.id}}">{{userDevice.Device_Code}}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Invalid device.
+                                              </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label class="dark-gray form-label" for="periodSelect">Select Category</label>
+                                            <select id="periodSelect" class="form-select body-regular dark-gray" name="category" required>
+                                                <option selected disabled value="">Choose...</option>
+                                                {% for category in categories %}
+                                                <option value="{{category.id}}">{{category.category}}</option>
+                                                {% endfor %} 
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Invalid category.
+                                              </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="dark-gray form-label" for="periodSelect">Select Priority Level</label>
+                                            <select id="periodSelect" class="form-select body-regular dark-gray" name="level" required>
+                                                <option selected disabled value="">Choose...</option>
+                                                {% for level in levels %}
+                                                    <option value="{{level.id}}">{{level.level}}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Invalid level.
+                                              </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <label for="problem_details" class="form-label">Problem Details</label>
+                                            <textarea type="text" class="form-control" id="problem_details" rows="6" name="problem_details" required></textarea>
+                                            <div class="invalid-feedback">
+                                              Invalid input.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="custom-button">Submit Ticket</button>
+                                </div>
+                            </form>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+          </div>
+            <div class="">
+                {% if tickets %}
+                <div class="table-container">
+                    <table id="requestTable">
+                    <thead>
+                        <tr>
+                            <th class="light-gray">Date</th>
+                            <th class="light-gray">Ticket No.</th>
+                            <th class="light-gray">Device</th>
+                            <th class="light-gray">Category</th>
+                            <th class="light-gray">Level</th>
+                            <th class="light-gray">Status</th>
+                            <th class="light-gray">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="survey-admin-table">
+                        {% for ticket in tickets %}
+                        <tr>
+                            <td>{{ticket.date_submitted|date:'F d, Y'}}</td>
+                            <td>{{ ticket.id|stringformat:"04d" }}</td>
+                            <td>{{ticket.device.Device_Code}}</td>
+                            <td>{{ticket.category}}</td>
+                            <td>{{ticket.level}}</td>
+                            <td>
+                                {% if ticket.status == 'On Process' %}
+                                <span class="status-badge status-pending">On Process</span>
+                                {% elif ticket.status == 'Approved'  %}
+                                <span class="status-badge status-approve">Approved</span>
+                                {% else %}
+                                <span class="status-badge status-cancel">Disapproved</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <!-- open button -->
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#Ticket{{ticket.id}}" class="button-light">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#6EACDA" class="bi bi-pencil-square action-icon" viewBox="0 0 16 16">
+                                            <path fill="#0D9276"d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                            <path stroke="#7BD3EA" stroke-width="1" fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                        </svg>
+                                    </button>
+
+                                    <div class="modal fade" id="Ticket{{ticket.id}}" tabindex="-1" aria-labelledby="Ticket{{ticket.id}}Label" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="Ticket{{ticket.id}}Label">Ticket {{ ticket.id|stringformat:"04d" }} Details</h4>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                                <div class="modal-body">
+                                                    <dl class="row">
+                                                        <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Department</h6></dt>
+                                                        <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.department}}</h6></dd>
+    
+                                                        <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Date Submitted</h6></dt>
+                                                        <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.date_submitted|date:"Y-m-d"}}</h6></dd>
+    
+                                                        <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Device</h6></dt>
+                                                        <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.device}}</h6></dd>
+                        
+                                                        <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Category</h6></dt>
+                                                        <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.category}}</h6></dd>
+    
+                                                        <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Level</h6></dt>
+                                                        <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.level}}</h6></dd>
+    
+                                                        <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Problem Details</h6></dt>
+                                                        <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.problem_details}}</h6></dd>
+    
+                                                        <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Status</h6></dt>
+                                                        <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.status}}</h6></dd>
+                                                    </dl>
+                                                    <hr>
+                                                    <h4 class="dark-gray"> MIS Technician Diagnosis</h4>
+                                                    <hr>
+                                                    <dl class="row">
+                                                        {% if ticket.technician %}
+                                                        <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Technician Name</h6></dt>
+                                                        <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.technician}}</h6></dd>
+                                                        {% endif %}
+                        
+                                                        {% if ticket.diagnosis %}
+                                                        <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Diagnosis</h6></dt>
+                                                        <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.diagnosis}}</h6></dd>
+                                                        {% endif %}
+
+                                                        {% if ticket.action_taken %}
+                                                        <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Action Taken</h6></dt>
+                                                        <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.action_taken}}</h6></dd>
+                                                        {% endif %}
+
+                                                        {% if ticket.possible_reason %}
+                                                        <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Possible Reason</h6></dt>
+                                                        <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.possible_reason}}</h6></dd>
+                                                        {% endif %}
+
+                                                        {% if ticket.recommendation %}
+                                                        <dt class="col-sm-3"><h6 class="body-regular light-gray fw-medium">Recommendation</h6></dt>
+                                                        <dd class="col-sm-9"><h6 class="body-regular dark-gray">{{ticket.recommendation}}</h6></dd>
+                                                        {% endif %}
+                                                    </dl>
+                                                </div>
+    
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>  
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="no-filed-prf-container">
+                    <div><h5 class="light-gray">You haven't created any ticket yet.</h5></div>
+                    <img src="{% static 'images/empty-box.png' %}" alt="no data found">
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+    </div>
+    
+</article>
+
+<script>
+    (() => {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        Array.from(forms).forEach(form => {
+          form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+      
+            form.classList.add('was-validated')
+          }, false)
+        })
+      })()
+</script>
+
+{% endblock content %}

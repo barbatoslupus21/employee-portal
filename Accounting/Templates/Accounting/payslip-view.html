@@ -1,0 +1,140 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% if request.user.is_admin %}{% url 'Dashboard:admin-dashboard' %}{% else %}{% url 'Dashboard:Dashboard' %}{% endif %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            {% if request.user.is_admin %}
+            <a href="{% url 'admin-finance' %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Finances</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">{{employee.name}}</h5>
+            {% else %}
+            <h5 class="m-0 light-gray fw-medium">Finance</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">Payslip</h5>
+            {% endif %}
+            
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="mt-1">
+                <div class="row flex-lg-row-reverse align-items-center justify-content-center">
+                    <div class="col-md-6 hero-image-size">
+                      <img src="{% static 'images/payslip_wallpaper.jpg' %}" class="d-block mx-lg-auto img-fluid prf-img-banner" alt="Bootstrap Themes" loading="lazy">
+                    </div>
+                    <div class="col-md-6 px-4">
+                      <h1 class="display-6 fw-bold dark-gray mb-3">Payroll Slip</h1>
+                      <p class="light-gray mb-3 hero-description">Access your payroll slip seamlessly. The portal provides a secure and user-friendly way to view and manage your payslips, ensuring confidentiality and convenience with every request.</p>
+                    </div>
+                  </div>
+              </div>
+
+            {% if payslips %}
+                <!-- Responsive Table -->
+                <div class="table-container">
+                    <table id="requestTable">
+                    <thead>
+                        <tr>
+                        <th class="light-gray" onclick="sortPRF(0)">Cut-Off Date</th>
+                        <th class="light-gray" onclick="sortPRF(1)">Uploaded at</th>
+                        <th class="light-gray" onclick="sortPRF(1)">Status</th>
+                        <th class="light-gray" onclick="sortPRF(1)">Recieved at</th>
+                        <th class="light-gray">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="prf-table-history">
+                        {% for payslip in payslips %}
+                        <tr>
+                            <td>{{payslip.payroll_start|date:"F d, Y"}} - {{payslip.payroll_end|date:"F d, Y"}}</td>
+                            <td>{{payslip.uploaded_at|date:"F d, Y"}}</td>
+                            <td>
+                                {% if payslip.status == "Pending" %}
+                                <span class="status-badge status-pending">Pending</span>
+                                {% else %}
+                                <span class="status-badge status-approve">Sent to Email</span>
+                                {% endif %}
+                            </td>
+                            <td>{{payslip.received_date|date:"F d, Y"}}</td>
+                            <td>
+                                <div class="d-flex gap-1">
+
+                                    <!-- Sent button -->
+                                    <button  class="button-light" type="button" data-bs-toggle="modal" data-bs-target="#Send{{payslip.id}}">
+                                        <span class="material-symbols-rounded" style="color:#0D92F4">
+                                            mail
+                                            </span>
+                                    </button>
+
+                                    <!-- modal for sent payslip -->
+                                    <div class="modal fade" id="Send{{payslip.id}}" tabindex="-1" aria-labelledby="Send{{payslip.id}}Label" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+
+                                                {% if request.user.email%} 
+                                                    <div class="modal-header">
+                                                        <h3 class="modal-title" id="Send{{payslip.id}}Label">Confirm Payslip Sending</h3>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p class="p-2">Send your {{payslip.payroll_start|date:"F d, Y"}} - {{payslip.payroll_end|date:"F d, Y"}} payslip to "{{ request.user.email }}"?</p>
+                                                        <div class="alert alert-primary" role="alert">
+                                                            <p class="mb-0">Ensure the email address is correct before sending your payslip to protect your information and enhance cybersecurity.</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                                        <form action="{% url 'send-payslip' pk=payslip.id %}" method="POST" class="d-inline">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="custom-button">Confirm</button>
+                                                        </form>
+                                                    </div>
+
+                                                {% else %}
+
+                                                    <div class="modal-header">
+                                                        <h3 class="modal-title" id="Send{{payslip.id}}Label">No Email Address Found</h3>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="alert alert-danger" role="alert">
+                                                            <p class="mb-0">Your email is missing. Please update it in Profile Settings > Edit.</p>
+                                                        </div>
+                                                    </div>
+
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="no-filed-prf-container">
+                    <div><h5 class="light-gray">You have not submitted any PRF requests yet.</h5></div>
+                    <img src="{% static 'images/empty-box.png' %}" alt="no data found">
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+</article>
+
+{% endblock content %}

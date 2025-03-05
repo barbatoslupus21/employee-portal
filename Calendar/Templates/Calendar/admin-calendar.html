@@ -1,0 +1,295 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:admin-dashboard' %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">Calendar</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="pt-1 d-flex justify-content-between align-items-center">
+                <h2 class="display-6 fw-bold dark-gray mb-3">Calendar</h2>
+                <div>
+                    <!-- Button trigger modal for new event -->
+                <button id="today" class="custom-button text-white mb-2" data-bs-toggle="modal" data-bs-target="#new_event">+ Add Event</button>
+
+                <!-- Modal for New Event-->
+                <div class="modal fade" id="new_event" tabindex="-1" aria-labelledby="new_eventLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h3 class="modal-title" id="new_eventLabel">Create New Event</h3>
+                        </div>
+                        <form class="needs-validation" novalidate method="POST" action="{% url "submit-event" %}"  enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="modal-body">
+                                <div class="mb-2">
+                                    <label for="event_date" class="form-label body-regular dark-gray">Event Date</label>
+                                    <input type="date" class="form-control body-regular dark-gray" id="event_date" name="event_date" required>
+                                    <div class="invalid-feedback">
+                                    Invalid event date
+                                    </div>
+                                </div>
+
+                                <div class="mb-2">
+                                    <label for="event_name" class="form-label body-regular dark-gray">Name of Event</label>
+                                    <input type="text" class="form-control body-regular dark-gray w-100" id="event_name" name="event_name" required>
+                                    <div class="invalid-feedback">
+                                    Invalid event name
+                                    </div>
+                                </div>
+
+                                <div class="mb-2">
+                                    <label for="event_description" class="form-label body-regular dark-gray">Description</label>
+                                    <textarea type="text" class="form-control body-regular dark-gray w-100" id="event_description" name="event_description" required></textarea>
+                                    <div class="invalid-feedback">
+                                    Invalid event name
+                                    </div>
+                                </div>
+
+                                <div class="mb-2 selection">
+                                    <label for="event_repeat" class="form-label body-regular dark-gray">Repetition</label>
+                                    <select class="form-select body-regular dark-gray" id="event_repeat" name="event_repeat" required>
+                                        <option selected disable value="">Choose...</option>
+                                        {% for repetition in repetitions %}
+                                            <option value="{{repetition.name}}">{{repetition.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Invalid event repetition.
+                                    </div>
+                                </div>
+
+                                <div class="mb-2 selection">
+                                    <label for="event_type" class="form-label body-regular dark-gray">Event Type</label>
+                                    <select class="form-select body-regular dark-gray" id="event_type" name="event_type" required>
+                                        <option selected disable value="">Choose...</option>
+                                        {% for type in types %}
+                                          <option value="{{type.name}}">{{type.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Invalid a valid state.
+                                    </div>
+                                </div>        
+
+                                <div class="mb-2">
+                                    <label for="event_picture" class="form-label body-regular dark-gray">Event Image</label>
+                                    <input type="file" class="form-control body-regular dark-gray" name="event_picture" id="event_picture" accept="image/*" required>
+                                    <div class="invalid-feedback">
+                                        Invalid event image
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="modal-footer">
+                                <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="custom-button">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                    </div>
+                </div> 
+                </div>
+            </div>
+
+            {% if events %}
+            <!-- table -->
+            <div class="table-container">
+                <table id="requestTable">
+                <thead>
+                    <tr>
+                    <th onclick="sortHolidays(0)">Date</th>
+                    <th onclick="sortHolidays(1)">Event</th>
+                    <th onclick="sortHolidays(2)">Event Type</th>
+                    <th onclick="sortHolidays(3)">Repeat</th>
+                    <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="admin-event-container">
+                    {% for event in events %}
+                        <tr>
+                            <td>{{event.event_date|date:"F d, Y"}}</td>
+                            <td>{{event.event_name}}</td>
+                            <td>{{event.event_type}}</td>
+                            <td>{{event.event_repetition}}</td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <!-- edit button -->
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#Event{{event.id}}" class="button-light">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#6EACDA" class="bi bi-pencil-square action-icon" viewBox="0 0 16 16">
+                                            <path fill="#0D9276"d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                            <path stroke="#7BD3EA" stroke-width="1" fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                        </svg>
+                                    </button>
+
+                                    <!-- Modal for Edit event-->
+                                    <div class="modal fade" id="Event{{event.id}}" tabindex="-1" aria-labelledby="Event{{event.id}}Label" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h3 class="modal-title" id="Event{{event.id}}Label">Edit Event</h3>
+                                                </div>
+                                                <form class="needs-validation" novalidate method="POST" action="{% url 'edit-event' pk=event.id %}" enctype="multipart/form-data">
+                                                    {% csrf_token %}
+                                                    <div class="modal-body">
+                                                        <div class="mb-2">
+                                                            <label for="event_date" class="form-label body-regular dark-gray">Event Date</label>
+                                                            <input type="date" class="form-control body-regular dark-gray" id="event_date" value="{{event.event_date|date:"Y-m-d"}}" name="event_date" required>
+                                                            <div class="invalid-feedback">
+                                                            Please specify event date
+                                                            </div>
+                                                        </div>
+                                                        <div class="mb-2">
+                                                            <label for="event_name" class="form-label body-regular dark-gray">Name of Event</label>
+                                                            <input type="text" class="form-control body-regular dark-gray w-100" id="event_name" value="{{event.event_name}}" name="event_name" required>
+
+                                                            <div class="invalid-feedback">
+                                                            Please specify event name
+                                                            </div>
+                                                        </div>
+                
+                                                        <div class="mb-2">
+                                                            <label for="event_description" class="form-label body-regular dark-gray">Description</label>
+                                                            <textarea type="text" class="form-control body-regular dark-gray w-100" id="event_description" name="event_description" required>{{event.event_description}}</textarea>
+                                                            <div class="invalid-feedback">
+                                                            Invalid event name
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="mb-2 selection">
+                                                            <label for="event_repeat" class="form-label body-regular dark-gray">Repetition</label>
+                                                            <select class="form-select body-regular dark-gray" id="event_repeat" name="event_repeat" required>
+                                                                <option selected value="{{event.event_repetition}}">{{event.event_repetition}}</option>
+                                                                {% for repetition in repetitions %}
+                                                                    <option value="{{repetition.name}}">{{repetition.name}}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                            <div class="invalid-feedback">
+                                                                Please select event repetition.
+                                                            </div>
+                                                        </div>
+            
+                                                        <div class="mb-2 selection">
+                                                            <label for="event_type" class="form-label body-regular dark-gray">Event Type</label>
+                                                            <select class="form-select body-regular dark-gray" id="event_type" name="event_type" required>
+                                                                <option selected value="{{event.event_type}}">{{event.event_type}}</option>
+                                                                {% for type in types %}
+                                                                  <option value="{{type.name}}">{{type.name}}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                            <div class="invalid-feedback">
+                                                            Please select a valid state.
+                                                            </div>
+                                                        </div>    
+
+                                                            
+                
+                                                        <div class="mb-2">
+                                                            <label for="event_image" class="form-label body-regular dark-gray">Event Image</label>
+                                                            <div class="border rounded-3 mt-2" style="height: 300px;">
+                                                                {% if event.event_image %}
+                                                                    <img src="{{event.event_image.url}}" height="100%" width="100%" alt="">
+                                                                {% else %}
+                                                                    <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
+                                                                        <img src="{% static 'images/empty-box.png' %}" width="120" height="120" alt="empty signature">
+                                                                    </div>
+                                                                {% endif %}
+                                                            </div>
+                                                            <input type="file" class="form-control body-regular dark-gray" name="event_image" id="event_image" accept="image/*">
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                                        <button type="submit" class="custom-button">Save Changes</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- delete button -->
+                                    <button  class="button-light" type="button" data-bs-toggle="modal" data-bs-target="#Delete{{event.id}}">
+                                        <svg xmlns="http://www.w3.org/2000/svg"fill="#f3473b" class="bi bi-trash3-fill action-icon" viewBox="0 0 16 16">
+                                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+                                        </svg>
+                                    </button>
+
+                                    <!-- modal for deletion of event -->
+                                    <div class="modal fade" id="Delete{{event.id}}" tabindex="-1" aria-labelledby="Delete{{event.id}}Label" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h3 class="modal-title" id="Delete{{event.id}}Label">Confirm Deletion</h3>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p class="pb-2">Are you sure you want to remove "{{event.event_name}}"?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                                <form method="POST" action="{% url 'delete-event' pk=event.id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="delete-button">Confirm</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+            </div>
+            {% else %}
+            <!-- if not data found -->
+            <div class="no-filed-prf-container">                 
+                <div><h5 class="light-gray">It looks like you haven't created any events.</h5></div>
+                <img src="{% static 'images/empty-box.png' %}" alt="no data found">
+            </div>
+            {% endif %}    
+        </div>
+    </div>
+    
+</article>
+
+<script>
+    function sortHolidays(columnIndex) {
+        const table = document.getElementById("requestTable");
+        const rows = Array.from(table.rows).slice(1);
+        const sortedRows = rows.sort((a, b) => {
+          const aText = a.cells[columnIndex].innerText.toLowerCase();
+          const bText = b.cells[columnIndex].innerText.toLowerCase();
+          return aText.localeCompare(bText);
+        });
+      
+        sortedRows.forEach(row => table.tBodies[0].appendChild(row));
+      }
+
+      (() => {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        Array.from(forms).forEach(form => {
+          form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+      
+            form.classList.add('was-validated')
+          }, false)
+        })
+      })()
+</script>
+{% endblock content %}

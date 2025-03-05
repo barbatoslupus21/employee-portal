@@ -1,0 +1,223 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url "Dashboard:Dashboard" %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <a href="" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Calendar</h5></a>
+        </div>
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="pt-3 pb-1">
+                <h1 class="display-6 fw-bold lh-1">Calendar</h1>
+            </div>
+
+            <div class="calendar-container">
+                <div class="row">
+                    <div class="col-md-8 card">
+                        <div class="calendar">
+                            <div class="calendar-header w-100">
+                                <button id="prevMonth" class="button-calendar">
+                                    <span class="material-symbols-rounded">keyboard_double_arrow_left</span>
+                                </button>
+                                <h2 id="monthYear" class="dark-gray fw-bold"></h2>
+                                <button id="nextMonth" class="button-calendar">
+                                    <span class="material-symbols-rounded">keyboard_double_arrow_right</span>
+                                </button>
+                            </div>
+
+                            <table id="calendarTable" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Mon</th>
+                                        <th>Tue</th>
+                                        <th>Wed</th>
+                                        <th>Thur</th>
+                                        <th>Fri</th>
+                                        <th>Sat</th>
+                                        <th>Sun</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="calendar"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card" id="holidayCard" style="height:100%">
+                            <div class="date-card-header">
+                                <h3 id="selectedDate" class="text-center dark-gray fw-bold" style="color: #7c92ff;"></h3>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item px-0"><h5 id="holidayList" class="light-gray fw-normal"></h5></li>
+                                  </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+    </div>
+    
+</article>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarBody = document.getElementById('calendar');
+        const monthYearElement = document.getElementById('monthYear');
+        const prevMonthBtn = document.getElementById('prevMonth');
+        const nextMonthBtn = document.getElementById('nextMonth');
+        const selectedDateElement = document.getElementById('selectedDate');
+        const holidayListElement = document.getElementById('holidayList');
+    
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+    
+        // Initialize holidays as an empty object
+        let holidays = {};
+    
+        // Function to fetch holidays from the API
+        function fetchHolidays() {
+            return axios.get('/Calendar/api/events/') // Adjust the URL based on your project structure
+                .then(response => {
+                    holidays = response.data; // Assuming the response data is in the correct format
+                    updateCalendar(); // Generate calendar after fetching holidays
+                    updateSelectedDate(formatDate(currentDate)); // Set the default selected date to today's date
+                })
+                .catch(error => {
+                    console.error('Error fetching holidays:', error);
+                });
+        }
+    
+        // Function to format date to YYYY-MM-DD
+        function formatDate(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        }
+    
+        function generateCalendar(month, year) {
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDay = firstDay.getDay() === 0 ? 7 : firstDay.getDay();
+    
+            monthYearElement.textContent = `${firstDay.toLocaleString('default', { month: 'long' })} ${year}`;
+    
+            let date = 1;
+            let calendarHTML = '';
+    
+            for (let i = 0; i < 6; i++) {
+                let row = '<tr>';
+                for (let j = 1; j <= 7; j++) {
+                    if (i === 0 && j < startingDay) {
+                        row += '<td></td>';
+                    } else if (date > daysInMonth) {
+                        break;
+                    } else {
+                        const currentDate = new Date(year, month, date);
+                        const dateString = formatDate(currentDate);
+                        const isToday = currentDate.toDateString() === new Date().toDateString();
+                        const eventData = holidays[dateString]; // Get event data
+    
+                        let cellClass = 'date-cell';
+                        let cellStyle = '';
+    
+                        if (isToday) {
+                            cellClass += ' today';
+                        }
+    
+                        if (eventData) {
+                            // If there's an event, apply the event color to the border
+                            const eventColor = eventData[0].event_color || '#FF6868'; // Default color if not provided
+                            cellStyle = `border: 3px solid ${eventColor}; color: ${eventColor};`; // Border and text color
+                        }
+    
+                        row += `<td><div class="${cellClass}" style="${cellStyle}" data-date="${dateString}">${date}</div></td>`;
+                        date++;
+                    }
+                }
+                row += '</tr>';
+                calendarHTML += row;
+                if (date > daysInMonth) {
+                    break;
+                }
+            }
+    
+            calendarBody.innerHTML = calendarHTML;
+    
+            // Add event listeners for click
+            const dateCells = document.querySelectorAll('.date-cell');
+            dateCells.forEach(cell => {
+                cell.addEventListener('click', function() {
+                    dateCells.forEach(c => {
+                        c.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    updateSelectedDate(this.dataset.date);
+                });
+            });
+        }
+    
+        function updateSelectedDate(dateString) {
+            const [year, month, day] = dateString.split('-').map(Number);
+            const selectedDate = new Date(year, month - 1, day);
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            selectedDateElement.textContent = selectedDate.toLocaleDateString('en-US', options);
+    
+            const holidayList = holidays[dateString];
+            if (holidayList && holidayList.length > 0) {
+                holidayListElement.innerHTML = holidayList.map(holiday => `
+                    <div class="d-flex gap-3 selected-holiday py-1">
+                        <img src="${holiday.event_image}" alt="holiday photo">
+                        <div class="flex-grow-1 d-flex flex-column align-items-between">
+                            <div class="d-flex flex-column justify-content-between">
+                                <p class="body-regular fw-bold dark-gray">${holiday.event_name}</p>
+                                <p class="body-text flex-grow-1 light-gray">${holiday.event_description || 'No description available.'}</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                holidayListElement.innerHTML = '<p class="px-3">No holidays on selected date</p>';
+            }
+        }
+    
+        function updateCalendar() {
+            generateCalendar(currentMonth, currentYear);
+        }
+    
+        prevMonthBtn.addEventListener('click', function() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            updateCalendar();
+        });
+    
+        nextMonthBtn.addEventListener('click', function() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            updateCalendar();
+        });
+    
+        // Fetch holidays on initial load
+        fetchHolidays();
+    });
+    
+</script>
+{% endblock content %}

@@ -1,0 +1,246 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% if request.user.is_admin %}{% url 'Dashboard:admin-dashboard' %}{% else %}{% url 'Dashboard:Dashboard' %}{% endif %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Leave Application</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Approval</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="display-6 fw-bold light-gray mb-3">Leave Approval</h1>
+
+                {% if request.user.is_admin %}
+                    <a href="{% url 'export-info' %}" class="text-decoration-none">
+                        <button class="btn border-0 p-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="32" viewBox="0 -960 960 960" width="32" fill="#343b48">
+                                <path d="M240-160q-33 0-56.5-23.5T160-240v-80q0-17 11.5-28.5T200-360q17 0 28.5 11.5T240-320v80h480v-80q0-17 11.5-28.5T760-360q17 0 28.5 11.5T800-320v80q0 33-23.5 56.5T720-160H240Zm200-486-75 75q-12 12-28.5 11.5T308-572q-11-12-11.5-28t11.5-28l144-144q6-6 13-8.5t15-2.5q8 0 15 2.5t13 8.5l144 144q12 12 11.5 28T652-572q-12 12-28.5 12.5T595-571l-75-75v286q0 17-11.5 28.5T480-320q-17 0-28.5-11.5T440-360v-286Z"/>
+                            </svg>
+                        </button>
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="row px-2">
+                {% if requests %}
+                <div class="table-container">
+                    <table id="requestTable">
+                    <thead>
+                        <tr>
+                        <th class="light-gray" onclick="sortIAD(0)">Leave Type</th>
+                        <th class="light-gray">Name</th>
+                        <th class="light-gray">Department</th>
+                        <th class="light-gray">Line</th>
+                        <th class="light-gray">Duration</th>
+                        <th class="light-gray">Reason</th>
+                        <th class="light-gray">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="admin-leave-container">
+                        {% for request in requests %}
+                        <tr>
+                            <td id="LeaveType">{{request.leave_request.leave_type}}</td>
+                            <td>{{request.leave_request.employee.name}}</td>
+                            <td>{{ request.leave_request.employee.employment_info.first.department.abreviation }}</td>
+                            <td>{{ request.leave_request.employee.employment_info.first.line.line }}</td>
+                            <td>{{request.leave_request.hrs}} Hrs</td>
+                            <td>{{request.leave_request.reason}}</td>
+                            <td>
+                                 <!-- open leave -->
+                                <button type="button" class="button-light" data-bs-toggle="offcanvas" data-bs-target="#View{{request.leave_request.id}}" aria-controls="View{{request.leave_request.id}}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="#E85C0D" class="bi bi-ui-checks action-icon" viewBox="0 0 16 16">
+                                        <path d="M7 2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zM2 1a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm0 8a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2zm.854-3.646a.5.5 0 0 1-.708 0l-1-1a.5.5 0 1 1 .708-.708l.646.647 1.646-1.647a.5.5 0 1 1 .708.708zm0 8a.5.5 0 0 1-.708 0l-1-1a.5.5 0 0 1 .708-.708l.646.647 1.646-1.647a.5.5 0 0 1 .708.708zM7 10.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5zm0-5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 8a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"/>
+                                      </svg>
+                                </button>
+
+                                <!-- offcanvas leave view -->
+                                <div class="offcanvas offcanvas-end" style="width: 700px;" data-bs-scroll="true" tabindex="-1" id="View{{request.leave_request.id}}" aria-labelledby="View{{request.leave_request.id}}Label">
+                                    <div class="offcanvas-header">
+                                        <h3 class="offcanvas-title light-gray fw-bold" id="View{{request.leave_request.id}}Label">Leave Details</h3>
+                                      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                    </div>
+                                    <div class="offcanvas-body"> 
+                                      <!-- timeline -->
+                                      <div class="timeline" id="timeline{{request.leave_request.id}}"></div>
+                                      <script>
+                                        async function fetchLeaveRoutingData(leaveRequestId) {
+                                            try {
+                                                const response = await axios.get(`/Leave/api/leaverouting/${leaveRequestId}/`);
+                                                const timelineData = response.data;
+                                                renderTimeline(timelineData, leaveRequestId);
+                                            } catch (error) {
+                                                console.error('Error fetching leave routing data:', error);
+                                            }
+                                        }
+                                    
+                                        function getStatusColor(status) {
+                                            switch(status.toLowerCase()) {
+                                                case 'approved': return '#88D66C';
+                                                case 'pending': return '#FCDE70';
+                                                case 'waiting for approval': return '#7c92ff';
+                                                case 'disapproved':
+                                                case 'cancelled': return '#FF7777';
+                                                default: return '#888888';
+                                            }
+                                        }
+                                    
+                                        function createTimelineItem(item) {
+                                            const itemElement = document.createElement('div');
+                                            itemElement.className = `timeline-item ${item.status.toLowerCase() === 'waiting for approval' ? 'current' : ''}`;
+                                            
+                                            const iconElement = document.createElement('div');
+                                            iconElement.className = 'timeline-icon';
+                                            iconElement.style.backgroundColor = getStatusColor(item.status);
+                                            
+                                            const contentElement = document.createElement('div');
+                                            contentElement.className = `timeline-content ${item.status.toLowerCase().replace(/\s/g, '')}`;
+                                            
+                                            const headerElement = document.createElement('div');
+                                            headerElement.className = 'timeline-header';
+                                            
+                                            const titleElement = document.createElement('h3');
+                                            titleElement.className = 'timeline-title';
+                                            titleElement.textContent = item.title;
+                                            
+                                            const dateElement = document.createElement('div');
+                                            dateElement.className = 'timeline-date';
+                                            
+                                            const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                                            dateElement.textContent = new Date(item.date).toLocaleDateString('en-US', dateOptions); 
+                                            
+                                            headerElement.appendChild(titleElement);
+                                            headerElement.appendChild(dateElement);
+                                            
+                                            const statusElement = document.createElement('div');
+                                            statusElement.className = 'timeline-status';
+                                            statusElement.textContent = item.status;
+                                            
+                                            contentElement.appendChild(headerElement);
+                                            contentElement.appendChild(statusElement);
+                                            
+                                            itemElement.appendChild(iconElement);
+                                            itemElement.appendChild(contentElement);
+                                            
+                                            return itemElement;
+                                        }
+                                    
+                                        function renderTimeline(data, id) {
+                                            const timelineElement = document.getElementById(`timeline${id}`);
+                                            if (!timelineElement) {
+                                                console.error("Timeline element not found");
+                                                return;
+                                            }
+                                            timelineElement.innerHTML = '';
+                                            data.forEach((item) => {
+                                                const timelineItem = createTimelineItem(item);
+                                                timelineElement.appendChild(timelineItem);
+                                            });
+                                        }
+                                    
+                                        document.addEventListener("DOMContentLoaded", () => {
+                                            const leaveRequestId = "{{ request.leave_request.id }}";
+                                            fetchLeaveRoutingData(leaveRequestId);
+                                        });
+                                    </script>
+                                      <hr>
+                                      <!-- details -->
+                                      <div class="container">
+                                        <div class="row">
+                                            <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">Control Number</h6></dt>
+                                            <dd class="col-sm-9 col-7 details-position"> <h6 class="body-regular light-gray fw-bold">{{request.leave_request.id|stringformat:"05d"}}</h6></dd>
+
+                                            <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">ID Number</h6></dt>
+                                            <dd class="col-sm-9 col-7 details-position"> <h6 class="body-regular light-gray fw-bold">{{request.leave_request.employee.idnumber}}</h6></dd>
+
+                                            <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">Name</h6></dt>
+                                            <dd class="col-sm-9 col-7 details-position"> <h6 class="body-regular light-gray fw-bold">{{request.leave_request.employee.name}}</h6></dd>
+
+                                            <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">Leave Type</h6></dt>
+                                            <dd class="col-sm-9 col-7 details-position"> <h6 class="body-regular light-gray fw-bold">{{request.leave_request.leave_type}}</h6></dd>
+            
+                                            <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">Start Date</h6></dt>
+                                            <dd class="col-sm-9 col-7 details-position"><h6 class="body-regular light-gray fw-bold">{{request.leave_request.from_date|date:'F d, Y'}}</h6></dd>
+            
+                                            <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">End Date</h6></dt>
+                                            <dd class="col-sm-9 col-7 details-position"><h6 class="body-regular light-gray fw-bold">{{request.leave_request.to_date|date:'F d, Y'}}</h6></dd>
+
+                                            <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">No of Days</h6></dt>
+                                            <dd class="col-sm-9 col-7 details-position"><h6 class="body-regular light-gray fw-bold">{{request.leave_request.days}}</h6></dd>
+            
+                                            <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">No of Hours</h6></dt>
+                                            <dd class="col-sm-9 col-7 details-position"><h6 class="body-regular light-gray fw-bold">{{request.leave_request.hrs}}</h6></dd>
+
+                                            <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">Category</h6></dt>
+                                            <dd class="col-sm-9 col-7 details-position"><h6 class="body-regular light-gray fw-bold">{{request.leave_request.category.category_name}}</h6></dd>
+
+                                            <dt class="col-sm-3 col-5"><h6 class="body-regular light-gray fw-medium">Reason</h6></dt>
+                                            <dd class="col-sm-9 col-7 details-position"><h6 class="body-regular light-gray fw-bold">{{request.leave_request.reason}}</h6></dd>
+                                        </div>
+                                      </div>
+
+                                      <div class="border rounded-3 p-3">
+                                        <form method="POST" action="{% url 'admin_leave_approval' pk=request.id %}">
+                                            {% csrf_token %}
+                                            <div class="mb-2">
+                                                <h6 class="body-text light-gray fw-medium">Remarks (Optional)</h6>
+                                                <textarea type="text" class="form-control form-control-sm body-regular light-gray w-100" name="approver_remarks"></textarea>
+                                            </div>
+                                            <div class="d-flex gap-2 align-items-center justify-content-end ">
+                                                <button type="submit" name="action" value="approve" class="custom-button">Approve</button>
+                                                <button type="submit" name="action" value="disapprove" class="delete-button">Disapprove</button>
+                                            </div>
+                                        </form>
+                                      </div>
+
+                                      <hr>
+                                        <!-- remarks -->
+                                        <div class="container">
+                                            <h6 class="offcanvas-title light-gray fw-bold">Remarks</h6>
+                                            {% for leave_routing in request.leave_request.routings.all %}
+                                                    {% if leave_routing.remarks %}
+                                                        <div class="p-2 my-2 border rounded-3">
+                                                            <p class="body-regular fw-bold light-gray">{{ leave_routing.approver.name }}</p>
+                                                            <p class="dark-gray body-text">{{ leave_routing.remarks }}</p>
+                                                        </div>
+                                                    {% endif %}
+                                            {% endfor %}
+                                          </div> 
+                                    </div>
+                                  </div>
+                            </td>
+                        </tr>  
+                        {% endfor %} 
+                    </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="no-filed-prf-container">      
+                    <div><h5 class="light-gray">Looks like you don't have a pending leave.</h5></div>
+                    <img src="{% static 'images/empty-box.png' %}" alt="no data found">
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+
+    </div>
+
+</article>
+
+{% endblock content %}

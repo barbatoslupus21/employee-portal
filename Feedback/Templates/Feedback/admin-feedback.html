@@ -1,0 +1,76 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:admin-dashboard' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Assessments</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Feedback</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-4">
+            <div class="row flex-lg-row-reverse align-items-center justify-content-center">
+                <div class="col-md-6 hero-image-size">
+                    <img src="{% static 'images/feedback.jpg' %}" class="d-block mx-lg-auto survey-img-banner"
+                        alt="Bootstrap Themes" loading="lazy">
+                </div>
+                <div class="col-md-6 px-4">
+                    <h1 class="display-6 fw-bold dark-gray mb-3">Employee's Feedback</h1>
+                    <p class="dark-gray mb-3 hero-description">Review and analyze employee feedback to identify trends, concerns, and
+                        opportunities for improvement. Use this data to inform company decisions and enhance
+                        employee satisfaction.</p>
+                    <a href="{% url 'export' %}" class="text-decoration-none"><button class="custom-button">Export Feedback</button></a>
+                </div>
+            </div>
+        </div>
+        <div class="">
+            <!-- Responsive Table -->
+            <div class="table-container">
+                <table id="requestTable">
+                    <thead>
+                        <tr>
+                            <th class="light-gray">Date</th>
+                            <th class="light-gray">Name</th>
+                            <th class="light-gray">Feedback</th>
+                        </tr>
+                    </thead>
+                    <tbody class="admin-feedback-table">
+                        {% for feedback in feedbacks %}
+                            <tr>
+                                <td>{{feedback.submitted_at|date:'m/d/Y'}}</td>
+                                <td>{{feedback.employee}}</td>
+                                <td>{{feedback.feedback}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <!-- if not data found -->
+        <!-- <div class="no-filed-prf-container">           
+                <h4 class="mb-3">There are no feedback posted at this time.</h4>
+                <img src="../../static/images/empty-box.png" alt="no data found">
+        </div> -->
+    </div>
+
+    </div>
+
+</article>
+
+{% endblock content %}

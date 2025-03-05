@@ -1,0 +1,395 @@
+{% load static %}
+<aside id="sidebar" class="sidebar">
+    <!-- avatar -->
+    <div class="d-flex justify-content-between align-items-center mt-3 py-2 px-2 rounded-3">
+        <div class="d-flex justify-content-center align-items-center gap-2">
+            <div>
+                <img src="{{request.user.avatar.url}}" width="50" height="50" alt="user avatar" class="border rounded-4">
+            </div>
+            
+            <div>
+                <h5 class="fw-medium m-0 text-start dark-gray">{{request.user.name}}</h5>
+                <h6 class="body-text text-secondary text-start m-0">@{{request.user.username}}</h6>
+            </div>
+        </div> 
+
+        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="{% static 'images/icons/3_dots.svg' %}" alt="profile settings">
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="{% url 'account-settings' %}">Account Settings</a></li>
+            {% if request.user.is_admin == False %}
+                <li><a class="dropdown-item" href="{% url 'user-profile' %}">Profile Settings</a></li>
+            {% endif %}
+            <li><a class="dropdown-item" href="{% url 'logout' %}">Log Out</a></li>
+        </ul>
+    </div> 
+
+    {% if request.user.is_admin %}
+        <!-- admin's menu -->
+        <ul class="list-unstyled ps-0 pt-3">
+            <li class="mb-2">
+                <a href="{% url 'the-wire' %}" class="text-decoration-none">
+                    <button class="btn btn-toggle w-100 d-inline-flex align-items-center rounded border-0 collapsed paragraph fw-medium"> 
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            newsmode
+                            </span>             
+                        <h5 class="m-0 fw-medium dark-gray">The Wire</h5>
+                    </button>
+                </a>
+            </li>
+
+            <li class="mb-2">
+                <a href="{% url 'admin-calendar' %}" class="text-decoration-none">
+                    <button class="btn btn-toggle w-100 d-inline-flex align-items-center rounded border-0 collapsed paragraph fw-medium"> 
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            calendar_month
+                            </span>           
+                        <h5 class="m-0 fw-medium dark-gray">Calendar</h5>
+                    </button>
+                </a>
+            </li>
+
+            <li class="mb-2">
+                <a href="{% url 'admin-timelogs' %}" class="text-decoration-none">
+                    <button class="btn btn-toggle w-100 d-inline-flex align-items-center rounded border-0 collapsed paragraph fw-medium"> 
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            work_history
+                            </span>           
+                        <h5 class="m-0 fw-medium dark-gray">Time Logs</h5>
+                    </button>   
+                </a>
+            </li>
+
+            <li class="mb-2">
+                <a href="{% url 'admin-prf' %}" class="text-decoration-none">
+                    <button class="btn btn-toggle w-100 d-inline-flex align-items-center rounded border-0 collapsed paragraph fw-medium">   
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            assignment
+                            </span>
+                        <h5 class="m-0 fw-medium dark-gray">PR-Form</h5>
+                    </button>
+                </a>
+            </li>
+            
+            <li class="mb-2">
+                <a href="{% url 'admin-certificate' %}" class="text-decoration-none">
+                    <button class="btn btn-toggle w-100 d-inline-flex align-items-center rounded border-0 collapsed paragraph fw-medium">
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            workspace_premium
+                            </span>
+                        <h5 class="m-0 fw-medium dark-gray">Certificate</h5>
+                    </button>
+                </a>
+            </li>
+
+            <li class="mb-2">
+                <a href="{% url 'announcements' %}" class="text-decoration-none">
+                    <button class="btn btn-toggle w-100 d-inline-flex align-items-center rounded border-0 collapsed paragraph fw-medium">
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            breaking_news
+                            </span>
+                        <h5 class="m-0 fw-medium dark-gray">Announcements</h5>
+                    </button>
+                </a>
+            </li>
+
+            <li class="mb-2">
+                <button class="btn w-100 btn-toggle d-flex justify-content-between align-items-center rounded border-0 fw-medium" data-bs-toggle="collapse" data-bs-target="#admin-supervisor" aria-expanded="true" onclick="toggleArrow(this)">
+                    <span class="d-flex align-items-center">
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            analytics
+                            </span>
+                        <h5 class="m-0 fw-medium dark-gray">Assessments</h5>
+                    </span>                                
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="bi bi-caret-down arrow" viewBox="0 0 24 24" fill="none" stroke="#495057" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="collapse hide mt-2" id="admin-supervisor">
+                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small paragraph px-5 ms-1">
+                        <li class="mb-2"><a href="{% url 'admin-survey' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Survey</h5></a></li>
+                        <li class="mb-2"><a href="{% url 'admin-feedback' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Feedback</h5></a></li>
+                        <li class="mb-2"><a href="{% url 'admin-training' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Training Evaluation</h5></a></li>
+                        <li class="mb-2"><a href="{% url 'admin-performance' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Performance Evaluation</h5></a></li>
+                    </ul>
+                </div>
+            </li>
+            
+            <li class="mb-2">
+                <button class="btn w-100 btn-toggle d-flex justify-content-between align-items-center rounded border-0 fw-medium" data-bs-toggle="collapse" data-bs-target="#emp-admin" aria-expanded="true" onclick="toggleArrow(this)">
+                    <span class="d-flex align-items-center">
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            group
+                            </span>                  
+                        <h5 class="m-0 fw-medium dark-gray">Employees</h5>
+                    </span>                                
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="bi bi-caret-down arrow" viewBox="0 0 24 24" fill="none" stroke="#495057" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="collapse hide mt-2" id="emp-admin">
+                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small paragraph px-5 ms-1">
+                        <li class="mb-2"><a href="{% url 'accounts' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Accounts</h5></a></li>
+                        <li class="mb-2"><a href="{% url 'id-request' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">ID Replacement</h5></a></li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="mb-2">
+                <a href="{% url 'admin-finance' %}" class="text-decoration-none">
+                    <button class="btn btn-toggle w-100 d-inline-flex align-items-center rounded border-0 collapsed paragraph fw-medium">
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            account_balance
+                            </span>
+                        <h5 class="m-0 fw-medium dark-gray">Finances</h5>
+                    </button>
+                </a>
+            </li>
+
+            <li class="mb-2">
+                <button class="btn w-100 btn-toggle d-flex justify-content-between align-items-center rounded border-0 fw-medium" data-bs-toggle="collapse" data-bs-target="#leave-admin" aria-expanded="true" onclick="toggleArrow(this)">
+                    <span class="d-flex align-items-center">
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            clarify
+                            </span>                 
+                        <h5 class="m-0 fw-medium dark-gray">Leave Application</h5>
+                    </span>                                
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="bi bi-caret-down arrow" viewBox="0 0 24 24" fill="none" stroke="#495057" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="collapse hide mt-2" id="leave-admin">
+                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small paragraph px-5 ms-1">
+                        <li class="mb-2"><a href="{% url 'leave-balances' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">SLVL Balances</h5></a></li>
+                        <li class="mb-2"><a href="{% url 'admin-approval' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">For Approval</h5></a></li>
+                        <li class="mb-2"><a href="{% url 'admin-leave' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Request History</h5></a></li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="mb-2">
+                <button class="btn w-100 btn-toggle d-flex justify-content-between align-items-center rounded border-0 fw-medium" data-bs-toggle="collapse" data-bs-target="#ticket-collapse" aria-expanded="true" onclick="toggleArrow(this)">
+                    <span class="d-flex align-items-center">
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            confirmation_number
+                            </span>
+                        <h5 class="m-0 fw-medium dark-gray">MIS Ticket</h5>
+                    </span>                                
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="bi bi-caret-down arrow" viewBox="0 0 24 24" fill="none" stroke="#495057" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="collapse hide mt-2" id="ticket-collapse">
+                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small paragraph px-5 ms-1">
+                        <li class="mb-2"><a href="{% url 'admin-ticket' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Tickets</h5></a></li>
+                        <li class="mb-2"><a href="{% url 'admin-devices' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Registered Devices</h5></a></li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="mb-2">
+                <a href="{% url 'settings' %}" class="text-decoration-none">
+                    <button class="btn btn-toggle w-100 d-inline-flex align-items-center rounded border-0 collapsed paragraph fw-medium">
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            settings
+                            </span>
+                        <h5 class="m-0 fw-medium dark-gray">Settings</h5>
+                    </button>
+                </a>
+            </li>
+        
+        </ul>
+    {% else %}
+        <!-- menu buttons -->
+        <ul class="list-unstyled ps-0 pt-4">
+            <li class="mb-2">
+                <a href="{% url 'Dashboard:Dashboard' %}" class="text-decoration-none">
+                    <button class="btn btn-toggle w-100 d-inline-flex align-items-center rounded border-0 collapsed paragraph fw-medium"> 
+                        <span class="material-symbols-outlined mx-2 dark-gray">
+                            space_dashboard
+                            </span>                     
+                        <h5 class="m-0 fw-medium dark-gray">Dashboard</h5>
+                    </button>
+                </a>
+            </li>
+
+            <li class="mb-2">
+                <a href="{% url 'the-wire' %}" class="text-decoration-none">
+                    <button class="btn btn-toggle w-100 d-inline-flex align-items-center rounded border-0 collapsed paragraph fw-medium"> 
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            newsmode
+                            </span>             
+                        <h5 class="m-0 fw-medium dark-gray">The Wire</h5>
+                    </button>
+                </a>
+            </li>
+            
+            
+            <li class="mb-2">
+                <a href="{% url 'calendar' %}" class="text-decoration-none">
+                    <button class="btn btn-toggle w-100 d-inline-flex align-items-center rounded border-0 collapsed paragraph fw-medium"> 
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            calendar_month
+                            </span>           
+                        <h5 class="m-0 fw-medium dark-gray">Calendar</h5>
+                    </button>
+                </a>
+            </li>
+
+            <li class="mb-2">
+                <a href="{% url 'timelogs' %}" class="text-decoration-none">
+                    <button class="btn btn-toggle w-100 d-inline-flex align-items-center rounded border-0 collapsed paragraph fw-medium">      
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            work_history
+                            </span>   
+                        <h5 class="m-0 fw-medium dark-gray">Time Logs</h5>
+                    </button>
+                </a>
+            </li>
+
+            <li class="mb-2">
+                <a href="{% url 'user-prf' %}" class="text-decoration-none">
+                    <button class="btn btn-toggle w-100 d-inline-flex align-items-center rounded border-0 collapsed paragraph fw-medium">   
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            assignment
+                            </span>
+                        <h5 class="m-0 fw-medium dark-gray">PR-Form</h5>
+                    </button>
+                </a>
+            </li>
+
+            <li class="mb-2">
+                <a href="{% url 'certificate' %}" class="text-decoration-none">
+                    <button class="btn btn-toggle w-100 d-inline-flex align-items-center rounded border-0 collapsed paragraph fw-medium">
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            workspace_premium
+                            </span>
+                        <h5 class="m-0 fw-medium dark-gray">Certificate</h5>
+                    </button>
+                </a>
+            </li>
+
+            <li class="mb-2">
+                <button class="btn w-100 btn-toggle d-flex justify-content-between align-items-center rounded border-0 fw-medium" data-bs-toggle="collapse" data-bs-target="#assessments-collapse" aria-expanded="true" onclick="toggleArrow(this)">
+                    <span class="d-flex align-items-center">
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            analytics
+                            </span>
+                        <h5 class="m-0 fw-medium dark-gray">Assessments</h5>
+                    </span>                                
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="bi bi-caret-down arrow" viewBox="0 0 24 24" fill="none" stroke="#495057" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="collapse hide mt-2" id="assessments-collapse">
+                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small paragraph px-5 ms-1">
+                        <li class="mb-2"><a href="{% url 'survey' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Survey</h5></a></li>
+                        <li class="mb-2"><a href="{% url 'feedback' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Feedback</h5></a></li>
+                        {% if request.user.employment_info.first.Status.name != "OJT" %}
+                        <li class="mb-2"><a href="{% url 'training' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Training Evaluation</h5></a></li>
+                        <li class="mb-2"><a href="{% url 'performance-evaluation' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Performance Evaluation</h5></a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </li>
+
+            <li class="mb-2">
+                <button class="btn w-100 btn-toggle d-flex justify-content-between align-items-center rounded border-0 fw-medium" data-bs-toggle="collapse" data-bs-target="#finance-collapse" aria-expanded="true" onclick="toggleArrow(this)">
+                    <span class="d-flex align-items-center">
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            account_balance
+                            </span>
+                        <h5 class="m-0 fw-medium dark-gray">Finances</h5>
+                    </span>                                
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="bi bi-caret-down arrow" viewBox="0 0 24 24" fill="none" stroke="#495057" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="collapse hide mt-2" id="finance-collapse">
+                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small paragraph px-5 ms-1">
+                        {% if request.user.employment_info.first.Status.name != "OJT" %}
+                        <li class="mb-2"><a href="{% url 'payslip' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Paylips</h5></a></li>
+                        <li class="mb-2"><a href="{% url 'loan-allowances' pk=request.user.id %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Loan and Allowances</h5></a></li>
+                        {% else %}
+                        <li class="mb-2"><a href="" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Paylips</h5></a></li>
+                        {% endif %}
+
+                    </ul>
+                </div>
+            </li>
+
+            <li class="mb-2">
+                <a href="{% url 'leave' %}" class="text-decoration-none">
+                    <button class="btn btn-toggle w-100 d-inline-flex align-items-center rounded border-0 collapsed paragraph fw-medium">   
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            clarify
+                            </span>
+                        <h5 class="m-0 fw-medium dark-gray">Leave Request</h5>
+                    </button>
+                </a>
+            </li>
+
+            {% if request.user.employment_info.first.Status.name != "OJT" %}
+            <li class="mb-2">
+                <button class="btn w-100 btn-toggle d-flex justify-content-between align-items-center rounded border-0 fw-medium" data-bs-toggle="collapse" data-bs-target="#ticket-collapse" aria-expanded="true" onclick="toggleArrow(this)">
+                    <span class="d-flex align-items-center">
+                        <span class="material-symbols-rounded dark-gray mx-2">
+                            confirmation_number
+                            </span>
+                        <h5 class="m-0 fw-medium dark-gray">MIS Ticket</h5>
+                    </span>                                
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="bi bi-caret-down arrow" viewBox="0 0 24 24" fill="none" stroke="#495057" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="collapse hide mt-2" id="ticket-collapse">
+                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small paragraph px-5 ms-1">
+                        <li class="mb-2"><a href="{% url "ticket" %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">My Tickets</h5></a></li>
+                        <li class="mb-2"><a href="{% url 'user-devices' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">My Devices</h5></a></li>
+                    </ul>
+                </div>
+            </li>
+            {% endif %}
+        
+        </ul>
+    {% endif %}
+
+    {% if request.user.is_approver %}
+    <!-- supervisor's approval -->
+    <ul class="list-unstyled ps-0 pt-3">
+        <h6 class="m-0 fw-medium light-gray mx-4">Approval</h6>
+        <hr class="mx-3 mt-2 mb-3">
+        <li class="mb-2">
+            <button class="btn w-100 btn-toggle d-flex justify-content-between align-items-center rounded border-0 fw-medium" data-bs-toggle="collapse" data-bs-target="#leave-supervisor" aria-expanded="true" onclick="toggleArrow(this)">
+                <span class="d-flex align-items-center">
+                    <span class="material-symbols-rounded dark-gray mx-2">
+                        clarify
+                        </span>                    
+                     <h5 class="m-0 fw-medium dark-gray">Leave Application</h5>
+                </span>                                
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="bi bi-caret-down arrow" viewBox="0 0 24 24" fill="none" stroke="#495057" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="collapse hide mt-2" id="leave-supervisor">
+                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small paragraph px-5 ms-1">
+                    <li class="mb-2"><a href="{% url 'admin-approval' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">For Approval</h5></a></li>
+                    <li class="mb-2"><a href="{% url 'leave-history' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Requests History</h5></a></li>
+                </ul>
+            </div>
+        </li>
+
+        <li class="mb-2">
+            <button class="btn w-100 btn-toggle d-flex justify-content-between align-items-center rounded border-0 fw-medium" data-bs-toggle="collapse" data-bs-target="#assessments-supervisor" aria-expanded="true" onclick="toggleArrow(this)">
+                <span class="d-flex align-items-center">
+                    <span class="material-symbols-rounded dark-gray mx-2">
+                        analytics
+                        </span>
+                      <h5 class="m-0 fw-medium dark-gray">Assessments</h5>
+                </span>                                
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="bi bi-caret-down arrow" viewBox="0 0 24 24" fill="none" stroke="#495057" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="collapse hide mt-2" id="assessments-supervisor">
+                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small paragraph px-5 ms-1">
+                    <li class="mb-2"><a href="{% url 'supervisor-view' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Training Evaluation</h5></a></li>
+                    <li class="mb-2"><a href="{% url 'supervisor-evaluation' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Performance Evaluation</h5></a></li>
+                    
+                    {% if request.user.employment_info.first.position.approver_level == 2 %}
+                    <hr>
+                    <li class="mb-2"><a href="{% url 'manager-training-view' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Training Approval</h5></a></li>
+                    <li class="mb-2"><a href="{% url 'manager-view' %}" class="d-inline-flex text-decoration-none"><h5 class="m-0 fw-medium dark-gray">Performance Approval</h5></a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </li>
+      
+    </ul>
+    {% endif %}
+    
+</aside>

@@ -1,0 +1,291 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:admin-dashboard' %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+                <h5 class="m-0 light-gray fw-medium">Assessments</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">Performance Evaluation</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="row flex-lg-row-reverse align-items-center justify-content-center">
+                <div class="col-md-6 hero-image-size">
+                  <img src="{% static 'images/survey-img.jpg' %}" class="d-block mx-lg-auto survey-img-banner" alt="Bootstrap Themes" loading="lazy">
+                </div>
+                <div class="col-md-6 px-4">
+                  <h1 class="display-6 fw-bold dark-gray">Performance Evaluation</h1>
+                  <p class="light-gray mb-3 hero-description">This platform is intended to streamline the process of gathering employee performance feedback through our online survey. Your involvement is crucial for us to understand employee experiences and pinpoint areas for enhancement. By working together, we can create a more constructive and supportive workplace atmosphere.</p>
+                    <!-- Button trigger modal for new evaluation -->
+                     <div class='d-flex gap-1'>
+                        <button type="button" class="custom-button mb-5" data-bs-toggle="modal" data-bs-target="#new_survey">+ New Evaluation</button>
+
+                    <!-- Modal for New evaluation-->
+                    <div class="modal fade" id="new_survey" tabindex="-1" aria-labelledby="new_surveyLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h4 class="modal-title" id="new_surveyLabel">Create New Evaluation</h4>
+                                </div>
+                                <form class="needs-validation" novalidate method="POST" action="{% url 'create-performance' %}">
+                                    {% csrf_token %}
+                                    <div class="modal-body">
+                                        <div class="row g-1">
+                                            <div class="col-md-12">
+                                                <label class="dark-gray form-label" for="quarterSelect">Select Quarter</label>
+                                                <select id="quarterSelect" class="form-select body-regular dark-gray" onchange="updatePeriod()" name="quarter" required>
+                                                    <option selected disabled value="">Choose...</option>
+                                                    <option>First Quarter</option>
+                                                    <option>Second Quarter</option>
+                                                    <option>Third Quarter</option>
+                                                    <option>Fourth Quarter</option>
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    Please provide the quarter.
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <label class="dark-gray form-label" for="periodSelect">Select Period Covered</label>
+                                                <select id="periodSelect" class="form-select body-regular dark-gray" name="period" required>
+                                                    <option selected disabled value="">Choose...</option>
+                                                    <option>Mar-Apr-May</option>
+                                                    <option>Jun-Jul-Aug</option>
+                                                    <option>Sept-Oct-Nov</option>
+                                                    <option>Dec-Jan-Feb</option>  
+                                                </select>
+                                                <div class="invalid-feedback">
+                                                    Please provide the period.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                    <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="custom-button">Create</button>
+                                    </div>
+                                </form>
+                            </div>
+                            </div>
+                    </div>
+
+                    <form id="savingsForm" method="POST" action="{% url 'upload-tasklist' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                            <input type="file" id="savingsFileInput" name="file" accept=".xlsx, .xls" style="display: none;">
+                            <button id="savingsUploadBtn" type="button" class="custom-button mb-5">+ Upload Tasklist</button>
+                    </form>
+                     </div>
+                    
+                </div>
+              </div>
+          </div>
+            <div class="">
+                {% if quarters %}
+                <!-- Responsive Table -->
+                <div class="table-container">
+                    <table id="requestTable">
+                    <thead>
+                        <tr>
+                            <th class="light-gray">Date</th>
+                            <th class="light-gray">Quarter</th>
+                            <th class="light-gray">Period</th>
+                            <th class="light-gray">State</th>
+                            <th class="light-gray">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="survey-admin-table">
+                        {% for quarter in quarters %}
+                        <tr>
+                            <td>{{quarter.submitted_at|date:'F d, Y'}}</td>
+                            <td>{{quarter.quarter}}</td>
+                            <td>{{quarter.period}} {{quarter.quarter.submitted_at|date:"Y"}}</td>
+                            <td>
+                                {% if quarter.state == "OPEN" %}
+                                    <div class="state-indicator state-open">
+                                        <span class="state-dot-open"></span> OPEN
+                                    </div>
+                                {% else %}
+                                    <div class="state-indicator state-close">
+                                        <span class="state-dot-close"></span> CLOSED
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <!-- open button -->
+                                    <a href="{% url 'view-quarter-response' pk=quarter.id %}" class="text-decoration-none">
+                                        <button type="button" class="button-light">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="#E85C0D" class="bi bi-folder2-open action-icon" viewBox="0 0 16 16" stroke="#E85C0D" stroke-width="0.5">
+                                                <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7z"/>
+                                            </svg>
+                                        </button>
+                                    </a>
+
+                                    <!-- edit button -->
+                                    <button type="button" data-bs-toggle="modal" data-bs-target="#EditEval{{quarter.id}}" class="button-light">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#6EACDA" class="bi bi-pencil-square action-icon" viewBox="0 0 16 16">
+                                            <path fill="#0D9276"d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                            <path stroke="#7BD3EA" stroke-width="1" fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                        </svg>
+                                    </button>
+
+                                    <!-- Modal for Edit survey-->
+                                    <div class="modal fade" id="EditEval{{quarter.id}}" tabindex="-1" aria-labelledby="EditEval{{quarter.id}}Label" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h4 class="modal-title" id="EditEval{{quarter.id}}Label">Edit Evaluation</h4>
+                                            </div>
+                                            <form class="needs-validation" novalidate method="POST" action="{% url 'edit-performance' pk=quarter.id %}">
+                                                {% csrf_token %}
+                                                <div class="modal-body">
+                                                    <div class="row g-1">
+                                                        <div class="col-md-12">
+                                                            <label class="dark-gray form-label" for="quarterSelect">Select Quarter</label>
+                                                            <select id="quarterSelect" class="form-select body-regular dark-gray" onchange="updatePeriod()" name="quarter" required>
+                                                                <option selected disabled value="">Choose...</option>
+                                                                <option value="First Quarter">First Quarter</option>
+                                                                <option value="Second Quarter">Second Quarter</option>
+                                                                <option value="Third Quarter">Third Quarter</option>
+                                                                <option value="Fourth Quarter">Fourth Quarter</option>
+                                                            </select>
+                                                            <div class="invalid-feedback">
+                                                                Please provide the quarter.
+                                                              </div>
+                                                        </div>
+            
+                                                        <div class="col-md-12">
+                                                            <label class="dark-gray form-label" for="periodSelect">Select Period Covered</label>
+                                                            <select id="periodSelect" class="form-select body-regular dark-gray" name="period" required>
+                                                                <option selected disabled value="">Choose...</option>
+                                                                <option value="Apr-May-Jun">Apr-May-Jun</option>
+                                                                <option value="Jul-Aug-Sept">Jul-Aug-Sept</option>
+                                                                <option value="Oct-Nov-Dec">Oct-Nov-Dec</option>
+                                                                <option value="Jan-Feb-Mar">Jan-Feb-Mar</option>  
+                                                            </select>
+                                                            <div class="invalid-feedback">
+                                                                Please provide the period.
+                                                              </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="custom-button">Save Changes</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- delete button -->
+                                    <button  class="button-light" type="button" data-bs-toggle="modal" data-bs-target="#DeleteEval{{quarter.id}}">
+                                        <svg xmlns="http://www.w3.org/2000/svg"fill="#f3473b" class="bi bi-trash3-fill action-icon" viewBox="0 0 16 16">
+                                            <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+                                        </svg>
+                                    </button>
+
+                                    <!-- modal for deletion of survey -->
+                                    <div class="modal fade" id="DeleteEval{{quarter.id}}" tabindex="-1" aria-labelledby="DeleteEval{{quarter.id}}Label" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h3 class="modal-title" id="DeleteEval{{quarter.id}}Label">Delete Evaluation?</h3>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="alert alert-danger" role="alert">
+                                                    <p>Once you delete the evaluation, it cannot be recovered. The evaluation will be permanently removed from the list and its data.</p>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                                <form method="POST" action="{% url 'delete-performance' pk=quarter.id %}">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="delete-button">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>  
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="no-filed-prf-container">
+                    <div><h5 class="light-gray">You haven't created any evaluation yet.</h5></div>
+                    <img src="{% static 'images/empty-box.png' %}" alt="no data found">
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+    </div>
+    
+</article>
+
+<script>
+    (() => {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        Array.from(forms).forEach(form => {
+          form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+      
+            form.classList.add('was-validated')
+          }, false)
+        })
+      })()
+
+    function updatePeriod() {
+        // Get the selected quarter
+        const quarterSelect = document.getElementById('quarterSelect').value;
+        const periodSelect = document.getElementById('periodSelect');
+    
+        // Define quarter periods
+        const periods = {
+            'First Quarter': 'Mar-Apr-May',
+            'Second Quarter': 'Jun-Jul-Aug',
+            'Third Quarter': 'Sept-Oct-Nov',
+            'Fourth Quarter': 'Dec-Jan-Feb'
+        };
+    
+        // Update the period select box
+        periodSelect.innerHTML = ''; // Clear existing options
+        const newOption = document.createElement('option');
+        newOption.value = periods[quarterSelect];
+        newOption.text = periods[quarterSelect];
+        periodSelect.appendChild(newOption);
+    }
+
+    document.getElementById('savingsUploadBtn').addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('savingsFileInput').click();
+    });
+
+    document.getElementById('savingsFileInput').addEventListener('change', function() {
+        if (this.files.length > 0) {
+            document.getElementById('savingsForm').submit();
+        }
+    });
+</script>
+
+{% endblock content %}

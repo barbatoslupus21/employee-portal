@@ -1,0 +1,81 @@
+{% load static %}
+
+<div class="orion-bot-container">
+    <div class="orion-bot-icon" onclick="toggleOrionChat()"><img src="{% static 'images/icons/ai.png' %}" class="company-logo" alt="company-logo"></div>
+    <div class="orion-chat-window" id="orionChatWindow">
+        <div class="orion-chat-header">Orion AI Assistant</div>
+        <div class="orion-chat-messages" id="orionChatMessages">
+            <!-- Initial bot message -->
+            <div class="orion-message bot">Hello! I'm your Orion AI assistant. How can I help you today?</div>
+        </div>
+        <div class="orion-chat-input">
+            <input type="text" id="orionUserInput" placeholder="Type your message...">
+            <button onclick="sendOrionMessage()">Send</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleOrionChat() {
+        const chatWindow = document.getElementById("orionChatWindow");
+        chatWindow.classList.toggle("active");
+    }
+    
+    function sendOrionMessage() {
+        const userInput = document.getElementById("orionUserInput");
+        const message = userInput.value.trim();
+    
+        if (message) {
+            addMessageToChat("user", message);
+            userInput.value = ""; // Clear input after sending
+            
+            // AJAX request to Django backend
+            fetch("{% url 'chatgpt_bot' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": getCSRFToken()  // Include CSRF token
+                },
+                body: new URLSearchParams({
+                    "user_input": message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.response) {
+                    addMessageToChat("bot", data.response);
+                } else if (data.error) {
+                    addMessageToChat("bot", "Error: " + data.error);
+                }
+            })
+            .catch(error => {
+                addMessageToChat("bot", "Error: Unable to reach server.");
+                console.error("Error:", error);
+            });
+        }
+    }
+    
+    function addMessageToChat(sender, text) {
+        const chatMessages = document.getElementById("orionChatMessages");
+        const messageElement = document.createElement("div");
+        messageElement.classList.add("orion-message", sender);
+        messageElement.textContent = text;
+        chatMessages.appendChild(messageElement);
+    
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Function to retrieve CSRF token from cookie
+    function getCSRFToken() {
+        const name = 'csrftoken=';
+        const decodedCookie = decodeURIComponent(document.cookie);
+        const cookies = decodedCookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = cookies[i].trim();
+            if (cookie.indexOf(name) === 0) {
+                return cookie.substring(name.length, cookie.length);
+            }
+        }
+        return '';
+    }
+</script>

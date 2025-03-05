@@ -1,0 +1,97 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:Dashboard' %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+                <h5 class="m-0 light-gray fw-medium">Assessments</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">Performance Evaluation</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="row flex-lg-row-reverse align-items-center justify-content-center">
+                <div class="col-md-6 hero-image-size">
+                  <img src="../../static/images/survey-img.jpg" class="d-block mx-lg-auto survey-img-banner" alt="Bootstrap Themes" loading="lazy">
+                </div>
+                <div class="col-md-6 px-4">
+                  <h1 class="display-6 fw-bold dark-gray">Performance Evaluation</h1>
+                  <p class="light-gray mb-3 hero-description">Thank you for taking the time to reflect on your performance through our self-evaluation survey. Your insights are essential in helping us understand your experiences and contributions in your role. This process not only supports your personal growth but also aids in enhancing our overall workplace environment.</p>
+                </div>
+              </div>
+          </div>
+            <div class="">
+                {% if quarters %}
+                <div class="table-container">
+                    <table id="requestTable">
+                    <thead>
+                        <tr>
+                        <th class="light-gray">Quarter</th>
+                        <th class="light-gray">Period</th>
+                        <th class="light-gray">Status</th>
+                        <th class="light-gray">State</th>
+                        <th class="light-gray">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for quarter in quarters %}
+                        <tr>
+                            <td>{{quarter.quarter}}</td>
+                            <td>{{quarter.quarter.period}}</td>
+                            <td>
+                                {% if quarter.is_submitted %}
+                                <span class="status-badge status-answer">Answered</span>
+                                {% else %}
+                                <span class="status-badge status-noanswer">Unanswered</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if quarter.quarter.state == "OPEN" %}
+                                <div class="state-indicator state-open">
+                                    <span class="state-dot-open"></span> OPEN
+                                </div>
+                                {% else %}
+                                <div class="state-indicator state-close">
+                                    <span class="state-dot-close"></span> CLOSED
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if quarter.quarter.state == "OPEN" %}
+                                    {% if quarter.is_submitted == False %}
+                                        <a href="{% url 'performance-evaluation-form' pk=quarter.id %}" class="text-decoration-none">
+                                            <button type="button" class="custom-button">Respond</button>
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="no-filed-prf-container">
+                    <div><h4 class="mb-3">No evaluation to assess yet.</h4></div>
+                    <img src="{% static 'images/empty-box.png' %}" alt="no data found">
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+    </div>
+    
+</article>
+
+{% endblock content %}

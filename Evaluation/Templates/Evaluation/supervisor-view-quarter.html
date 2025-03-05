@@ -1,0 +1,92 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:Dashboard' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Assessments</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <a href="{% url 'supervisor-evaluation' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Performance Evaluation</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">{{quarter.quarter}}</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="survey-header">
+                <div>
+                    <h1 class="display-6 fw-bold dark-gray">Performance Evaluation</h1>
+                </div>
+
+            </div>
+
+            <div class="table-container">
+                <table id="requestTable">
+                    <thead>
+                        <tr>
+                            <th class="light-gray">ID Number</th>
+                            <th class="light-gray">Name</th>
+                            <th class="light-gray">Department</th>
+                            <th class="light-gray">Line</th>
+                            <th class="light-gray">Submitted At</th>
+                            <th class="light-gray">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="accordion-table-container">
+                        {% for response in responses %}
+                            <tr>
+                                <td>{{response.employee.idnumber}}</td>
+                                <td>{{response.employee.name}}</td>
+                                <td>{{response.employee.employment_info.first.department}}</td>
+                                <td>{{response.employee.employment_info.first.line.line}}</td>
+                                <td>
+                                    {% if response.is_submitted %}
+                                        {{response.date_submitted|date:'F d, Y'}}
+                                    {% else %}
+                                        <span class="text-danger">Not yet submitted</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if status.status == "Pending" %}
+                                        {% if response.is_submitted %}
+                                            <a href="{% url 'supervisor-assessment' pk=response.id %}" class="text-decoration-none">
+                                                <button type="button" class="button-light">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="#00712D" class="bi bi-ui-checks-grid" viewBox="0 0 16 16" stroke="#00712D" stroke-width="0.5">
+                                                        <path d="M2 10h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1m9-9h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1m0 9a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1zm0-10a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM2 9a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2zm7 2a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2zM0 2a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm5.354.854a.5.5 0 1 0-.708-.708L3 3.793l-.646-.647a.5.5 0 1 0-.708.708l1 1a.5.5 0 0 0 .708 0z"/>
+                                                    </svg>
+                                                </button>
+                                            </a>
+                                        {% endif %}
+                                    {% else %}
+                                    <div class="state-indicator state-open">
+                                        <span class="state-dot-open"></span> Evaluated
+                                    </div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</article>
+
+{% endblock content %}

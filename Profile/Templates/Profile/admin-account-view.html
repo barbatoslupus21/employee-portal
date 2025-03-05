@@ -1,0 +1,408 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .header-background {
+        background-image: url("{% static 'images/ryonan.png' %}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: 200px;
+    }
+</style>
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url "Dashboard:admin-dashboard" %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">Employees</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <a href="{% url "accounts" %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Accounts</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">{{selectedAccount.name}}</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="card profile-card mt-4">
+            <div class="header-background"></div>
+            <div class="profile-content">
+                <img src="{{selectedAccount.avatar.url}}" alt="Profile Picture" class="profile-image">
+                <div class="user-detail">
+                    <div>
+                        <h2 class="dark-gray fw-bold text-start">{{selectedAccount.firstname}} {% if PersonalInfo.middlename %}{{PersonalInfo.middlename}}{% endif %} {{selectedAccount.lastname}}</h2>
+                        <p class="fw-medium light-gray text-start">{{EmpInfo.position}}</p>
+                        <p class="fw-medium light-gray text-start">Joined {{EmpInfo.date_hired|date:'F Y'}} • {{EmpInfo.Status}}</p>
+                        <p class="fw-medium light-gray text-start mb-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+                              </svg>
+                               {{selectedAccount.email}}</p>
+                    </div>
+                    
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="card profile-card mt-2">
+            <div class="profile-container-padding">
+                <h4 class="dark-gray body-regular fw-medium">Training Attended</h4>
+                <div class="inner-userprofile-padding">
+                    {% for training in trainings %}
+                        <div class="skills-container"><span class="dark-gray body-regular m-0">{{training.training.training_title}}</span></div>
+                    {% endfor %}
+                    {% if trainingCount > 5 %}
+                        <div class="skills-container">
+                            <span class="dark-gray body-regular m-0">
+                                {% if trainingCount > 5 %}
+                                    + {{ extra_training_count }}
+                                {% else %}
+                                    {{ trainingCount }}
+                                {% endif %}
+                            </span>
+                        </div>  
+                    {% endif %}
+     
+                </div>
+            </div>
+        </div>
+
+        <div class="card profile-card mt-2">
+            <div class="profile-container-padding">
+                <h4 class="dark-gray body-regular fw-medium">Certificate</h4>
+                <div class="inner-userprofile-padding">
+                    <div class="skills-container"><span class="dark-gray body-regular m-0">Perfect Attendance</span></div>
+                    <div class="skills-container"><span class="dark-gray body-regular m-0">3yrs Perfect Attendance</span></div>
+                    <div class="skills-container"><span class="dark-gray body-regular m-0">Road Safety</span></div>
+                    <div class="skills-container"><span class="dark-gray body-regular m-0">CyberSecurity</span></div>
+                    <a href=""><div class="skills-container"><span class="dark-gray body-regular m-0">+ 2</span></div></a>               
+                </div>
+            </div>
+        </div>
+
+        <div class="card profile-card mt-2 mb-3">
+            <div class="profile-container-padding">
+
+                <!-- tab content -->
+                <div class="tab-dashboard">
+                    <div class="tab-button">
+                        <button class="tab active body-regular m-0 light-gray fw-medium" data-tab="personal">Personal</button>
+                        <button class="tab body-regular m-0 light-gray fw-medium" data-tab="Employment">Employment</button>
+                        <button class="tab body-regular m-0 light-gray fw-medium" data-tab="Others">Others</button>
+                    </div>
+
+                    <div class="content-wrapper">
+
+                        <!-- Personal Details -->
+                        <div class="content" id="personal">
+                            <div class="inner-userprofile-padding">
+                                <div class="row">
+                                    <div class="col-12 col-md-5">
+                                        <dl class="row">
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Nickname</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.nickname}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Gender</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.gender.name}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Date of Birth</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.birth_date|date:'F d, Y'}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Place of Birth</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.birth_place}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Contact Number</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.contact_number}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Mother's Name</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.mother}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Father's Name</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.father}}</dd>
+                                        </dl>
+                                    </div>
+        
+                                    <div class="col-12 col-md-7">
+                                        <dl class="row">
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Personal Email</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{selectedAccount.email}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Work Email</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.work_email}}</dd>
+
+                                            <dt class="col-sm-4 body-regular light-gray">Present Address</dt>
+                                            <dd class="col-sm-8 personal-content body-regular dark-gray">{{PersonalInfo.present_street}}, {{PersonalInfo.present_baranggay}}, {{PersonalInfo.present_city}}, {{PersonalInfo.present_province}}</dd>
+                                            
+                                            <dt class="col-sm-4 body-regular light-gray">Provincial Address</dt>
+                                            <dd class="col-sm-8 personal-content body-regular dark-gray">{{PersonalInfo.provincial_street}}, {{PersonalInfo.provincial_baranggay}}, {{PersonalInfo.provincial_city}}, {{PersonalInfo.provincial_province}}</dd>    
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Contact Person</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.contact_firstname}} {{PersonalInfo.contact_middlename}} {{PersonalInfo.contact_lastname}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Contact Person Relation</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.contact_relation}}</dd>
+
+                                            <dt class="col-sm-4 col-5 body-regular light-gray">Contact Number</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.contact_no}}</dd>
+
+                                            <dt class="col-sm-4 body-regular light-gray">Contact Person Address</dt>
+                                            <dd class="col-sm-8 personal-content body-regular dark-gray">{{PersonalInfo.contact_street}}, {{PersonalInfo.contact_baranggay}}, {{PersonalInfo.contact_city}}, {{PersonalInfo.contact_province}}</dd>  
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- employment -->
+                        <div class="content" id="Employment">
+                            <div class="members-content">
+                                <div class="inner-userprofile-padding">
+                                    <form class="needs-validation" novalidate method="POST" action="{% url 'update-account' pk=selectedAccount.id %}">
+                                        {% csrf_token %}
+                                        <div class="row">
+                                            <div class="col-12 col-md-5"> 
+                                                <dl class="row">
+                                                    <dt class="col-sm-4 col-5 body-regular light-gray">ID Number</dt>
+                                                    <dd class="col-sm-8 col-7">
+                                                        <input type="text" class="form-control custom-border-bottom" name="idnumber" value="{{selectedAccount.idnumber}}" required>
+                                                        <div class="invalid-feedback">
+                                                            Please provide employee id number.
+                                                          </div>
+                                                    </dd>
+                                                    
+                                                    <dt class="col-sm-4 col-5 body-regular light-gray">Position</dt>
+                                                    <dd class="col-sm-8 col-7 selection">
+                                                        <select class="form-select custom-border-bottom" id="position" name="position" required>
+                                                            {% if EmpInfo.position %}
+                                                                <option selected value="{{EmpInfo.position.id}}">{{EmpInfo.position.name}}</option>
+                                                            {% else %}
+                                                                <option selected  disabled value="">Choose...</option>
+                                                            {% endif %}
+                                                            {% for position in positions %}
+                                                                <option value="{{position.id}}">{{position.name}}</option>
+                                                            {% endfor %}
+                                                          </select>
+                                                        <div class="invalid-feedback">
+                                                            Please provide employee position.
+                                                          </div>
+                                                    </dd>
+                                                    
+                                                    <dt class="col-sm-4 col-5 body-regular light-gray">Line</dt>
+                                                    <dd class="col-sm-8 col-7 selection">
+                                                        <select class="form-select custom-border-bottom" id="line" name="line" required>
+                                                            {% if EmpInfo.line %}
+                                                                <option selected value="{{EmpInfo.line.id}}">{{EmpInfo.line.line}}</option>
+                                                            {% else %}
+                                                                <option selected  disabled value="">Choose...</option>
+                                                            {% endif %}
+                                                            {% for line in lines %}
+                                                                <option value="line.id">{{line.line}}</option>
+                                                            {% endfor %}
+                                                          </select>
+                                                        <div class="invalid-feedback">
+                                                            Please provide employee line assignment.
+                                                          </div>
+                                                    </dd>
+                                                    
+                                                    <dt class="col-sm-4 col-5 body-regular light-gray">Department</dt>
+                                                    <dd class="col-sm-8 col-7 selection">
+                                                        <select class="form-select custom-border-bottom" id="department" name="department" required>
+                                                            {% if EmpInfo.department %}
+                                                                <option selected value="{{EmpInfo.department.id}}">{{EmpInfo.department.description}}</option>
+                                                            {% else %}
+                                                                <option selected  disabled value="">Choose...</option>
+                                                            {% endif %}
+                                                            {% for department in departments %}
+                                                                <option value="department.id">{{department.description}}</option>
+                                                            {% endfor %}
+                                                          </select>
+                                                        <div class="invalid-feedback">
+                                                            Please provide employee department.
+                                                          </div>
+                                                    </dd>
+                                                    
+                                                    <dt class="col-sm-4 col-5 body-regular light-gray">Status</dt>
+                                                    <dd class="col-sm-8 col-7 selection">
+                                                        <select class="form-select custom-border-bottom" id="status" name="status" required>
+                                                            {% if EmpInfo.Status %}
+                                                                <option selected value="{{EmpInfo.Status.id}}">{{EmpInfo.Status.name}}</option>
+                                                            {% else %}
+                                                                <option selected  disabled value="">Choose...</option>
+                                                            {% endif %}
+                                                            {% for status in statuses %}
+                                                                <option value="status.id">{{status.name}}</option>
+                                                            {% endfor %}
+                                                          </select>
+                                                        <div class="invalid-feedback">
+                                                            Please provide employee line status.
+                                                          </div>
+                                                    </dd>
+                                                    
+                                                    <dt class="col-sm-4 col-5 body-regular light-gray">Type</dt>
+                                                    <dd class="col-sm-8 col-7 selection">
+                                                        <input type="text" class="form-control custom-border-bottom" name="type" value="{{EmpInfo.type}}" required>
+                                                        <div class="invalid-feedback">
+                                                            Please provide employee type.
+                                                          </div>
+                                                    </dd>
+
+                                                    <dt class="col-sm-4 col-5 body-regular light-gray">Date Hired</dt>
+                                                    <dd class="col-sm-8 col-7 mb-0">
+                                                        <input type="date" class="form-control custom-border-bottom" name="date_hired" value="{{EmpInfo.date_hired|date:'Y-m-d'}}" required>
+                                                        <div class="invalid-feedback">
+                                                            Please provide employee date hired.
+                                                          </div>
+                                                    </dd>
+                                                </dl>
+                                            </div>
+                
+                                            <div class="col-12 col-md-7">
+                                                <dl class="row">
+                                                    <dt class="col-sm-4 col-5 body-regular light-gray">TIN Number</dt>
+                                                    <dd class="col-sm-8 col-7">
+                                                        <input type="text" class="form-control custom-border-bottom" name="tin_number" value="{{EmpInfo.tin_number}}" required>
+                                                        <div class="invalid-feedback">
+                                                            Please provide employee TIN number.
+                                                          </div>
+                                                    </dd>
+                                                    
+                                                    <dt class="col-sm-4 col-5 body-regular light-gray">SSS Number</dt>
+                                                    <dd class="col-sm-8 col-7">
+                                                        <input type="text" class="form-control custom-border-bottom" name="sss_number" value="{{EmpInfo.sss_number}}" required>
+                                                        <div class="invalid-feedback">
+                                                            Please provide employee SSS number.
+                                                          </div>
+                                                    </dd>    
+                                                    
+                                                    <dt class="col-sm-4 col-5 body-regular light-gray">HDMF Number</dt>
+                                                    <dd class="col-sm-8 col-7">
+                                                        <input type="text" class="form-control custom-border-bottom" name="hdmf_number" value="{{EmpInfo.hdmf_number}}" required>
+                                                        <div class="invalid-feedback">
+                                                            Please provide employee HDMF number.
+                                                          </div>
+                                                    </dd>
+                                                    
+                                                    <dt class="col-sm-4 col-5 body-regular light-gray">PHILHEALTH</dt>
+                                                    <dd class="col-sm-8 col-7">
+                                                        <input type="text" class="form-control custom-border-bottom" name="philhealth" value="{{EmpInfo.philhealth}}" required>
+                                                        <div class="invalid-feedback">
+                                                            Please provide employee PHILHEALTH number.
+                                                          </div>
+                                                    </dd>
+
+                                                    <dt class="col-sm-4 col-5 body-regular light-gray">Bank Account</dt>
+                                                    <dd class="col-sm-8 col-7">
+                                                        <input type="text" class="form-control custom-border-bottom" name="bank_account" value="{{EmpInfo.bank_account}}" required>
+                                                        <div class="invalid-feedback">
+                                                            Please provide employee bank account.
+                                                          </div>
+                                                    </dd>
+
+                                                    <dt class="col-sm-4 col-5 body-regular light-gray">Approver</dt>
+                                                    <dd class="col-sm-8 col-7 body-regular dark-gray"><h5 class="body-regular px-3 pb-3">{{EmpInfo.approver.name}}<h5></dd>
+
+                                                    <dt class="col-sm-4 col-5 body-regular light-gray">Is a Approver?</dt>
+                                                    <dd class="col-sm-8 col-7 selection">
+                                                        <select class="form-select custom-border-bottom" id="is_approver" name="is_approver">
+                                                            {% if selectedAccount.is_approver == True %}
+                                                                <option selected >Yes</option>
+                                                            {% else %}
+                                                                <option selected >No</option>
+                                                            {% endif %}
+                                                                <option value="True">Yes</option>
+                                                                <option value="False">No</option>
+                                                           </select>
+                                                    </dd>
+                                                </dl>
+                                            </div>
+
+                                            <div class="col-12 col-md-12">
+                                                <div class="d-flex justify-content-end">
+                                                    <button type="submit" class="custom-button">Save Changes</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>                                           
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Others -->
+                        <div class="content" id="Others">
+                            <div class="inner-userprofile-padding">
+                                <div class="row">
+                                    <div class="col-12 col-md-5">
+                                        <dl class="row">
+                                            <dt class="col-sm-4 col-5 body-regular fw-medium light-gray">Elementary</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.primary_school}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular fw-medium light-gray">Secondary</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.secondary_school}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular fw-medium light-gray">Vocational</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.vocational_school}}</dd>
+                                            
+                                            <dt class="col-sm-4 col-5 body-regular fw-medium light-gray">College</dt>
+                                            <dd class="col-sm-8 col-7 personal-content body-regular dark-gray">{{PersonalInfo.tertiary_school}}</dd>
+                                        </dl>
+                                    </div>
+        
+                                    <div class="col-12 col-md-7">
+                                        <dl class="row">
+                                            <dt class="col-sm-4 body-regular fw-medium light-gray">Spouse Name</dt>
+                                            <dd class="col-sm-8 personal-content body-regular dark-gray">{{PersonalInfo.spouse}}</dd>
+                                            
+                                            <dt class="col-sm-4 body-regular fw-medium light-gray">Children</dt>
+                                            <dd class="col-sm-8 personal-content body-regular dark-gray">{{PersonalInfo.children}}</dd>    
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                       
+                
+            </div>
+        </div>               
+    </div>         
+</article>
+
+<script>
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.content');
+
+    function setActiveTab(tabName) {
+        tabs.forEach(t => t.classList.toggle('active', t.getAttribute('data-tab') === tabName));
+        contents.forEach(content => {
+            if (content.id === tabName) {
+                content.classList.add('active');
+                content.style.transform = 'translateX(0)';
+            } else {
+                content.classList.remove('active');
+                content.style.transform = 'translateX(100%)';
+            }
+        });
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            setActiveTab(tab.getAttribute('data-tab'));
+        });
+    });
+
+    // Set initial active tab
+    setActiveTab('personal');
+</script>
+
+{% endblock content %}

@@ -1,0 +1,284 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:admin-dashboard' %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">PR-Form</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="pt-2">
+                <h1 class="display-6 fw-bold dark-gray mb-3">Personal Request Form (PRF)</h1>
+              </div>
+            <div class="">
+                 <!-- Search and Filter Section -->
+                <div class="table-controls-admin">
+                    <div class="d-flex gap-1">
+                        <div class="InputContainer">
+                            <input type="text" name="text" class="searchinput" id="searchInput" placeholder="Search" onkeyup="searchPRFTable()">
+                            <label for="searchInput" class="labelforsearch">
+                            <svg viewBox="0 0 512 512" class="searchIcon"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"></path></svg>
+                            </label>
+                        </div>
+                    </div>
+                    
+
+                    <div class="d-flex align-items-center">
+                        <div class="filter-select">
+                            <button class="btn border-0 p-0" onclick="toggleFilter()">
+                                <svg xmlns="http://www.w3.org/2000/svg" height="32" width="32" viewBox="0 -960 960 960" fill="#343b48">
+                                    <path d="M480-120q-17 0-28.5-11.5T440-160v-160q0-17 11.5-28.5T480-360q17 0 28.5 11.5T520-320v40h280q17 0 28.5 11.5T840-240q0 17-11.5 28.5T800-200H520v40q0 17-11.5 28.5T480-120Zm-320-80q-17 0-28.5-11.5T120-240q0-17 11.5-28.5T160-280h160q17 0 28.5 11.5T360-240q0 17-11.5 28.5T320-200H160Zm160-160q-17 0-28.5-11.5T280-400v-40H160q-17 0-28.5-11.5T120-480q0-17 11.5-28.5T160-520h120v-40q0-17 11.5-28.5T320-600q17 0 28.5 11.5T360-560v160q0 17-11.5 28.5T320-360Zm160-80q-17 0-28.5-11.5T440-480q0-17 11.5-28.5T480-520h320q17 0 28.5 11.5T840-480q0 17-11.5 28.5T800-440H480Zm160-160q-17 0-28.5-11.5T600-640v-160q0-17 11.5-28.5T640-840q17 0 28.5 11.5T680-800v40h120q17 0 28.5 11.5T840-720q0 17-11.5 28.5T800-680H680v40q0 17-11.5 28.5T640-600Zm-480-80q-17 0-28.5-11.5T120-720q0-17 11.5-28.5T160-760h320q17 0 28.5 11.5T520-720q0 17-11.5 28.5T480-680H160Z"/>
+                                </svg>
+                            </button>
+                            <div class="filter-option">
+                                <div class="mb-2">
+                                    <h6 class="dark-gray py-2">Filter by Line</h6>
+                                    <select id="line_filter" class="form-select body-regular dark-gray">
+                                        <option selected value="all">All</option>
+                                        {% for line in lines %}
+                                            <option value="{{ line.line_name }}">{{ line.line_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <h6 class="dark-gray py-2">Filter by Product Number</h6>
+                                    <select id="product_filter" class="form-select body-regular dark-gray">
+                                        <option selected value="all">All</option>
+                                        {% for product in products %}
+                                            <option value="{{ product.product_number }}">{{ product.product_number }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-0">
+                                    <h6 class="dark-gray py-2">Filter by Date</h6>
+                                    <dl class="row">
+                                        <dt class="col-sm-2 py-2 light-gray fw-normal">From</dt>
+                                        <dd class="col-sm-10 py-2 user-profile-font">
+                                            <input type="date" class="form-control" id="from-date">
+                                        </dd>
+                                        <dt class="col-sm-2 light-gray fw-normal">To</dt>
+                                        <dd class="col-sm-10 user-profile-font">
+                                            <input type="date" class="form-control" id="to-date">
+                                        </dd>
+                                    </dl>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <a href="{% url 'export-prf' %}" class="w-100 text-decoration-none">
+                                        <button class="button-light w-100">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#343b48">
+                                                <path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h160q17 0 28.5 11.5T360-760q0 17-11.5 28.5T320-720H160v480h640v-480H640q-17 0-28.5-11.5T600-760q0-17 11.5-28.5T640-800h160q33 0 56.5 23.5T880-720v480q0 33-23.5 56.5T800-160H160Zm280-336v-264q0-17 11.5-28.5T480-800q17 0 28.5 11.5T520-760v264l76-76q11-11 28-11t28 11q11 11 11 28t-11 28L508-372q-12 12-28 12t-28-12L308-516q-11-11-11-28t11-28q11-11 28-11t28 11l76 76Z"/>
+                                            </svg>
+                                            Export
+                                        </button>
+                                    </a>
+                                </div>  
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                {% if prfs %}
+                <div class="table-container pb-3">
+                    <table id="requestTable">
+                    <thead>
+                        <tr>
+                        <th class="light-gray" onclick="sortPRFTable(0)">Ref</th>
+                        <th class="light-gray" onclick="sortPRFTable(0)">Date Filed</th>
+                        <th class="light-gray" onclick="sortPRFTable(1)">ID Number</th>
+                        <th class="light-gray" onclick="sortPRFTable(2)">Name</th>
+                        <th class="light-gray" onclick="sortPRFTable(4)">Request Type</th>
+                        <th class="light-gray" onclick="sortPRFTable(5)">Purpose</th>
+                        <th class="light-gray" onclick="sortPRFTable(6)">Control Number</th>
+                        <th class="light-gray">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="admin-prf-list">
+                        {% for prf in prfs %}
+                            <tr>
+                                <td>PRF{{ prf.id|default_if_none:"0"|stringformat:"04d"}}</td>
+                                <td>{{prf.submitted_at|date:"m/d/y"}}</td>
+                                <td>{{prf.request_by.idnumber}}</td>
+                                <td>{{prf.request_by.name}}</td>
+                                <td>{{prf.request_type}}</td>
+                                <td>{{prf.purpose}}</td>
+                                <td>{{prf.ctrl_no}}</td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        {% if prf.status == "Pending" %}
+                                        <!-- approve button -->
+                                         <form method="POST" action="{% url 'approve-prf' pk=prf.id %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="button-light">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="#00712D" class="bi bi-check2 action-icon" viewBox="0 0 16 16">
+                                                    <path stroke="#00712D" stroke-width="2"  d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                        
+                                        <!-- disapprove button -->
+                                        <button  class="button-light" type="button" data-bs-toggle="modal" data-bs-target="#Disapprove{{prf.id}}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="#f3473b" class="bi bi-x action-icon" viewBox="0 0 16 16" stroke="#f3473b" stroke-width="2">
+                                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                                            </svg>
+                                        </button>
+
+                                        <!-- modal for cancellation of request -->
+                                        <div class="modal fade" id="Disapprove{{prf.id}}" tabindex="-1" aria-labelledby="Disapprove{{prf.id}}Label" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                    <h4 class="modal-title" id="Disapprove{{prf.id}}Label">Confirm Disapproval</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p class="pb-2">Are you sure to disapprove of the PRF request?</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                                        <form method="POST" action="{% url 'disapprove-prf' pk=prf.id %}">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="delete-button">Disapprove</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {% elif prf.status == 'Approved' %}
+                                        <span class="status-badge status-approve">Approved</span>
+
+                                    {% elif prf.status == 'Cancelled' %}
+                                        <span class="status-badge status-cancel">Cancelled</span>
+
+                                    {% else %}
+                                        <span class="status-badge status-cancel">Disapproved</span>
+
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                {% else %}
+                    <div class="no-filed-prf-container">
+                        <div><h5 class="light.gray">No PRF requests submitted yet.</h5></div>
+                        <img src="{% static 'images/empty-box.png' %}" alt="no data found">
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+        
+    </div>
+    
+</article>
+
+<script>
+    function sortPRFTable(columnIndex) {
+        const table = document.getElementById("requestTable");
+        const rows = Array.from(table.rows).slice(1);
+        const sortedRows = rows.sort((a, b) => {
+          const aText = a.cells[columnIndex].innerText.toLowerCase();
+          const bText = b.cells[columnIndex].innerText.toLowerCase();
+          return aText.localeCompare(bText);
+        });
+      
+        sortedRows.forEach(row => table.tBodies[0].appendChild(row));
+      }
+      
+    // Function to search the table
+    function searchPRFTable() {
+        const input = document.getElementById("searchInput");
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById("requestTable");
+        const rows = table.getElementsByTagName("tr");
+      
+        for (let i = 1; i < rows.length; i++) {
+          const cells = rows[i].getElementsByTagName("td");
+          let shouldDisplay = false;
+          for (let j = 0; j < cells.length - 1; j++) {
+            if (cells[j].innerText.toLowerCase().includes(filter)) {
+              shouldDisplay = true;
+              break;
+            }
+          }
+          rows[i].style.display = shouldDisplay ? "" : "none";
+        }
+      }
+
+    function toggleFilter() {
+        const filterOptions = document.querySelector('.filter-option');
+        filterOptions.classList.toggle('show');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const lineFilter = document.getElementById('line_filter');
+        const productFilter = document.getElementById('product_filter');
+        const fromDate = document.getElementById('from-date');
+        const toDate = document.getElementById('to-date');
+        const table = document.getElementById('requestTable');
+        const tbody = table.querySelector('tbody');
+        const rows = tbody.getElementsByTagName('tr');
+    
+        function filterTable() {
+            const selectedLine = lineFilter.value.toLowerCase();
+            const selectedProduct = productFilter.value.toLowerCase();
+            const startDate = fromDate.value ? new Date(fromDate.value) : null;
+            const endDate = toDate.value ? new Date(toDate.value) : null;
+    
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const line = row.cells[1].innerText.trim().toLowerCase();   // Adjusted index for Line Name
+                const dateText = row.cells[2].innerText.trim();             // Adjusted index for Date Inspected
+                const product = row.cells[3].innerText.trim().toLowerCase(); // Adjusted index for Product Number
+                const dateFiled = new Date(dateText);
+    
+                let showRow = true;
+    
+                // Filter by Line
+                if (selectedLine !== 'all' && line !== selectedLine) {
+                    showRow = false;
+                }
+    
+                // Filter by Product
+                if (selectedProduct !== 'all' && product !== selectedProduct) {
+                    showRow = false;
+                }
+    
+                // Filter by Date range
+                if (startDate && dateFiled < startDate) {
+                    showRow = false;
+                }
+                if (endDate && dateFiled > endDate) {
+                    showRow = false;
+                }
+    
+                // Show or hide row based on filter criteria
+                row.style.display = showRow ? '' : 'none';
+            }
+        }
+    
+        lineFilter.addEventListener('change', filterTable);
+        productFilter.addEventListener('change', filterTable);
+        fromDate.addEventListener('change', filterTable);
+        toDate.addEventListener('change', filterTable);
+    });
+    
+</script>
+
+{% endblock content %}

@@ -1,0 +1,109 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:Dashboard' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Assessments</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Training Evaluation</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="row flex-lg-row-reverse align-items-center justify-content-center">
+                <div class="col-md-6 hero-image-size">
+                    <img src="{% static 'images/Training-effectiveness.jpg' %}"
+                        class="d-block mx-lg-auto survey-img-banner" alt="Bootstrap Themes" loading="lazy">
+                </div>
+                <div class="col-md-6 px-4">
+                    <h1 class="display-6 fw-bold dark-gray mb-3">Training Effectiveness Evaluation</h1>
+                    <p class="dark-gray hero-description">Your feedback is essential to helping us improve our training
+                        programs. Please take a moment to complete this survey and share your honest thoughts.</p>
+                </div>
+            </div>
+        </div>
+        <div class="">
+            {% if trainings %}
+            <div class="table-container">
+                <table id="requestTable">
+                    <thead>
+                        <tr>
+                            <th class="light-gray">Training Title</th>
+                            <th class="light-gray">Training Date</th>
+                            <th class="light-gray">Status</th>
+                            <th class="light-gray">State</th>
+                            <th class="light-gray">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="">
+                        {% for training in trainings %}
+                        <tr>
+                            <td>{{training.training.training_title}}</td>
+                            <td>{{training.training.training_date|date:'F d,Y'}}</td>
+                            <td>
+                                {% if training.action %}
+                                    <span class="status-badge status-answer">Answered</span>
+                                {% else %}
+                                    <span class="status-badge status-noanswer">Unanswered</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if training.training.is_closed %}
+                                    <div class="state-indicator state-close">
+                                        <span class="state-dot-close"></span> CLOSED
+                                    </div>
+                                {% else %}
+                                    <div class="state-indicator state-close">
+                                        <span class="state-dot-open"></span> OPEN
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    {% if training.action %}
+                                        <a href="{% url 'view-response' pk=training.id %}" class="text-decoration-none">
+                                            <button type="button" class="button-light">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="#E85C0D" class="bi bi-folder2-open action-icon" viewBox="0 0 16 16" stroke="#E85C0D" stroke-width="0.5">
+                                                    <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7z"/>
+                                                </svg>
+                                            </button>
+                                        </a>
+                                    {% else %}
+                                        {% if training.training.is_closed == False %}
+                                            <a href="{% url 'take-training' pk=training.training.id %}" class="text-decoration-none">
+                                                <button type="button" class="custom-button">Respond</button>
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>            
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <div class="no-filed-prf-container">    
+                    <div><h5 class="light-gray">You have not attended any company training yet..</h5></div>
+                    <img src="{% static 'images/empty-box.png' %}" alt="no data found">
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    </div>
+</article>
+
+{% endblock content %}

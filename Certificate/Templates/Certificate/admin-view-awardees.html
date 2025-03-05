@@ -1,0 +1,185 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .certificate {
+        width: 100%;
+        padding: 100px 20px;
+        text-align: center;
+        background-image: url("{{certificate.cert_template.template.url}}");
+        background-size: contain; /* Fallback */
+        background-size: cover; /* Standard behavior */
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+</style>
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:admin-dashboard' %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <a href="{% url 'admin-certificate' %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Certificate</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">{{certificate.cert_name}}</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-4">
+          <h1 class="display-6 fw-bold dark-gray mb-3">Awardees</h1>
+        </div>
+            <!-- Responsive Table -->
+            <div class="table-container">
+                <table id="requestTable">
+                <thead>
+                    <tr>
+                    <th class="light-gray" onclick="sortTable(0)">ID Number</th>
+                    <th class="light-gray" onclick="sortTable(1)">Name</th>
+                    <th class="light-gray" onclick="sortTable(2)">Department</th>
+                    <th class="light-gray" onclick="sortTable(3)">Line</th>
+                    <th class="light-gray">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="admin-certificate-participant">
+                    {% for awardee in awardees %}
+                    <tr>
+                        <td>{{awardee.awardeee.idnumber}}</td>
+                        <td>{{awardee.awardeee.name}}</td>
+                        <td>{{awardee.department}}</td>
+                        <td>{{awardee.line}}</td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <!-- open button -->
+                                <button type="button" class="button-light" data-bs-toggle="modal" data-bs-target="#certificate{{awardee.id}}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="#E85C0D" class="bi bi-folder2-open action-icon" viewBox="0 0 16 16" stroke="#E85C0D" stroke-width="0.5">
+                                        <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7z"/>
+                                    </svg>
+                                </button>
+
+                                <!-- modal to view certificate -->
+                                <div class="modal modal-xl fade" id="certificate{{awardee.id}}" tabindex="-1" aria-labelledby="certificate{{awardee.id}}Label" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title light-gray fw-medium" id="certificate{{awardee.id}}Label">{{awardee.awardeee.name}} Certificate</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="certificate">
+                                                <p class="title">Certificate of {{certificate.cert_template.certificate_type}}</p>
+                                                <div style="padding: 0px 150px;">
+                                                    <p>This certificate is presented to</p>
+                                                    <div class="recipient">{{ awardee.awardeee.name }}</div>
+                                                    
+                                                    {% if certificate.cert_template.certificate_type == "Attendance" %}
+                                                        <p class="description">
+                                                            In recognition of your outstanding achievement of {{awardee.certificate.cert_name}}, 
+                                                            this certificate is presented to you on {{awardee.certificate.cert_date|date:'F d, Y'}}. Your dedication and reliability are a model for others.
+                                                        </p>
+                                                        
+                                                    {% else %}
+                                                        <p class="description">
+                                                            In recognition of your participation in the <span>{{awardee.certificate.cert_name}}</span> on {{awardee.certificate.cert_date|date:'F d, Y'}}, 
+                                                            as a symbol of our gratitude for your dedication to learning and professional growth.
+                                                        </p>
+                                                    {% endif %}
+                                                </div>
+                                                
+                                                <div class="d-flex justify-content-evenly">
+                                                    <div class="signature-container text-center">
+                                                        <div class="signature mb-2">
+                                                            <img src="{{awardee.certificate.cert_speaker.signature.url}}" alt="" class="img-fluid">
+                                                        </div>
+                                                        <div class="signer-title">
+                                                            <p class="body-regular m-0 border-bottom border-black">{{awardee.certificate.cert_speaker}}</p>
+                                                            <p class="body-text m-0">{{awardee.certificate.cert_speaker.position}}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    {% for approver in approvers %}
+                                                    <div class="signature-container text-center">
+                                                        <div class="signature mb-2">
+                                                            <img src="{{approver.approver.signature.url}}" alt="" class="img-fluid">
+                                                        </div>
+                                                        <div class="signer-title">
+                                                            <p class="body-regular m-0 border-bottom border-black">{{approver.approver.name}}</p>
+                                                            <p class="body-text m-0">{{approver.approver.position}}</p>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                        <button type="button" class="cancel-button" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+
+                                <!-- cancel button -->
+                                <button  class="button-light" type="button" data-bs-toggle="modal" data-bs-target="#Delete{{awardee.id}}">
+                                    <svg xmlns="http://www.w3.org/2000/svg"fill="#f3473b" class="bi bi-trash3-fill action-icon" viewBox="0 0 16 16">
+                                        <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+                                    </svg>
+                                </button>
+
+                                <!-- modal for deletion of participants -->
+                                <div class="modal fade" id="Delete{{awardee.id}}" tabindex="-1" aria-labelledby="Delete{{awardee.id}}Label" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h3 class="modal-title" id="Delete{{awardee.id}}Label">Delete Awardee?</h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="alert alert-danger" role="alert">
+                                                <p>Be aware that deleting this awardee is permanent, and their certificate for this training will also be deleted.</p>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                            <form method="POST" action="{% url 'delete-awardee' pk=awardee.id %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="delete-button">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>  
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+            </div>
+        </div>
+        
+    </div>
+    
+</article>
+
+<script>
+    function sortTable(columnIndex) {
+        const table = document.getElementById("requestTable");
+        const rows = Array.from(table.rows).slice(1);
+        const sortedRows = rows.sort((a, b) => {
+          const aText = a.cells[columnIndex].innerText.toLowerCase();
+          const bText = b.cells[columnIndex].innerText.toLowerCase();
+          return aText.localeCompare(bText);
+        });
+      
+        sortedRows.forEach(row => table.tBodies[0].appendChild(row));
+      }
+</script>
+
+{% endblock content %}

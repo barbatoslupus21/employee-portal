@@ -1,0 +1,729 @@
+{% extends "main.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:admin-dashboard' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Admin</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Assessments</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <a href="{% url 'admin-survey' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Survey</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">{{quarter.quarter}}</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="survey-header">
+                <div>
+                    <h1 class="display-6 fw-bold dark-gray">Online Satisfactory Survey</h1>
+                    <p class="light-gray">Please take a few moments to review this survey</p>
+                </div>
+                
+                <div class="d-flex justify-content-end gap-1 align-items-end">
+                    {% if quarter.state == "OPEN" %}
+                        <button class="button-light" data-bs-toggle="modal" data-bs-target="#closeSurvey">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                            </svg>
+                            Close Survey
+                        </button>
+
+                        <div class="modal fade" id="closeSurvey" tabindex="-1" aria-labelledby="closeSurveyLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h3 class="modal-title" id="closeSurveyLabel">Confirmation</h3>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="pb-2">Would you like to end the survey now?</p>
+                                    <div class="alert alert-info" role="alert">
+                                        <p>Once the survey is closed, it's no longer available to employees who haven't taken it.</p>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="cancel-button" data-bs-dismiss="modal">Cancel</button>
+                                    <form method="POST" action="{% url "close-survey" pk=quarter.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="custom-button">Confirm</button>
+                                    </form>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <a href="{% url 'export-survey' pk=quarter.id %}" class="text-decoration-none">
+                        <button class="button-light">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
+                                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
+                              </svg>
+                            Export
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+            <div class="row px-2">
+                <!-- total employees -->
+                <div class="col-12 col-md-3 p-1">
+                    <div class="card survey-card-container">
+                        <div class="card-body d-flex flex-column justify-content-betweengap-3">
+                            <h5 class="dark-gray fw-medium">Employees</h5>
+                            <div>
+                                <div class="d-flex gap-2 align-items-end pt-2">
+                                    <img src="{% static 'images/icons/employees.png' %}" class="survey-img"
+                                        alt="employees count">
+                                    <h2 class="fw-bold light-gray lh-1 m-0">{{employeeCount}}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- total respondent -->
+                <div class="col-12 col-md-3 p-1">
+                    <div class="card survey-card-container">
+                        <div class="card-body d-flex flex-column justify-content-betweengap-3">
+                            <h5 class="dark-gray fw-medium">Respondent</h5>
+                            <div>
+                                <div class="d-flex gap-2 align-items-end pt-2">
+                                    <img src="{% static 'images/icons/respond.png' %}" class="survey-img"
+                                        alt="respondent" class="survey-img" class="survey-img">
+                                    <h2 class="fw-bold light-gray lh-1 m-0">{{respondent}}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- total percentage -->
+                <div class="col-12 col-md-3 p-1">
+                    <div class="card survey-card-container">
+                        <div class="card-body d-flex flex-column justify-content-betweengap-3">
+                            <h5 class="dark-gray fw-medium">Response Rate</h5>
+                            <div>
+                                <div class="d-flex gap-2 align-items-end pt-2">
+                                    <img src="{% static 'images/icons/graph.png' %}" class="survey-img"
+                                        alt="response rate">
+                                    <h2 class="fw-bold light-gray lh-1 m-0">{{response_percentage}}%</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- total average -->
+                <div class="col-12 col-md-3 p-1">
+                    <div class="card survey-card-container">
+                        <div class="card-body d-flex flex-column justify-content-betweengap-3">
+                            <h5 class="dark-gray fw-medium">Overall Average</h5>
+                            <div>
+                                <div class="d-flex gap-2 align-items-end pt-2">
+                                    <img src="{% static 'images/icons/graph.png' %}" class="survey-img"
+                                        alt="survey average">
+                                    <h2 class="fw-bold light-gray lh-1 m-0">{{average_percentage}}%</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--job satisfaction chart -->
+                <div class="col-12 col-md-12 p-1">
+                    <div class="card survey-chart">
+                        <h5 class="dark-gray body-title">Employee Job Satisfaction</h5>
+                        <canvas id="surveyChart" data-quarter-id="{{ quarter.id }}" class="survey-graph"></canvas>
+                    </div>
+                </div>
+
+                <!--facilities -->
+                <div class="col-12 col-md-12 p-1">
+                    <div class="card survey-chart">
+                        <h5 class="dark-gray body-title">Company Facilities</h5>
+                        <canvas id="FacilitiesChart" data-quarter-id="{{ quarter.id }}" class="survey-graph"></canvas>
+                    </div>
+                </div>
+
+                <!--policy and salary -->
+                <div class="col-12 col-md-6 p-1">
+                    <div class="card survey-chart">
+                        <h5 class="dark-gray body-title">Company Policy and Salary</h5>
+                        <canvas id="PolicySalaryChart" data-quarter-id="{{ quarter.id }}" class="survey-graph"></canvas>
+                    </div>
+                </div>
+
+                <!--relation program -->
+                <div class="col-12 col-md-6 p-1">
+                    <div class="card survey-chart">
+                        <h5 class="dark-gray body-title">Relations Program</h5>
+                        <canvas id="RelationsChart" data-quarter-id="{{ quarter.id }}" class="survey-graph"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion pb-5" id="surveyresponse">
+                <!-- respondent dropdown -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#respondent" aria-expanded="false" aria-controls="respondent">
+                            <h4 class="dark-gray body-title">Respondent</h4>
+                        </button>
+                    </h2>
+                    <div id="respondent" class="accordion-collapse collapse" data-bs-parent="#surveyresponse">
+                        <div class="accordion-body">
+                            <!-- Responsive Table -->
+                            <div class="table-container">
+                                <table id="requestTable">
+                                    <thead>
+                                        <tr>
+                                            <th class="light-gray">Date Submitted</th>
+                                            <th class="light-gray">ID Number</th>
+                                            <th class="light-gray">Name</th>
+                                            <th class="light-gray">Department</th>
+                                            <th class="light-gray">Line</th>
+                                            <th class="light-gray">Email</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="accordion-table-container">
+                                        {% for respondent in respondents %}
+                                            <tr>
+                                                <td>{{respondent.posted_at|date:'m/d/Y'}}</td>
+                                                <td>{{respondent.employee.idnumber}}</td>
+                                                <td>{{respondent.employee.name}}</td>
+                                                <td>{{respondent.department}}</td>
+                                                <td>{{respondent.line}}</td>
+                                                <td>{{respondent.employee.email}}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Remarks -->
+                <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#Remarks"
+                                aria-expanded="false" aria-controls="Remarks">
+                                <h4 class="dark-gray body-title">Remarks</h4>
+                            </button>
+                        </h2>
+                        <div id="Remarks" class="accordion-collapse collapse" data-bs-parent="#surveyresponse">
+                            <div class="accordion-body">
+                                <!-- Responsive Table -->
+                                <div class="table-container">
+                                    <table id="requestTable">
+                                        <thead>
+                                            <tr>
+                                                <th class="light-gray">Date Submitted</th>
+                                                <th class="light-gray">Name</th>
+                                                <th class="light-gray">Remarks</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody class="accordion-table-container">
+                                            {% for survey_response in survey_responses %}
+                                                <tr>
+                                                    <td>{{survey_response.submitted_at|date:'m/d/Y'}}</td>
+                                                    <td>{{survey_response.employee.name}}</td>
+                                                    <td>{{survey_response.remarks}}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                
+                <!-- suggestions and ideas -->
+                <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#suggestionsideas" aria-expanded="false" aria-controls="suggestionsideas">
+                                <h4 class="dark-gray body-title">Suggestions and Ideas</h4>
+                            </button>
+                        </h2>
+                        <div id="suggestionsideas" class="accordion-collapse collapse" data-bs-parent="#surveyresponse">
+                            <div class="accordion-body">
+                                <!-- Responsive Table -->
+                                <div class="table-container">
+                                    <table id="requestTable">
+                                        <thead>
+                                            <tr>
+                                                <th class="light-gray">Date Submitted</th>
+                                                <th class="light-gray">Name</th>
+                                                <th class="light-gray">Suggestions and Ideas</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody class="accordion-table-container">
+                                            {% for survey_response in survey_responses %}
+                                                <tr>
+                                                    <td>{{survey_response.submitted_at|date:'m/d/Y'}}</td>
+                                                    <td>{{survey_response.employee.name}}</td>
+                                                    <td>{{survey_response.suggestions}}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</article>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('surveyChart');
+        let chart;
+    
+        function createOrUpdateChart(data) {
+            const config = {
+                type: 'line',
+                data: {
+                    labels: ['Skills', 'Knowledge of Job', 'Orientation of Job', 'Quality of Supervision', 'Training and Development', 'Job Description', 'Opportunity for Advancement', 'Workload'],
+                    datasets: [{
+                        label: '',
+                        data: data,
+                        fill: 'start',
+                        backgroundColor: 'rgba(124, 146, 255, 0.2)',
+                        borderColor: '#7c92ff',
+                        borderWidth: 1.5,
+                        tension: 0.3,
+                        pointRadius: 0,
+                        pointHoverRadius: 10,
+                        pointHitRadius: 100,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.raw + '%';
+                                }
+                            },
+                            displayColors: false,
+                            bodyFont: {
+                                size: 15
+                            },
+                            titleFont: {
+                                size: 14
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 100,
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                callback: function (value) {
+                                    if (value === 100 || value === 50) return value + '%';
+                                    return '';
+                                }
+                            }
+                        },
+                        x: {
+                            offset: false,
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                align: 'center',
+                                font: {
+                                    size: 12,
+                                    weight: 'normal'
+                                },
+                                color: '#333'
+                            }
+                        }
+                    }
+                }
+            };
+    
+            if (chart) {
+                chart.data.datasets[0].data = data;
+                chart.update();
+            } else {
+                chart = new Chart(ctx, config);
+            }
+        }
+    
+        function updateChart() {
+            const pk = document.getElementById('surveyChart').dataset.quarterId;
+            axios.get(`/Survey/api/job-satisfaction/${pk}/`)
+                .then(response => {
+                    const data = [
+                        response.data.skills,
+                        response.data.knowledge_of_job,
+                        response.data.orientation_of_job,
+                        response.data.quality_of_supervision,
+                        response.data.training_and_development,
+                        response.data.job_description,
+                        response.data.opportunity_for_advancement,
+                        response.data.workload
+                    ];
+                    createOrUpdateChart(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching survey stats:', error);
+                });
+        }
+    
+        updateChart();
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('PolicySalaryChart');
+        let chart;
+    
+        function createOrUpdateChart(data) {
+            const config = {
+                type: 'line',
+                data: {
+                    labels: ['Company Policy ', 'Salary', 'Salary Increase'],
+                    datasets: [{
+                        label: '',
+                        data: data,
+                        fill: 'start',
+                        backgroundColor: 'rgba(124, 146, 255, 0.2)',
+                        borderColor: '#7c92ff',
+                        borderWidth: 1.5,
+                        tension: 0.3,
+                        pointRadius: 0,
+                        pointHoverRadius: 10,
+                        pointHitRadius: 100,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.raw + '%';
+                                }
+                            },
+                            displayColors: false,
+                            bodyFont: {
+                                size: 15
+                            },
+                            titleFont: {
+                                size: 14
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 100,
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                callback: function (value) {
+                                    if (value === 100 || value === 50) return value + '%';
+                                    return '';
+                                }
+                            }
+                        },
+                        x: {
+                            offset: false,
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                align: 'center',
+                                font: {
+                                    size: 12,
+                                    weight: 'normal'
+                                },
+                                color: '#333'
+                            }
+                        }
+                    }
+                }
+            };
+    
+            if (chart) {
+                chart.data.datasets[0].data = data;
+                chart.update();
+            } else {
+                chart = new Chart(ctx, config);
+            }
+        }
+    
+        function updateChart() {
+            const pk = document.getElementById('PolicySalaryChart').dataset.quarterId;
+            axios.get(`/Survey/api/policy-salary/${pk}/`)
+                .then(response => {
+                    const data = [
+                        response.data.policy,
+                        response.data.salary,
+                        response.data.salary_increase,
+                    ];
+                    createOrUpdateChart(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching survey stats:', error);
+                });
+        }
+    
+        updateChart();
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('FacilitiesChart');
+        let chart;
+    
+        function createOrUpdateChart(data) {
+            const config = {
+                type: 'line',
+                data: {
+                    labels: ['Clinic', 'Kiddie Garden', 'Shuttle Service', 'Locker Room', 'Working Condition', 'Workplace', 'Comfort Room ', 'Canteen'],
+                    datasets: [{
+                        label: '',
+                        data: data,
+                        fill: 'start',
+                        backgroundColor: 'rgba(124, 146, 255, 0.2)',
+                        borderColor: '#7c92ff',
+                        borderWidth: 1.5,
+                        tension: 0.3,
+                        pointRadius: 0,
+                        pointHoverRadius: 10,
+                        pointHitRadius: 100,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.raw + '%';
+                                }
+                            },
+                            displayColors: false,
+                            bodyFont: {
+                                size: 15
+                            },
+                            titleFont: {
+                                size: 14
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 100,
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                callback: function (value) {
+                                    if (value === 100 || value === 50) return value + '%';
+                                    return '';
+                                }
+                            }
+                        },
+                        x: {
+                            offset: false,
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                align: 'center',
+                                font: {
+                                    size: 12,
+                                    weight: 'normal'
+                                },
+                                color: '#333'
+                            }
+                        }
+                    }
+                }
+            };
+    
+            if (chart) {
+                chart.data.datasets[0].data = data;
+                chart.update();
+            } else {
+                chart = new Chart(ctx, config);
+            }
+        }
+    
+        function updateChart() {
+            const pk = document.getElementById('FacilitiesChart').dataset.quarterId;
+            axios.get(`/Survey/api/facilities/${pk}/`)
+                .then(response => {
+                    const data = [
+                        response.data.clinic,
+                        response.data.kiddie_garden,
+                        response.data.shuttle_service,
+                        response.data.locker_room,
+                        response.data.working_condition,
+                        response.data.workplace,
+                        response.data.comfort_room,
+                        response.data.canteen,
+                    ];
+                    createOrUpdateChart(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching survey stats:', error);
+                });
+        }
+    
+        updateChart();
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('RelationsChart');
+        let chart;
+    
+        function createOrUpdateChart(data) {
+            const config = {
+                type: 'line',
+                data: {
+                    labels: ['Summer Outing', 'Birthday Celebration', 'Christmas Party/Family Day', 'Team Building'],
+                    datasets: [{
+                        label: '',
+                        data: data,
+                        fill: 'start',
+                        backgroundColor: 'rgba(124, 146, 255, 0.2)',
+                        borderColor: '#7c92ff',
+                        borderWidth: 1.5,
+                        tension: 0.3,
+                        pointRadius: 0,
+                        pointHoverRadius: 10,
+                        pointHitRadius: 100,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.raw + '%';
+                                }
+                            },
+                            displayColors: false,
+                            bodyFont: {
+                                size: 15
+                            },
+                            titleFont: {
+                                size: 14
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 100,
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                callback: function (value) {
+                                    if (value === 100 || value === 50) return value + '%';
+                                    return '';
+                                }
+                            }
+                        },
+                        x: {
+                            offset: false,
+                            grid: {
+                                display: false,
+                            },
+                            ticks: {
+                                align: 'center',
+                                font: {
+                                    size: 12,
+                                    weight: 'normal'
+                                },
+                                color: '#333'
+                            }
+                        }
+                    }
+                }
+            };
+    
+            if (chart) {
+                chart.data.datasets[0].data = data;
+                chart.update();
+            } else {
+                chart = new Chart(ctx, config);
+            }
+        }
+    
+        function updateChart() {
+            const pk = document.getElementById('RelationsChart').dataset.quarterId;
+            axios.get(`/Survey/api/relation-program/${pk}/`)
+                .then(response => {
+                    const data = [
+                        response.data.summer_outing,
+                        response.data.birthday_celebration,
+                        response.data.christmas_party,
+                        response.data.team_building,
+                    ];
+                    createOrUpdateChart(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching survey stats:', error);
+                });
+        }
+    
+        updateChart();
+    });
+</script>
+
+{% endblock content %}

@@ -1,0 +1,384 @@
+{% extends "main.html" %}
+{% load static %}
+{% load tz %}
+{% load custom_filters %}
+
+{% block content %}
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+                <span class="material-symbols-rounded light-gray">
+                    keyboard_arrow_right
+                </span>
+                <h5 class="m-0 light-gray fw-medium">Dashboard</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-4 rounded-4">
+
+            <!-- Greetings Carousel -->
+            <div class="d-flex gap-3 align-items-center">
+                {% if is_birthday and is_birthday.birth_date and is_birthday.birth_date|date:"m-d" == current_date|date:"m-d" %}
+                    <img src="{% static "images/icons/birthday.gif" %}" width="70" height="70" alt="">
+                    <div class="">
+                        <h2 class="fw-bold dark-gray">Happy {{age}}th Birthday, {{ request.user.firstname }}!</h2>
+                        <p class="body-regular light-gray">Cheers to you from the Ryonan Family!</p>
+                    </div>
+                {% else %}
+                    {% with greeting=request.user.firstname|greeting %}
+                        {% if is_rainy %}
+                            <img src="{% static 'images/icons/rainy.gif' %}" width="70" height="70" alt="Rainy Icon">
+                        {% elif is_sunny %}
+                            <img src="{% static 'images/icons/sunny.gif' %}" width="70" height="70" alt="Sunny Icon">
+                        {% elif user_greeting|slice:":13" == "Good evening" %}
+                            <img src="{% static 'images/icons/night.gif' %}" width="70" height="70" alt="Night Icon">
+                        {% else %}
+                            <img src="{% static 'images/icons/cloudy.gif' %}" width="70" height="70" alt="Cloudy Icon">
+                        {% endif %}
+
+                        <div class="greeting-message">
+                            <h2 class="fw-bold dark-gray">{{ user_greeting }}!</h2>
+                            <p class="body-regular light-gray">It's {% now "l, F j, Y" %}</p>
+                        </div>
+                    {% endwith %}
+                {% endif %}
+            </div>
+            
+            <div class="row g-2 mt-2">
+                <!-- Announcement Carousel -->
+                <div class="col-md-8 announcement-column-height">
+                      <div class="card announcement-card flex-grow-1">
+                        <div id="announcementIndicators" class="carousel slide">
+                            <div class="carousel-indicators">
+                                {% for announcement in announcements %}
+                                <button type="button" data-bs-target="#announcementIndicators" data-bs-slide-to="{{ forloop.counter0 }}" 
+                                        class="{% if forloop.first %}active{% endif %} indicator"></button>
+                                {% endfor %}
+                            </div>
+                            <div class="carousel-inner">
+                                {% for announcement in announcements %}
+                                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                    <div class="carousel-content" {% if announcement.image %}style="background-image: url('{{ announcement.image.url }}')"{% endif %}>
+                                        <div class="carousel-caption">
+                                            <h3 class="fw-bold mb-3">{{ announcement.title }}</h3>
+                                            <p class="text-light">{{ announcement.description }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#announcementIndicators" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#announcementIndicators" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 announcement-column-height">
+
+                    <!-- Calendar -->
+                    <div class="card dashboard-calendar-container">
+                        <div class="card-dashboard">
+                            <div class="dashboard-calendar">
+                                <div class="dashboard-calendar-header w-100">
+                                    <button id="prevMonth" class="dashboard-button-calendar">
+                                        <span class="material-symbols-rounded">keyboard_double_arrow_left</span>
+                                    </button>
+                                    <h5 id="monthYear" class="dark-gray body-regular fw-medium"></h5>
+                                    <button id="nextMonth" class="dashboard-button-calendar">
+                                        <span class="material-symbols-rounded">keyboard_double_arrow_right</span>
+                                    </button>
+
+                                    <a href="{% url 'calendar' %}" class="text-decoration-none"><button class="button-small-light">Go to Calendar</button></a>
+                                </div>
+
+                                <table id="dashboard-calendarTable" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Mon</th>
+                                            <th>Tue</th>
+                                            <th>Wed</th>
+                                            <th>Thur</th>
+                                            <th>Fri</th>
+                                            <th>Sat</th>
+                                            <th>Sun</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dashboard-calendar"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Percentage -->
+                    <a href="#profile user#" class="text-decoration-none">
+                        <div class="card p-2">
+                            <div class="d-flex align-items-center gap-3">
+                                <h2  id="profilePercentage" class="display-5 fw-bold light-gray lh-1 p-2 rounded-3" style="background-color: #eef1ff; color: #7c92ff;">25%</h2>
+                                <div>
+                                    <h5 class="dark-gray fw-medium m-0">Profile Progress</h5>
+                                    <p id="profileAlert" class="light-gray body-regular"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <!-- News Carousel -->
+                    <div class="card news-card flex-grow-1">
+                        <div class="news-card-dashboard">
+                            
+                            <div class="news-card-item" id="currentItem">
+                                <img id="currentImage" src="" alt="Current news" class="news-card-image">
+                                <div class="news-gradient-overlay"></div>
+                                <a id="newsLink" class="text-decoration-none">
+                                    <div class="news-card-content">
+                                        <p id="currentTopic" class="news-card-topic"></p>
+                                        <h2 id="currentTitle" class="news-card-title"></h2>
+                                        <p id="currentSubtitle" class="news-card-subtitle"></p>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="news-card-item" id="nextItem">
+                                <img id="nextImage" src="" alt="Next news" class="news-card-image">
+                                <div class="news-gradient-overlay"></div>
+                                <div class="news-card-content">
+                                    <p id="nextTopic" class="news-card-topic"></p>
+                                    <h2 id="nextTitle" class="news-card-title"></h2>
+                                    <p id="nextSubtitle" class="news-card-subtitle"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="news-arrow-button news-arrow-left" onclick="changeNews(-1)">&#8249;</button>
+                        <button class="news-arrow-button news-arrow-right" onclick="changeNews(1)">&#8250;</button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        
+    </div>
+</article>
+
+<script>
+
+    // Calendar Dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarBody = document.getElementById('dashboard-calendar');
+        const monthYearElement = document.getElementById('monthYear');
+        const prevMonthBtn = document.getElementById('prevMonth');
+        const nextMonthBtn = document.getElementById('nextMonth');
+    
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+    
+        let holidays = {};
+    
+        function fetchHolidays() {
+            return axios.get('/Calendar/api/events/')
+                .then(response => {
+                    holidays = response.data;
+                    updateCalendar();
+                })
+                .catch(error => {
+                    console.error('Error fetching holidays:', error);
+                });
+        }
+    
+        function generateCalendar(month, year) {
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDay = firstDay.getDay() === 0 ? 7 : firstDay.getDay();
+    
+            monthYearElement.textContent = `${firstDay.toLocaleString('default', { month: 'long' })} ${year}`;
+    
+            let date = 1;
+            let calendarHTML = '';
+    
+            for (let i = 0; i < 6; i++) {
+                let row = '<tr>';
+                for (let j = 1; j <= 7; j++) {
+                    if (i === 0 && j < startingDay) {
+                        row += '<td></td>';
+                    } else if (date > daysInMonth) {
+                        break;
+                    } else {
+                        const currentDate = new Date(year, month, date);
+                        const dateString = currentDate.toISOString().split('T')[0];
+                        const isToday = currentDate.toDateString() === new Date().toDateString();
+                        const eventData = holidays[dateString];
+    
+                        let cellClass = 'date-cell';
+                        let cellStyle = `
+                            width: 30px;
+                            height: 30px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin: auto;
+                            border-radius: 50%;
+                        `;
+    
+                        if (isToday) {
+                            cellClass += ' dashboard-today';
+                            cellStyle += 'background-color: #6895D2; color: white; font-size: 15px; font-weight: 600;';
+                        }
+    
+                        if (eventData) {
+                            const eventColor = eventData[0].event_color || '#FF6868';
+                            cellStyle += `border: 1px solid ${eventColor}; color: ${eventColor}; font-size: 15px; font-weight: 600;`;
+                        }
+    
+                        row += `<td><div class="${cellClass}" style="${cellStyle}" data-date="${dateString}">${date}</div></td>`;
+                        date++;
+                    }
+                }
+                row += '</tr>';
+                calendarHTML += row;
+                if (date > daysInMonth) {
+                    break;
+                }
+            }
+    
+            calendarBody.innerHTML = calendarHTML;
+    
+            const dateCells = document.querySelectorAll('.date-cell');
+            dateCells.forEach(cell => {
+                cell.addEventListener('click', function() {
+                    const selectedDate = this.dataset.date; // Get the selected date
+                    window.location.href = `{% url 'calendar' %}?date=${selectedDate}`; // Redirect to the calendar URL with selected date as a query parameter
+                });
+            });
+        }
+    
+        function updateCalendar() {
+            generateCalendar(currentMonth, currentYear);
+        }
+    
+        prevMonthBtn.addEventListener('click', function() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            updateCalendar();
+        });
+    
+        nextMonthBtn.addEventListener('click', function() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            updateCalendar();
+        });
+    
+        fetchHolidays();
+    });
+
+
+    // News Dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+        let newsItems = [];
+        let currentIndex = 0;
+    
+        axios.get('/The-wire/api/news/')
+            .then(function(response) {
+                console.log('API Response:', response.data);
+                newsItems = response.data;
+                if (newsItems.length > 0) {
+                    updateCard(0, 'current'); 
+                    if (newsItems.length > 1) {
+                        updateCard(1, 'next'); 
+                    }
+                }
+            })
+            .catch(function(error) {
+                console.error('Error fetching news:', error);
+            });
+    
+        function updateCard(index, prefix) {
+            if (newsItems.length === 0) return;
+    
+            const news = newsItems[index]; 
+            document.getElementById(prefix + 'Image').src = news.image; 
+            document.getElementById(prefix + 'Topic').textContent = news.category;
+            document.getElementById(prefix + 'Title').textContent = news.title; 
+            document.getElementById(prefix + 'Subtitle').textContent = news.subtitle;
+            const newsLink = document.getElementById('newsLink');
+            newsLink.href = `/The-wire/news/${news.id}/`; 
+        }
+    
+        function changeNews(direction) {
+            const nextIndex = (currentIndex + direction + newsItems.length) % newsItems.length;
+    
+            updateCard(nextIndex, 'next');  
+    
+            const container = document.querySelector('.news-card-dashboard');
+            container.style.transform = direction > 0 ? 'translateX(-50%)' : 'translateX(50%)';
+    
+            setTimeout(() => {
+                container.style.transition = 'none';
+                container.style.transform = 'translateX(0)';
+                updateCard(nextIndex, 'current');
+                
+                currentIndex = nextIndex; 
+    
+                setTimeout(() => {
+                    container.style.transition = 'transform 0.5s ease';
+                }, 50);
+            }, 500);
+        }
+    
+        document.querySelector('.news-arrow-left').addEventListener('click', () => changeNews(-1));
+        document.querySelector('.news-arrow-right').addEventListener('click', () => changeNews(1));
+    
+        updateCard(0, 'current');
+        updateCard(1, 'next');    
+    });
+
+
+    //Profile Progress
+    document.addEventListener('DOMContentLoaded', function() {
+        async function updateProfileCompletion() {
+            try {
+                const response = await axios.get('/Profile/api/profile-completion-percentage/');
+                const percentage = response.data.percentage;
+                
+                const percentageElement = document.getElementById("profilePercentage");
+                percentageElement.textContent = `${percentage}%`;
+                
+                const messageElement = document.getElementById("profileAlert");
+                if (percentage <= 25) {
+                    messageElement.textContent = "Finish your profile to boost visibility.";
+                } else if (percentage <= 50) {
+                    messageElement.textContent = "Keep going! You're halfway there.";
+                } else if (percentage <= 80) {
+                    messageElement.textContent = "You're almost there! Keep going.";
+                } else if (percentage < 100) {
+                    messageElement.textContent = "Great job! Your profile is nearly complete!";
+                } else {
+                    messageElement.textContent = "Great job! Your profile is complete!";
+                }
+            } catch (error) {
+                console.error('Error fetching profile completion:', error);
+                document.getElementById("profilePercentage").textContent = "0.0%";
+                document.getElementById("profileAlert").textContent = "Unable to load profile progress.";
+            }
+        }
+    
+        updateProfileCompletion();
+    });
+</script>
+{% endblock content %}

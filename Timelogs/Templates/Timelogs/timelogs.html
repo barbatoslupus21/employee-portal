@@ -1,0 +1,210 @@
+{% extends "main.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:Dashboard' %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <a href="" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Time logs</h5></a>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="pt-3 pb-1">
+                <h1 class="display-6 fw-bold lh-1">Time logs</h1>
+            </div>
+
+            <div class="time-container">
+                <div class="row">
+                    <div class="col-md-8 card">
+                        <div class="time">
+                            <div class="time-header w-100">
+                                <button id="prevMonth" class="button-time">
+                                    <span class="material-symbols-rounded">keyboard_double_arrow_left</span>
+                                </button>
+                                <h2 id="monthYear" class="dark-gray fw-bold"></h2>
+                                <button id="nextMonth" class="button-time">
+                                    <span class="material-symbols-rounded">keyboard_double_arrow_right</span>
+                                </button>
+                            </div>
+
+                            <table id="timeTable" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Mon</th>
+                                        <th>Tue</th>
+                                        <th>Wed</th>
+                                        <th>Thur</th>
+                                        <th>Fri</th>
+                                        <th>Sat</th>
+                                        <th>Sun</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="time"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card" id="timelogsCard" style="height: 100%;">
+                            <div class="timelogs-card-header">
+                                <h3 id="selectedDate" class="text-center dark-gray fw-bold" style="color: #7c92ff;"></h3>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item px-0"><h5 id="timelogsList" class="light-gray fw-normal"></h5></li>
+                                  </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>         
+    </div>    
+</article>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const timeBody = document.getElementById('time');
+        const monthYearElement = document.getElementById('monthYear');
+        const prevMonthBtn = document.getElementById('prevMonth');
+        const nextMonthBtn = document.getElementById('nextMonth');
+        const selectedDateElement = document.getElementById('selectedDate');
+        const timelogsListElement = document.getElementById('timelogsList');
+    
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+        const currentDateString = currentDate.toISOString().split('T')[0];
+        let timelogs = {};
+    
+        axios.get('/Timelogs/api/timelogs/')
+            .then(response => {
+                timelogs = response.data;
+                updatetime();
+                updateSelectedDate(currentDateString);
+            })
+            .catch(error => {
+                console.error('Error fetching timelogs:', error);
+            });
+    
+        function generatetime(month, year) {
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDay = firstDay.getDay() === 0 ? 7 : firstDay.getDay();
+    
+            monthYearElement.textContent = `${firstDay.toLocaleString('default', { month: 'long' })} ${year}`;
+    
+            let date = 1;
+            let timeHTML = '';
+    
+            for (let i = 0; i < 6; i++) {
+                let row = '<tr>';
+                for (let j = 1; j <= 7; j++) {
+                    if (i === 0 && j < startingDay) {
+                        row += '<td></td>';
+                    } else if (date > daysInMonth) {
+                        break;
+                    } else {
+                        const currentDate = new Date(year, month, date);
+                        const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+                        const isToday = currentDate.toDateString() === new Date().toDateString();
+                        const timelogsForDate = timelogs[dateString];
+    
+                        let cellClass = 'time-cell';
+                        if (isToday) {
+                            cellClass += ' today';
+                        } else if (timelogsForDate) {
+                            if (timelogsForDate[0].timeIn && timelogsForDate[0].timeOut) {
+                                cellClass += ' timelogs';
+                            } else {
+                                cellClass += ' missingtimelogs';
+                            }
+                        }
+    
+                        row += `<td><div class="${cellClass}" data-date="${dateString}">${date}</div></td>`;
+                        date++;
+                    }
+                }
+                row += '</tr>';
+                timeHTML += row;
+                if (date > daysInMonth) {
+                    break;
+                }
+            }
+    
+            timeBody.innerHTML = timeHTML;
+    
+            // Add event listeners for click
+            const dateCells = document.querySelectorAll('.time-cell');
+            dateCells.forEach(cell => {
+                cell.addEventListener('click', function() {
+                    dateCells.forEach(c => {
+                        c.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    updateSelectedDate(this.dataset.date);
+                });
+            });
+        }
+    
+        function updateSelectedDate(dateString) {
+            const [year, month, day] = dateString.split('-').map(Number);
+            const selectedDate = new Date(year, month - 1, day);
+    
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            selectedDateElement.textContent = selectedDate.toLocaleDateString('en-US', options);
+    
+            const timelogsList = timelogs[dateString];
+            if (timelogsList && timelogsList.length > 0) {
+                timelogsListElement.innerHTML = timelogsList.map(log => `
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="fw-bold dark-gray">Time In</h4>
+                        <h4 class="fw-bold light-gray">${log.timeIn || 'Missing'}</h4>
+                    </div>
+    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="fw-bold dark-gray">Time Out</h4>
+                        <h4 class="fw-bold light-gray">${log.timeOut || 'Missing'}</h4>
+                    </div>
+                `).join('');
+            } else {
+                timelogsListElement.innerHTML = '<p class="px-3">No time logs on selected date</p>';
+            }
+        }
+    
+        function updatetime() {
+            generatetime(currentMonth, currentYear);
+        }
+    
+        prevMonthBtn.addEventListener('click', function() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            updatetime();
+        });
+    
+        nextMonthBtn.addEventListener('click', function() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            updatetime();
+        });
+    
+        // Initial time generation (will be triggered after fetching data)
+        updatetime();
+    });
+</script>
+{% endblock content %}

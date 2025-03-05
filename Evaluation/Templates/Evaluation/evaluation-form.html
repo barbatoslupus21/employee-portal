@@ -1,0 +1,181 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% url 'Dashboard:Dashboard' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Home</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">Assessments</h5>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <a href="{% url 'performance-evaluation' %}" class="text-decoration-none">
+                <h5 class="m-0 light-gray fw-medium">Performance Evaluation</h5>
+            </a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+            </span>
+            <h5 class="m-0 light-gray fw-medium">{{quarter.quarter}}</h5>
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="pt-2">
+                <h1 class="display-6 fw-bold dark-gray">Performance Evaluation</h1>
+                <p class="dark-gray mb-4">Please take a few moments to complete this survey</p>
+            </div>
+            <hr>
+            <form method="POST" action="{% url 'submit-evalform' pk=quarter.id %}">
+                {% csrf_token %}
+                <div class="pb-4">
+                    <h3 class="dark-gray mb-2">Ryonan Training Program</h3>
+                    <p class="dark-gray mb-2">Please consider any training programs that could enhance your skills and benefit both you and the company. Participation is optional, and your suggestions are welcome but not required.</p>
+                    <div class="mt-5">
+                        <label for="trainingname" class="form-label">Training Name</label>
+                        <input type="text" class="form-control" id="trainingname" name='training_name'>
+                        <div class="valid-feedback">
+                          Looks good!
+                        </div>
+                    </div>
+
+                    <div class="mt-2">
+                        <label for="trainingObjective" class="form-label">Objectives</label>
+                        <textarea type="text" class="form-control" id="trainingObjective" name='training_objective'></textarea>
+                        <div class="valid-feedback">
+                          Looks good!
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="pb-4">
+                    <h3 class="dark-gray mb-2">Task Review Self-Assessment</h3>
+                    <p class="dark-gray mb-2">Rate your satisfaction with each job aspect on a scale of 1 (Poor) to
+                        5(Excellent).</p>
+                    <table class="table survey-table">
+                        <thead>
+                            <tr>
+                                <th class="body-regular dark-gray fw-medium self-assessment"></th>
+                                <th class="body-regular dark-gray fw-medium text-center">1</th>
+                                <th class="body-regular dark-gray fw-medium text-center">2</th>
+                                <th class="body-regular dark-gray fw-medium text-center">3</th>
+                                <th class="body-regular dark-gray fw-medium text-center">4</th>
+                                <th class="body-regular dark-gray fw-medium text-center">5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tasklist in tasklists %}
+                            <tr>
+                                <td><p>{{tasklist.tasklist}}</p></td>
+                                <td class="text-center">
+                                    <div class="form-check d-flex justify-content-center">
+                                        <input class="form-check-input" type="radio" name="Assessment{{tasklist.id}}" value="1">
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="form-check d-flex justify-content-center">
+                                        <input class="form-check-input" type="radio" name="Assessment{{tasklist.id}}" value="2">
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="form-check d-flex justify-content-center">
+                                        <input class="form-check-input" type="radio" name="Assessment{{tasklist.id}}" value="3">
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="form-check d-flex justify-content-center">
+                                        <input class="form-check-input" type="radio" name="Assessment{{tasklist.id}}" value="4">
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="form-check d-flex justify-content-center">
+                                        <input class="form-check-input" type="radio" name="Assessment{{tasklist.id}}" value="5">
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <hr>
+
+                <div class="pb-4">
+                    <h3 class="dark-gray mb-2">Ryonan Training Program (Optional)</h3>
+                    <p class="dark-gray mb-2">Please consider any training programs that could enhance your skills and benefit both you and the company. Participation is optional, and your suggestions are welcome but not required.</p>
+                    <div class="mt-5">
+                        <label for="trainingname" class="form-label">Training Name</label>
+                        <input type="text" class="form-control" id="trainingname" name='training_name'>
+                        <div class="valid-feedback">
+                          Looks good!
+                        </div>
+                    </div>
+
+                    <div class="mt-2">
+                        <label for="trainingObjective" class="form-label">Objectives</label>
+                        <textarea type="text" class="form-control" id="trainingObjective" name='training_objective'></textarea>
+                        <div class="valid-feedback">
+                          Looks good!
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-end mb-4 gap-2">
+                    <button type="submit" class="custom-button" onclick="validateEvaluation(event)">
+                        Submit Assessment
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+</article>
+
+<script>
+    function validateEvaluation(event) {
+        event.preventDefault(); // Prevent form submission initially
+        const rows = document.querySelectorAll('table tbody tr');
+        let allRowsValid = true;
+        let firstInvalidRow = null;
+    
+        rows.forEach((row) => {
+            const radios = row.querySelectorAll('input[type="radio"]');
+            const isChecked = Array.from(radios).some(radio => radio.checked);
+    
+            const rowHeader = row.querySelector('td');
+    
+            if (!isChecked) {
+                rowHeader.classList.add('error-label');
+                allRowsValid = false;
+                if (!firstInvalidRow) {
+                    firstInvalidRow = row;
+                }
+            } else {
+                rowHeader.classList.remove('error-label');
+            }
+        });
+    
+        if (allRowsValid) {
+            // All rows have been validated, submit the form
+            event.target.closest('form').submit();
+        } else {
+            // Scroll to the first incomplete row and focus it
+            if (firstInvalidRow) {
+                firstInvalidRow.scrollIntoView({ behavior: 'smooth' });
+                const firstRadio = firstInvalidRow.querySelector('input[type="radio"]');
+                if (firstRadio) {
+                    firstRadio.focus();
+                }
+            }
+        }
+    }
+</script>
+{% endblock content %}

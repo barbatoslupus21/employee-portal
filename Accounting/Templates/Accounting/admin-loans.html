@@ -1,0 +1,225 @@
+{% extends "main.html" %}
+{% load static %}
+
+{% block content %}
+
+<article>
+    <div class="container-fluid">
+        <div class="d-flex align-items-start gap-2 my-2">
+            <a href="{% if request.user.is_admin %}{% url 'Dashboard:admin-dashboard' %}{% else %}{% url 'Dashboard:Dashboard' %}{% endif %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Home</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            {% if request.user.is_admin %}
+            <a href="{% url 'admin-finance' %}" class="text-decoration-none"><h5 class="m-0 light-gray fw-medium">Finances</h5></a>
+            <span class="material-symbols-rounded light-gray">
+                keyboard_arrow_right
+                </span>
+            <h5 class="m-0 light-gray fw-medium">{{employee.name}}</h5>
+            {% else %}
+            <h5 class="m-0 light-gray fw-medium">Loan and Allowances</h5>
+            {% endif %}
+            
+        </div>
+
+    </div>
+
+    <div class="article-container">
+        <div class="mt-1">
+            <div class="pt-2">
+                <h1 class="display-6 fw-bold dark-gray mb-3">Loans & Allowances</h1>
+              </div>
+            <div class="">
+                {% if emploans %}
+                <h4 class="fw-medium mb-3">Personal Loans</h4>
+                 <!-- Search and Filter Section -->
+                <div class="table-controls-admin">
+                    <div class="d-flex gap-1">
+                        <div class="InputContainer">
+                            <input type="text" name="text" class="searchinput" id="searchInput" placeholder="Search" onkeyup="searchLoanView()">
+                            <label for="searchInput" class="labelforsearch">
+                            <svg viewBox="0 0 512 512" class="searchIcon"><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"></path></svg>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loan Table -->
+                <div class="table-container pb-3">
+                    <table id="requestTable">
+                    <thead>
+                        <tr>
+                            <th class="light-gray" onclick="sortTable(0)">Loan Type</th>
+                            <th class="light-gray">Date Started</th>
+                            <th class="light-gray">Loan Amount</th>
+                            <th class="light-gray">Payments</th>
+                            <th class="light-gray">Balances</th>
+                            <th class="light-gray">Percentage</th>
+                            <th class="light-gray">Posted At</th>
+                        </tr>
+                    </thead>
+                    <tbody class="admin-loans-view-container">
+                        {% for emploan in emploans %}
+                        <tr >
+                            <td>{{emploan.loan_type.name}}</td>
+                            <td>{{emploan.date_started|date:'F d, Y'}}</td>
+                            <td>{{emploan.loan_amount_format}}</td>
+                            <td>{{emploan.payment_format}}</td>
+                            <td>{{emploan.balance_format}}</td>
+                            <td class="percentage">{{emploan.percentage}}%</td>
+                            <td>{{emploan.date_posted|date:'F d,Y'}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                {% endif %}
+
+                {% if savings %}
+                <h4 class=" fw-medium mb-3">Personal Savings</h4>
+                <!-- Savings Table -->
+                <div class="table-container pb-3">
+                    <table id="requestTable">
+                    <thead>
+                        <tr>
+                            <th class="light-gray">Savings Type</th>
+                            <th class="light-gray">Date Started</th>
+                            <th class="light-gray">Desired Savings</th>
+                            <th class="light-gray">Savings</th>
+                            <th class="light-gray">Balances</th>
+                            <th class="light-gray">Posted At</th>
+                        </tr>
+                    </thead>
+                    <tbody class="admin-loans-view-container">
+                        {% for saving in savings %}
+                        <tr >
+                            <td>{{saving.savings_type.name}}</td>
+                            <td>{{saving.date_started|date:'F d, Y'}}</td>
+                            <td>{{saving.desired_savings_format}}</td>
+                            <td>{{saving.actual_savings_format}}</td>
+                            <td>{{saving.formatted_savings}}</td>
+                            <td>{{saving.date_posted|date:'F d, Y'}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                {% endif %}
+
+                {% if medicines %}
+                <h4 class=" fw-medium mb-3">Medicine Allowance</h4>
+                <!-- Medicine Table -->
+                <div class="table-container pb-3">
+                    <table id="requestTable">
+                    <thead>
+                        <tr>
+                            <th class="light-gray">Month Started</th>
+                            <th class="light-gray">Month Ended</th>
+                            <th class="light-gray">Allowance</th>
+                            <th class="light-gray">Claimed Amount</th>
+                            <th class="light-gray">Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody class="admin-loans-view-container">
+
+                        <tr >
+                            <td>May 2024</td>
+                            <td>September 2024</td>
+                            <td>1000</td>
+                            <td>400</td>
+                            <td>600</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                </div>
+                {% endif %}
+
+                {% if attendances %}
+                <h4 class=" fw-medium mb-3">Perfect Attendance</h4>
+                <!-- Medicine Table -->
+                <div class="table-container pb-3">
+                    <table id="requestTable">
+                    <thead>
+                        <tr>
+                            <th class="light-gray">Title</th>
+                            <th class="light-gray">Period</th>
+                            <th class="light-gray">Amount</th>
+                            <th class="light-gray">Status</th>
+                            <th class="light-gray">Date Credited</th>
+                        </tr>
+                    </thead>
+                    <tbody class="admin-loans-view-container">
+                        {% for attendance in attendances %}
+                        <tr >
+                            <td>{{attendance.title}}</td>
+                            <td>{{attendance.started_at|date:'F Y'}} - {{attendance.ended_at|date:'F Y'}}</td>
+                            <td>{{attendance.amount}}</td>
+                            <td>Credited to Account</td>
+                            <td>{{attendance.date_credited|date:'F d, Y'}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                {% endif %}
+
+                {% if not loans and not savings and not medicines and not attendances %}
+                <div class="no-filed-prf-container">
+                    <div><h5 class="light-gray">This user has no recorded loans or allowances.</h5></div>
+                    <img src="{% static 'images/empty-box.png' %}" alt="no data found">
+                </div>
+                {% endif %}
+            </div>
+        </div>            
+    </div>
+</article>
+
+<script>
+    function sortTable(columnIndex) {
+        const table = document.getElementById("requestTable");
+        const rows = Array.from(table.rows).slice(1);
+        const sortedRows = rows.sort((a, b) => {
+          const aText = a.cells[columnIndex].innerText.toLowerCase();
+          const bText = b.cells[columnIndex].innerText.toLowerCase();
+          return aText.localeCompare(bText);
+        });
+      
+        sortedRows.forEach(row => table.tBodies[0].appendChild(row));
+      }
+      
+    document.addEventListener('DOMContentLoaded', function() {
+        const percentages = document.querySelectorAll('.percentage');
+        
+        percentages.forEach(percentage => {
+            const value = parseInt(percentage.textContent);
+            percentage.style.color = getColorForPercentage(value);
+        });
+
+        function getColorForPercentage(value) {
+            if (value <= 40) return 'red';
+            if (value <= 70) return 'orange';
+            return 'green';
+        }
+    });
+
+    function searchLoanView() {
+        const input = document.getElementById("searchInput");
+        const filter = input.value.toLowerCase();
+        const table = document.getElementById("requestTable");
+        const rows = table.getElementsByTagName("tr");
+      
+        for (let i = 1; i < rows.length; i++) {
+          const cells = rows[i].getElementsByTagName("td");
+          let shouldDisplay = false;
+          for (let j = 0; j < cells.length - 1; j++) {
+            if (cells[j].innerText.toLowerCase().includes(filter)) {
+              shouldDisplay = true;
+              break;
+            }
+          }
+          rows[i].style.display = shouldDisplay ? "" : "none";
+        }
+      }
+</script>
+
+{% endblock content %}
