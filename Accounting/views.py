@@ -338,9 +338,21 @@ def import_savings(request):
 
 @login_required(login_url='login')
 def payslip_view(request):
-    # employee = get_object_or_404(EmployeeLogin, id=pk)
     payslips = EmployeePayslip.objects.filter(employee=request.user).order_by('-uploaded_at')
 
+    context={
+        'payslips':payslips
+    }
+    return render(request, 'Accounting/payslip-view.html', context)
+
+@login_required(login_url='login')
+def admin_payslip_view(request, pk):
+    employee = get_object_or_404(EmployeeLogin, id=pk)
+    payslips = EmployeePayslip.objects.filter(employee=employee).order_by('-uploaded_at')
+
+    if not payslips.exists():
+        payslips = None
+        
     context={
         # 'employee':employee,
         'payslips':payslips
